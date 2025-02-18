@@ -1,0 +1,12 @@
+#authenticationDiv {
+  background-image: url("../../../assets/image/banner-1.jpg");
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+:host ::ng-deep {
+  body {
+    overflow: hidden !important;
+  }
+}

@@ -1,0 +1,345 @@
+<div [id]="props.id" class="hidden md:grid {{ props.class }} gap-4 grid-flow-col items-start" [formGroup]="FormGroup">
+    <div *ngFor="let item of props.fields"
+        class="flex {{ props.style == 'inline' ? 'flex-row' : 'flex-col' }} {{ item.type == 'textarea' ? 'items-start' : 'items-center' }} gap-1"
+        [class.hidden]="item.hidden">
+        <!-- Label -->
+        <div *ngIf="!item.hideLabel" class="{{ props.style == 'inline' ? 'w-4/12' : 'w-full'  }}">
+            <p class="text-sm text-gray-600 font-medium {{ item.type == 'textarea' ? 'pt-3' : '' }}">
+                {{ item.label }}
+                <span *ngIf="item.required" class="text-xs text-red-500">*</span>
+            </p>
+        </div>
+
+        <div class="{{ props.style == 'inline' ? 'w-8/12' : 'w-full'  }}">
+            <!-- Text -->
+            <input *ngIf="item.type == 'text' && !item.mask" type="text" pInputText
+                class="p-inputtext-sm w-full {{ props.state == 'read' || item.readonly ? 'readonlyState' : '' }}"
+                formControlName="{{ item.id }}" [readonly]="props.state == 'read' || item.readonly "
+                (change)="handleChangeInputText($event, item)" [value]="item.value"
+                placeholder="{{ item.placeholder ? item.placeholder : '' }}" />
+
+            <!-- Text and Mask -->
+            <input *ngIf="item.type == 'text' && item.mask" type="text" pInputText
+                class="p-inputtext-sm w-full {{ props.state == 'read' || item.readonly ? 'readonlyState' : '' }}"
+                formControlName="{{ item.id }}" [readonly]="props.state == 'read' || item.readonly "
+                (change)="handleChangeInputText($event, item)" [value]="item.value"
+                placeholder="{{ item.placeholder ? item.placeholder : '' }}" [mask]="item.mask"
+                [dropSpecialCharacters]="item.dropSpecialCharacters ? item.dropSpecialCharacters : false" />
+
+            <!-- Textarea -->
+            <textarea *ngIf="item.type == 'textarea'" rows="{{ item.textareaRow }}" pInputTextarea
+                class="p-inputtext-sm w-full {{ props.state == 'read' ? 'readonlyState' : '' }}"
+                formControlName="{{ item.id }}" [readonly]="props.state == 'read' || item.readonly ">
+            </textarea>
+
+            <!-- Editor -->
+            <p-editor *ngIf="item.type == 'editor'" id="'editor_{{ item.id }}" formControlName="{{ item.id }}"
+                [style]="{ height: '250px' }">
+                <ng-template pTemplate="header">
+                    <span class="ql-formats">
+                        <button type="button" class="ql-bold" aria-label="Bold"></button>
+                        <button type="button" class="ql-italic" aria-label="Italic"></button>
+                        <button type="button" class="ql-underline" aria-label="Underline"></button>
+                    </span>
+                </ng-template>
+            </p-editor>
+
+            <!-- Number -->
+            <p-inputNumber *ngIf="item.type == 'number'" inputId="integeronly" class="p-inputtext-sm w-full"
+                formControlName="{{ item.id }}" [readonly]="item.readonly! || props.state == 'read'"
+                (onBlur)="item.onChange?.(FormGroup.get(item.id)?.value)">
+            </p-inputNumber>
+
+            <!-- Datepicker -->
+            <p-calendar *ngIf="item.type == 'date'" appendTo="body" styleClass="p-inputtext-sm w-full"
+                dateFormat="dd MM yy" [showClear]="true" formControlName="{{ item.id }}" [readonlyInput]="true"
+                (onSelect)="handleChangeCalendar($event, item)">
+            </p-calendar>
+
+            <!-- Daterange -->
+            <p-calendar *ngIf="item.type == 'daterange'" appendTo="body" styleClass="p-inputtext-sm w-full"
+                dateFormat="dd MM yy" [showClear]="true" selectionMode="range" formControlName="{{ item.id }}">
+            </p-calendar>
+
+            <!-- Time -->
+            <p-calendar *ngIf="item.type == 'time'" appendTo="body" styleClass="p-inputtext-sm w-full" [timeOnly]="true"
+                [showClear]="true" formControlName="{{ item.id }}" [readonlyInput]="true">
+            </p-calendar>
+
+            <!-- Dropdown -->
+            <p-dropdown *ngIf="item.type == 'select'" [options]="item.dropdownProps.options"
+                [optionLabel]="item.dropdownProps.optionName"
+                [optionValue]="item.dropdownProps.optionValueAlternative ? item.dropdownProps.optionValueAlternative : item.dropdownProps.optionValue"
+                [autoDisplayFirst]="false" [showClear]="true" [filter]="true" styleClass="p-inputtext-sm w-full"
+                formControlName="{{ item.id }}" appendTo="body" [disabled]="props.state == 'read'"
+                (onChange)="handleChangeDropdown($event, item)" (onFilter)="handleFilterDropdown($event, item)">
+                <ng-template *ngIf="item.dropdownProps.customField" let-data pTemplate="item">
+                    <div class="flex flex-col gap-2">
+                        <p class="text-blue-500 text-sm font-semibold">
+                            {{ data[item.dropdownProps.customField.title] }}
+                        </p>
+                        <p class="text-gray-800 text-xs">
+                            {{ data[item.dropdownProps.customField.subtitle] }}
+                        </p>
+                        <p *ngIf="item.dropdownProps.customField.description" class="text-gray-600 text-xs">
+                            {{ data[item.dropdownProps.customField.description] ?
+                            data[item.dropdownProps.customField.description] : '-' }}
+                        </p>
+                    </div>
+                </ng-template>
+                <ng-template *ngIf="item.dropdownProps.customField?.footer" let-data pTemplate="footer">
+                    <div class="grid grid-cols-1 w-full p-2 bg-gray-100">
+                        <p-button styleClass="p-button-info p-button-sm w-full"
+                            [label]="item.dropdownProps.customField.footer.label" icon="pi pi-plus"
+                            (onClick)="item.dropdownProps.customField.footer.method()">
+                        </p-button>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+
+            <!-- Multiselect -->
+            <p-multiSelect *ngIf="item.type == 'multiselect'" [options]="item.dropdownProps.options"
+                formControlName="{{ item.id }}" [optionLabel]="item.dropdownProps.optionName"
+                [optionValue]="item.dropdownProps.optionValueAlternative ? item.dropdownProps.optionValueAlternative : item.dropdownProps.optionValue"
+                appendTo="body" [disabled]="props.state == 'read'" styleClass="p-inputtext-sm w-full"
+                (onChange)="handleChangeDropdown($event, item)" (onFilter)="handleFilterDropdown($event, item)" />
+
+            <!-- Radio Button -->
+            <div *ngIf="item.type == 'radio'" class="flex flex-wrap gap-3">
+                <div *ngFor="let radio of item.radioButtonProps; let i = index" class="flex align-items-center">
+                    <p-radioButton [value]="radio.value" [name]="radio.id" formControlName="{{ item.id }}"
+                        styleClass="p-inputtext-sm">
+                    </p-radioButton>
+                    <label for="{{ radio.id }}" class="ml-2 text-sm">
+                        {{ radio.label }}
+                    </label>
+                </div>
+            </div>
+
+            <!-- Checkbox -->
+            <div *ngIf="item.type == 'checkbox'" class="flex items-center flex-row gap-3">
+                <div *ngFor="let check of item.checkBoxProps" class="flex align-items-center gap-1">
+                    <p-checkbox [name]="item.id" [value]="check.value" formControlName="{{ item.id }}"
+                        inputId="{{ check.name }}_check" (onChange)="handleChangeCheckbox($event, item)">
+                    </p-checkbox>
+
+                    <label for="{{ check.name }}_check" class="text-sm">
+                        {{ check.label }}
+                    </label>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <p-password *ngIf="item.type == 'password'" formControlName="{{ item.id }}" [feedback]="false"
+                [toggleMask]="true" styleClass="p-inputtext-sm w-full">
+            </p-password>
+
+            <!-- Lookup -->
+            <app-lookup-dialog *ngIf="item.type == 'lookup'" [props]="item.lookupProps!"
+                (onSelectData)="handleSelectDataLookup(item, $event)">
+            </app-lookup-dialog>
+
+            <!-- Input Text Split -->
+            <div *ngIf="item.type == 'text_split'" class="flex gap-4 items-center">
+                <input *ngFor="let text of item.splitProps" type="text" pInputText
+                    class="p-inputtext-sm w-full {{ props.state == 'read' || text.readonly ? 'readonlyState' : '' }}"
+                    formControlName="{{ text.id }}" [readonly]="props.state == 'read'"
+                    (change)="handleChangeInputText($event, text)" [value]="text.value" />
+            </div>
+
+            <!-- Input Text Split -->
+            <div *ngIf="item.type == 'number_split'" class="flex gap-4 items-center">
+                <p-inputNumber *ngFor="let text of item.splitProps" inputId="integeronly" class="p-inputtext-sm w-full"
+                    formControlName="{{ text.id }}" [readonly]="text.readonly! || props.state == 'read'"
+                    (onBlur)="item.onChange?.(FormGroup.get(text.id)?.value)">
+                </p-inputNumber>
+            </div>
+
+            <!-- Switch -->
+            <div *ngIf="item.type == 'switch'" class="flex w-full items-center gap-4">
+                <p-inputSwitch formControlName="{{ item.id }}" (onChange)="handleChangeSwitch($event, item)" />
+                <p class="text-gray-700 text-sm">
+                    {{ item.label }}
+                </p>
+            </div>
+
+            <!-- OTP / PIN -->
+            <div *ngIf="item.type == 'otp'" class="flex w-full md:w-5/12">
+                <p-inputOtp formControlName="{{item.id}}" class="p-inputtext-sm" [integerOnly]="true" [length]="6" />
+            </div>
+
+            <!-- File -->
+            <div *ngIf="item.type == 'fileinput'" class="flex items-center flex-col w-full">
+                <div
+                    class="flex flex-col items-center justify-center w-full p-3 rounded-md border border-dashed border-gray-300">
+                    <!-- If file input el is empty -->
+                    <div *ngIf="!ImagePreviews[item.id]"
+                        class="flex flex-col items-center justify-center w-full gap-0 cursor-pointer h-[10rem]"
+                        (click)="FileInputEl.click()">
+                        <i class="pi pi-plus-circle"></i>
+                        <p class="text-sm text-gray-700 font-semibold mt-1">Click here to browse files</p>
+                        <p class="text-xs text-gray-600">
+                            You can choose
+                            {{ isImageFile(item.file_accept!) ? 'image' :'video' }}
+                            with all type
+                        </p>
+                    </div>
+
+                    <div *ngIf="ImagePreviews[item.id]" class="flex flex-col gap-5 items-center justify-center">
+
+                        <!-- Image Preview -->
+                        <img *ngIf="isImageFile(item.file_accept!)" id="{{ item.id }}_file_preview"
+                            [src]="ImagePreviews[item.id]" alt="{{ item.id }}_file_preview" class="h-[5rem] w-[5rem]">
+
+                        <!-- Video Preview -->
+                        <video *ngIf="isVideoFile(item.file_accept!)" id="{{ item.id }}_video_preview" preload="auto"
+                            controls class="h-[20rem] w-full">
+                            <source [src]="ImagePreviews[item.id]" type="video/mp4">
+                        </video>
+
+                        <!-- <vg-player>
+                            <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>
+                                <source [src]="ImagePreviews[item.id]" type="video/mp4">
+                            </video>
+                        </vg-player> -->
+
+
+                        <!-- Button -->
+                        <div class="flex w-full gap-3 justify-center">
+                            <span
+                                class="px-2 py-1 text-sm bg-gray-100 text-gray-800 font-semibold rounded-md cursor-pointer"
+                                (click)="FileInputEl.click()">
+                                Change File
+                            </span>
+
+                            <span
+                                class="px-2 py-1 text-sm bg-red-100 text-red-800 font-semibold rounded-md cursor-pointer"
+                                (click)="FileInputEl.value = ''; removeFile(item.id)">
+                                Delete File
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden file input element -->
+                <input #FileInputEl [id]="'fileInputEl_' + item.id" type="file" [accept]="item.file_accept"
+                    class="hidden p-inputtext-sm w-full readonlyState" (change)="handleChangeFileInput($event, item)" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Form Mobile -->
+<div [id]="props.id" class="md:hidden grid gap-4 items-start" [formGroup]="FormGroup">
+    <div *ngFor="let item of props.fields"
+        class="flex {{ props.style == 'inline' ? 'flex-row' : 'flex-col' }} {{ item.type == 'textarea' ? 'items-start' : 'items-center' }} gap-2"
+        [class.hidden]="item.hidden">
+        <!-- Label -->
+        <div *ngIf="item.id !== 'just_gap'" class="{{ props.style == 'inline' ? 'w-4/12' : 'w-full'  }}">
+            <p class=" text-xs text-gray-600 {{ item.type == 'textarea' ? 'pt-3' : '' }}">
+                {{ item.label }}
+                <span *ngIf="item.required" class="text-xs text-red-500">*</span>
+            </p>
+        </div>
+
+        <div *ngIf="item.id !== 'just_gap'" class="{{ props.style == 'inline' ? 'w-8/12' : 'w-full'  }}">
+            <!-- Text -->
+            <input *ngIf="item.type == 'text'" type="text" pInputText
+                class="p-inputtext-sm w-full {{ props.state == 'read' ? 'readonlyState' : '' }}"
+                formControlName="{{ item.id }}" [readonly]="props.state == 'read' || item.readonly " />
+
+            <!-- Textarea -->
+            <textarea *ngIf="item.type == 'textarea'" rows="{{ item.textareaRow }}" pInputTextarea
+                class="p-inputtext-sm w-full {{ props.state == 'read' ? 'readonlyState' : '' }}"
+                formControlName="{{ item.id }}" [readonly]="props.state == 'read' || item.readonly ">
+            </textarea>
+
+            <!-- Number -->
+            <p-inputNumber *ngIf="item.type == 'number'" inputId="integeronly" class="p-inputtext-sm w-full"
+                formControlName="{{ item.id }}" [readonly]="item.readonly! || props.state == 'read'"
+                (onBlur)="item.onChange?.(FormGroup.get(item.id)?.value)">
+            </p-inputNumber>
+
+            <!-- Datepicker -->
+            <p-calendar *ngIf="item.type == 'date'" appendTo="body" styleClass="p-inputtext-sm w-full"
+                dateFormat="dd MM yy" [showClear]="true" formControlName="{{ item.id }}" [readonlyInput]="true">
+            </p-calendar>
+
+            <!-- Daterange -->
+            <p-calendar *ngIf="item.type == 'daterange'" appendTo="body" styleClass="p-inputtext-sm w-full"
+                dateFormat="dd MM yy" [showClear]="true" selectionMode="range" formControlName="{{ item.id }}">
+            </p-calendar>
+
+            <!-- Dropdown -->
+            <p-dropdown *ngIf="item.type == 'select'" [options]="item.dropdownProps.options"
+                [optionLabel]="item.dropdownProps.optionName" [optionValue]="item.dropdownProps.optionValue"
+                [autoDisplayFirst]="false" [showClear]="true" [filter]="true" styleClass="p-inputtext-sm w-full"
+                formControlName="{{ item.id }}" appendTo="body" [filterBy]="item.dropdownProps.optionName"
+                [disabled]="props.state == 'read'" (onChange)="handleChangeDropdown($event, item)"
+                (onFilter)="handleFilterDropdown($event, item)">
+                <ng-template *ngIf="item.dropdownProps.customField" let-data pTemplate="item">
+                    <div class="flex flex-col gap-2">
+                        <p class="text-blue-500 text-sm font-semibold">
+                            {{ data[item.dropdownProps.customField.title] }}
+                        </p>
+                        <p class="text-gray-800 text-xs">
+                            {{ data[item.dropdownProps.customField.subtitle] }}
+                        </p>
+                        <p *ngIf="item.dropdownProps.customField.description" class="text-gray-600 text-xs">
+                            {{ data[item.dropdownProps.customField.description] }}
+                        </p>
+                    </div>
+                </ng-template>
+                <ng-template *ngIf="item.dropdownProps.customField" let-data pTemplate="footer">
+                    <div class="grid grid-cols-1 w-full p-2 bg-gray-100">
+                        <p-button styleClass="p-button-info p-button-sm w-full"
+                            [label]="item.dropdownProps.customField.footer.label" icon="pi pi-plus"
+                            (onClick)="item.dropdownProps.customField.footer.method()">
+                        </p-button>
+                    </div>
+                </ng-template>
+            </p-dropdown>
+
+            <!-- Radio Button -->
+            <div *ngIf="item.type == 'radio'" class="flex flex-wrap gap-3">
+                <div *ngFor="let radio of item.radioButtonProps; let i = index" class="flex align-items-center">
+                    <p-radioButton [name]="radio.name" [value]="radio.value" inputId="{{ item.id }}_{{ i }}"
+                        formControlName="{{ item.id }}">
+                    </p-radioButton>
+                    <label for="{{ item.id }}_{{ i }}" class="ml-2">
+                        {{ radio.label }}
+                    </label>
+                </div>
+            </div>
+
+            <!-- Checkbox -->
+            <div *ngIf="item.type == 'checkbox'" class="flex items-center flex-row gap-3">
+                <div *ngFor="let check of item.checkBoxProps" class="flex align-items-center gap-1">
+                    <p-checkbox [name]="item.id" [value]="check.value" formControlName="{{ item.id }}"
+                        inputId="{{ check.name }}_check">
+                    </p-checkbox>
+
+                    <label for="{{ check.name }}_check" class="text-sm">
+                        {{ check.label }}
+                    </label>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <p-password *ngIf="item.type == 'password'" formControlName="{{ item.id }}" [feedback]="false"
+                [toggleMask]="true" styleClass="p-inputtext-sm w-full">
+            </p-password>
+
+            <!-- File -->
+            <div *ngIf="item.type == 'fileinput'" class="flex items-center flex-col w-full">
+                <input id="{{ item.id }}_file_title" type="text" pInputText class="p-inputtext-sm w-full"
+                    (click)="FileInputEl.click()" />
+
+                <input #FileInputEl type="file" [accept]="item.file_accept"
+                    class="hidden p-inputtext-sm w-full readonlyState" (change)="handleChangeFileInput($event, item)" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-toast></p-toast>

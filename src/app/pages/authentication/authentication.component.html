@@ -1,0 +1,51 @@
+<section id="authentication" class="bg-white h-screen">
+    <div class="flex w-full h-full gap-5 p-5">
+        <!-- Form -->
+        <div class="w-full md:w-6/12 flex flex-col flex-nowrap justify-between h-full">
+            <!-- Title -->
+            <div class="flex items-center gap-2 mb-5">
+                <!-- Title -->
+                <img src="../../../assets/image/img_logo.png" alt="logo" class="h-[2rem] w-auto">
+
+                <p class="text-gray-700 font-bold text-2xl pt-2">
+                    UnionIPTV
+                </p>
+            </div>
+
+            <!-- Form -->
+            <div class="flex flex-col gap-0 mb-7 md:px-32">
+                <p class="text-4xl font-semibold text-gray-800 text-center">
+                    Welcome
+                </p>
+                <p
+                    class="text-base text-gray-600 text-center mb-5 pb-3 border-b border-t-0 border-x-0 border-dashed border-gray-200">
+                    Sign in to your account and start managing your services.
+                </p>
+
+                <div class="w-full mb-5">
+                    <app-dynamic-form #FormComps [props]="FormProps"></app-dynamic-form>
+                </div>
+
+                <div class="flex flex-col w-full">
+                    <p-button severity="secondary" styleClass="w-full rounded-xl bg-pink-600 text-white" label="Sign In"
+                        (onClick)="handleSignIn()">
+                    </p-button>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row w-full items-center md:items-start md:justify-between gap-1 px-10">
+                <p class="text-xs text-gray-600 mt-1 cursor-pointer text-center">
+                    UnionIPTV <span class="text-semibold">{{ Year }}</span> . All Rights Reserved
+                </p>
+
+                <p class="text-xs text-gray-600 mt-1 cursor-pointer text-center">
+                    PT. Mitra Aplikasi Teknologi
+                </p>
+            </div>
+        </div>
+
+        <!-- Image -->
+        <div id="authenticationDiv" class="w-6/12 hidden md:flex rounded-2xl h-full shadow-xl">
+        </div>
+    </div>
+</section>

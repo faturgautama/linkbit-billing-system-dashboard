@@ -1,0 +1,81 @@
+<div class="flex items-center">
+    <p-button styleClass="p-button-sm p-button-info" label="Pencarian" icon="pi pi-search"
+        (onClick)="handleToggleOffcanvas(OpenOffcanvas)">
+    </p-button>
+
+    <div class="flex gap-3 ml-5">
+        <p-chip *ngFor="let item of ChipsDatasource;" [label]="item.label" [removable]="true" class="font-xs"
+            (onRemove)="handleRemoveChips(item)">
+        </p-chip>
+    </div>
+</div>
+
+<div class="grid justify-center">
+    <p-sidebar [(visible)]="OpenOffcanvas" position="right" styleClass="offcanvas_filter">
+        <ng-template pTemplate="header">
+            <h3>Pencarian</h3>
+        </ng-template>
+
+        <ng-template pTemplate="content">
+            <div [formGroup]="FormSearch" class="flex gap-2 items-end mb-5 pb-3 divide-y divide-slate-200">
+                <div class="grid w-2/6 gap-2">
+                    <label for="find_by" class="text-sm">
+                        Cari Berdasarkan
+                    </label>
+                    <p-dropdown styleClass="w-full p-inputtext-sm" [filter]="true" [options]="props.filter"
+                        [optionLabel]="'title'" [autoDisplayFirst]="false" (onChange)="handleChangeFilterBy($event)">
+                    </p-dropdown>
+                </div>
+
+                <div class="grid w-3/6 gap-2">
+                    <label for="kata_kunci" class="text-sm">
+                        Kata Kunci
+                    </label>
+
+                    <!-- String -->
+                    <input *ngIf="type.value != 'between'" pInputText style="width: 100%" class="p-inputtext-sm"
+                        formControlName="kataKunci" />
+
+                    <p-calendar *ngIf="type.value == 'between'" selectionMode="range" [readonlyInput]="true"
+                        styleClass="w-full p-inputtext-sm" formControlName="kataKunci">
+                    </p-calendar>
+                </div>
+
+                <div class="grid w-1/6">
+                    <p-button styleClass="p-button-sm p-button-info" label="Add"
+                        (onClick)="handleAddSearch(FormSearch.value)">
+                    </p-button>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div *ngFor="let item of SavedFilter; let i = index" class="flex items-center gap-2 mb-3">
+                    <div class="grid w-2/6">
+                        <p class="text-gray-500 text-sm">
+                            {{ item.title }}
+                        </p>
+                    </div>
+                    <div class="grid w-3/6">
+                        <p *ngIf="item.type == 'like'" class="text-gray-500 text-sm">
+                            {{ item.kataKunci }}
+                        </p>
+
+                        <p *ngIf="item.type == 'between'" class="text-gray-500 text-sm">
+                            {{ item.kataKunci }} - {{ item.kataKunci2 }}
+                        </p>
+                    </div>
+                    <div class="grid w-1/6 text-center" (click)="handleDeleteFilter(i)">
+                        <i class="pi pi-trash text-gray-500"></i>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <div class="grid">
+                <p-button styleClass="p-button-sm p-button-info w-full" label="Cari" (onClick)="handleSearchData(true)">
+                </p-button>
+            </div>
+        </ng-template>
+    </p-sidebar>
+</div>

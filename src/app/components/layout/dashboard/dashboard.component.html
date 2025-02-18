@@ -1,0 +1,101 @@
+<section id="dashboard" class="h-screen overflow-hidden bg-gray-100">
+    <div class="flex w-full h-full">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-[5rem] bg-white transition-all flex flex-col p-5 shadow"
+            (mouseenter)="handleShowSidebarWhenMouseOver()" (mouseleave)="handleHideSidebarWhenMouseLeave()">
+            <!-- User -->
+            <div *ngIf="UserData$ | async as user" class="flex flex-col justify-center w-full items-center gap-0 mb-10">
+                <img src="../../../../assets/icon/user.png" alt="user"
+                    class="transition-all mb-2 {{ ShowSidebar ? 'h-20 w-20' : 'h-10 w-10'}}">
+
+                <p class="{{ ShowSidebar ? 'text-gray-800' : 'text-transparent' }} text-lg transition-all font-bold">
+                    {{ user.nama | titlecase }}
+                </p>
+
+                <p class="{{ ShowSidebar ? 'text-gray-600' : 'text-transparent' }}  text-sm transition-all">
+                    {{ user.role }}
+                </p>
+            </div>
+
+            <!-- Welcome -->
+            <div class="{{ ShowSidebar ? 'flex' : 'hidden' }} flex-col gap-1 mb-5 transition-all">
+                <p
+                    class="{{ ShowSidebar ? 'text-pink-500' : 'text-transparent' }} text-base transition-all font-semibold">
+                    Welcome
+                </p>
+                <p class="{{ ShowSidebar ? 'text-gray-500' : 'text-transparent' }} text-xs transition-all">
+                    Manage your services here
+                </p>
+            </div>
+
+            <!-- Menu -->
+            <div *ngIf="SidebarMenu$ | async as sidebar_menu" class="flex-col gap-2 overflow-x-auto"
+                style="height: calc(100vh - 10rem);">
+                <div *ngFor="let item of sidebar_menu" class="flex flex-col w-full pr-3"
+                    (click)="item.is_parent ? item.toggle_child = !item.toggle_child : handleClickSidebarMenu(item)">
+
+                    <div
+                        class="flex w-full {{ ShowSidebar ? 'items-center' : '' }} p-2 gap-2 cursor-pointer hover:bg-pink-100 text-gray-700 hover:text-pink-700 rounded-md transition-all duration-75 {{ item.sidebarChild && item.toggle_child ? 'mb-0' : 'mb-0' }}">
+                        <div *ngIf="item.is_parent && ShowSidebar" class="w-1/12">
+                            <i class="pi pi-chevron-{{ item.toggle_child ? 'down' : 'right' }}"
+                                style="font-size: 10px;">
+                            </i>
+                        </div>
+
+                        <div *ngIf="ShowSidebar" class="w-11/12 flex gap-2">
+                            <span class="tracking-normal" style="font-size: 15px;">
+                                <i class="{{ item.icon }} mr-2" style="font-size: 13px;"></i>&nbsp;{{ item.caption }}
+                            </span>
+                        </div>
+
+                        <div *ngIf="!ShowSidebar" class="w-11/12 flex gap-2">
+                            <span class="tracking-normal">
+                                <i class="{{ item.icon }} mr-2" style="font-size: 13px;"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div *ngIf="item.is_parent && item.toggle_child"
+                        class="w-full flex flex-col pl-7 py-1 gap-2 cursor-pointer">
+                        <span *ngFor="let child of item.sidebarChild"
+                            class="flex text-gray-700 hover:bg-pink-100 hover:rounded-md p-2 items-center hover:text-pink-700 tracking-normal transition-all"
+                            style="font-size: 14px;" (click)="handleClickSidebarMenu(child)">
+                            <p *ngIf="ShowSidebar" class="ml-2 p-0 mt-0 mb-0">
+                                <i class="{{ child.icon }} mr-2" style="font-size: 14px;"></i>&nbsp;{{ child.caption }}
+                            </p>
+
+                            <p *ngIf="!ShowSidebar" class="ml-2 p-0 mt-0 mb-0">
+                                <i class="{{ child.icon }} mr-2" style="font-size: 14px;"></i>
+                            </p>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navbar & Content -->
+        <div class="w-full flex flex-col gap-3">
+            <app-navbar></app-navbar>
+
+            <div class="flex flex-col gap-3 px-5">
+                <!-- Breadcrumbs & Buttons -->
+                <div *ngIf="!IsBeranda" class="flex w-full h-14 gap-2 justify-between items-center">
+                    <app-breadcrumbs></app-breadcrumbs>
+
+                    <div *ngIf="ButtonNavigation" class="flex gap-3">
+                        <p-button *ngFor="let item of ButtonNavigation" severity="secondary"
+                            styleClass="p-button-sm bg-pink-600 text-white" [label]="item.title" [icon]="item.icon"
+                            (onClick)="handleClickButtonNavigation(item)">
+                        </p-button>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="w-full p-2 overflow-y-auto bg-transparent "
+                    [style.height]="IsBeranda ? 'calc(100vh - 6rem)' : 'calc(100vh - 10rem)'">
+                    <ng-content></ng-content>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

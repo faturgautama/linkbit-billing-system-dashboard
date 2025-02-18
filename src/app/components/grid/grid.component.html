@@ -1,0 +1,199 @@
+<div *ngIf="props.showSearch"
+    class="flex items-center justify-between w-full mb-4 pt-2 pb-3 border-b border-t-0 border-x-0 border-dashed border-gray-300">
+    <div class="flex w-5/12">
+        <input #KeywordSearch type="text" pInputText class="w-full p-inputtext-sm"
+            [placeholder]="props.searchPlaceholder">
+    </div>
+
+    <div class="flex gap-3">
+        <p-button severity="secondary" label="Search" styleClass="p-button-sm bg-pink-600 text-white"
+            (onClick)="onSearchKeyword(KeywordSearch.value)">
+        </p-button>
+
+        <p-button severity="info" label="Export" styleClass="p-button-sm" (onClick)="onExportExcel()"></p-button>
+    </div>
+</div>
+
+<div class="grid w-full">
+    <p-table *ngIf="props.showSort; else noSortMode" [value]="props.dataSource" [columns]="props.column"
+        styleClass="p-datatable-striped" [tableStyle]="{'min-width': '50rem'}" selectionMode="single"
+        [(selection)]="SelectedRow" sortMode="multiple">
+        <ng-template pTemplate="header" let-columns>
+            <tr class="bg-gray-100">
+                <th *ngFor="let col of columns" class="text-sm" [pSortableColumn]="col.field">
+                    {{ col.headerName }} <p-sortIcon [field]="col.field" style="font-size: 12px" />
+                </th>
+                <th *ngIf="props.toolbar" class="text-sm text-center">
+                    Action
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template *ngIf="props.dataSource" pTemplate="body" let-rowData let-columns="columns">
+            <tr [pSelectableRow]="rowData" (dblclick)="onRowDoubleClicked(rowData)" (click)="onCellClicked(rowData)">
+                <td *ngFor="let col of columns" class="text-sm {{ col.class }}">
+                    <span *ngIf="col.renderAsCheckbox && !col.renderAsPills">
+                        <i class="pi {{ rowData[col.field] ? 'pi-check' : 'pi-times' }}"></i>
+                    </span>
+
+                    <span *ngIf="!col.renderAsCheckbox && col.renderAsPills" class="{{ col.pillClass }}">
+                        <p class="text-sm">
+                            {{ rowData[col.field] }}
+                        </p>
+                    </span>
+
+                    <span *ngIf="!col.renderAsCheckbox && !col.renderAsPills">
+                        @switch (col.format) {
+                        @case ('html') {
+                        <span [innerHtml]="rowData[col.field]"></span>
+                        }
+                        @case ('image') {
+                        <p-avatar [image]="rowData[col.field]" size="large" shape="circle" />
+                        }
+                        @case ('currency') {
+                        {{ handleFormatStringToNumber(rowData[col.field]) | currency: 'Rp. ' }}
+                        }
+                        @case ('date') {
+                        {{ rowData[col.field] | date: 'dd-MM-yyyy' }}
+                        }
+                        @case ('number') {
+                        {{ handleFormatStringToNumber(rowData[col.field]) | number: '' }}
+                        }
+                        @case ('icon_boolean') {
+                        {{ handleRenderIconBoolean(rowData[col.field]) }}
+                        }
+                        @case (undefined) {
+                        {{ rowData[col.field] }}
+                        }
+                        @default {
+                        {{ rowData[col.field] }}
+                        }
+                        }
+                    </span>
+                </td>
+                <td *ngIf="gridToolbar.length" class="text-center">
+                    <i class="pi pi-ellipsis-v" (click)="op.toggle($event)"></i>
+
+                    <p-overlayPanel #op>
+                        <div class="flex flex-col gap-2 w-[10rem]">
+                            @for (item of gridToolbar; track $index) {
+                            <div class="flex items-center gap-2 p-2 bg-white hover:bg-gray-100 transition-all rounded-md cursor-pointer"
+                                (click)="onAksiClicked(item.id, rowData)">
+                                <i class="pi {{ item.icon }}" style="font-size: 13px"></i>
+                                <span class="font-medium text-sm text-gray-700">
+                                    {{ item.title }}
+                                </span>
+                            </div>
+                            }
+                        </div>
+                    </p-overlayPanel>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template *ngIf="!props.dataSource">
+            <div class="flex w-full justify-center">
+                <p class="text-sm font-medium text-gray-700">
+                    No data displayed
+                </p>
+            </div>
+        </ng-template>
+    </p-table>
+
+    <ng-template #noSortMode>
+        <p-table [value]="props.dataSource" [columns]="props.column" styleClass="p-datatable-striped"
+            [tableStyle]="{'min-width': 'auto'}" selectionMode="single" [(selection)]="SelectedRow">
+            <ng-template pTemplate="header" let-columns>
+                <tr class="bg-gray-100">
+                    <th *ngFor="let col of columns"
+                        class="text-sm {{ col.renderAsCheckbox || col.renderAsPills ? 'text-center' : '' }}">
+                        {{ col.headerName }}
+                    </th>
+                    <th *ngIf="props.toolbar" class="text-sm text-center">
+                        Action
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template *ngIf="props.dataSource" pTemplate="body" let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData" (dblclick)="onRowDoubleClicked(rowData)"
+                    (click)="onCellClicked(rowData)">
+                    <td *ngFor="let col of columns" class="text-sm {{ col.class }}">
+                        <!-- Checkbox -->
+                        <span *ngIf="col.renderAsCheckbox && !col.renderAsPills">
+                            <i class="pi {{ rowData[col.field] ? 'pi-check' : 'pi-times' }}"></i>
+                        </span>
+
+                        <!-- Piils -->
+                        <span *ngIf="!col.renderAsCheckbox && col.renderAsPills && col.field == 'status_order_name'"
+                            class="flex rounded-lg items-center justify-center font-semibold mx-auto {{ handleRenderStatusOrderManagement(rowData[col.field])[0] }}"
+                            style="width: fit-content">
+                            <p class="text-sm">
+                                {{ handleRenderStatusOrderManagement(rowData[col.field])[1] | titlecase }}
+                            </p>
+                        </span>
+
+                        <!-- Piils -->
+                        <span *ngIf="!col.renderAsCheckbox && col.renderAsPills && col.field != 'status_order_name'"
+                            class="{{ col.pillClass }}">
+                            <p class="text-sm">
+                                {{ rowData[col.field] }}
+                            </p>
+                        </span>
+
+                        <span *ngIf="!col.renderAsCheckbox && !col.renderAsPills">
+                            @switch (col.format) {
+                            @case ('html') {
+                            <span [innerHtml]="rowData[col.field]"></span>
+                            }
+                            @case ('image') {
+                            <p-avatar [image]="rowData[col.field]" size="large" shape="circle" />
+                            }
+                            @case ('currency') {
+                            {{ handleFormatStringToNumber(rowData[col.field]) | currency: 'Rp. ' }}
+                            }
+                            @case ('date') {
+                            {{ rowData[col.field] | date: 'dd-MM-yyyy' }}
+                            }
+                            @case ('number') {
+                            {{ handleFormatStringToNumber(rowData[col.field]) | number: '' }}
+                            }
+                            @case ('icon_boolean') {
+                            <span [innerHtml]="handleRenderIconBoolean(rowData[col.field])"></span>
+                            }
+                            @case (undefined) {
+                            {{ rowData[col.field] }}
+                            }
+                            @default {
+                            {{ rowData[col.field] }}
+                            }
+                            }
+                        </span>
+                    </td>
+                    <td *ngIf="gridToolbar.length" class="text-center">
+                        <i class="pi pi-ellipsis-v" (click)="op.toggle($event)"></i>
+
+                        <p-overlayPanel #op>
+                            <div class="flex flex-col gap-2 w-[10rem]">
+                                @for (item of gridToolbar; track $index) {
+                                <div class="flex items-center gap-2 p-2 bg-white hover:bg-gray-100 transition-all rounded-md cursor-pointer"
+                                    (click)="onAksiClicked(item.id, rowData)">
+                                    <i class="pi {{ item.icon }}" style="font-size: 13px"></i>
+                                    <span class="font-medium text-sm text-gray-700">
+                                        {{ item.title }}
+                                    </span>
+                                </div>
+                                }
+                            </div>
+                        </p-overlayPanel>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template *ngIf="!props.dataSource">
+                <div class="flex w-full justify-center">
+                    <p class="text-sm font-medium text-gray-700">
+                        No data displayed
+                    </p>
+                </div>
+            </ng-template>
+        </p-table>
+
+    </ng-template>
+</div>

@@ -1,0 +1,107 @@
+<div class="flex flex-col w-full gap-2">
+    <!-- Dropdown Pasien -->
+    <div class="w-full flex flex-col gap-1 px-2 pt-2 pb-3 bg-white rounded-md">
+        <p class="text-sm font-medium text-gray-700">
+            Pilih Pasien
+        </p>
+        <p-dropdown [filter]="true" [options]="PasienDatasource" optionValue="no_rekam_medis" optionLabel="nama_lengkap"
+            [showClear]="true" appendTo="body" styleClass="w-full p-inputtext-sm"
+            placeholder="Cari Berdasarkan Nama Lengkap Pasien" (onFilter)="handleFilterPasienDropdown($event)"
+            (onChange)="handleChangePasienDropdown($event)">
+            <ng-template let-pasien pTemplate="item">
+                <div class="flex flex-col gap-0">
+                    <p class="text-sm font-semibold text-gray-800">
+                        {{ pasien.nama_lengkap | titlecase }}
+                    </p>
+                    <div class="flex w-full">
+                        <div class="w-4/12">
+                            <p class="text-sm text-gray-700">
+                                No. RM
+                            </p>
+                        </div>
+                        <div class="w-8/12">
+                            <p class="text-sm text-gray-700">
+                                : {{ pasien.no_rekam_medis }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex w-full">
+                        <div class="w-4/12">
+                            <p class="text-sm text-gray-700">
+                                No. Identitas
+                            </p>
+                        </div>
+                        <div class="w-8/12">
+                            <p class="text-sm text-gray-700">
+                                : {{ pasien.nik }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex w-full">
+                        <div class="w-4/12">
+                            <p class="text-sm text-gray-700">
+                                Alamat
+                            </p>
+                        </div>
+                        <div class="w-8/12">
+                            <p class="text-sm text-gray-700">
+                                : {{ pasien.ktp_alamat_lengkap }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </p-dropdown>
+    </div>
+
+    <!-- Hasil Pencarian -->
+    <div *ngIf="!ShowForm" class="flex flex-col gap-0 p-2 border-b-0 border-t border-x-0 border-dashed border-gray-300">
+        <p class="text-sm text-gray-700 mb-3 font-semibold">
+            Riwayat Kunjungan
+        </p>
+
+        @if(RiwayatKunjunganDatasource.length) {
+        <div *ngFor="let item of RiwayatKunjunganDatasource; let last = last"
+            class="flex flex-row gap-0 cursor-pointer items-center p-2 hover:bg-gray-50 transition-all rounded-md {{ last ? '' : 'border-b border-t-0 border-x-0 border-dashed border-gray-300 mb-2' }}">
+            <div class="flex flex-col w-10/12 gap-0" (click)="handleSelectRiwayatKunjungan(item)">
+                <p class="text-sm text-gray-700 font-medium">
+                    {{ item.nama_lengkap | titlecase }}
+                    <span class="text-normal text-xs italic text-gray-600">
+                        ({{ item.no_antrian }})
+                    </span>
+                </p>
+                <p class="text-sm text-gray-700">
+                    {{ item.tanggal_visit }}
+                </p>
+                <p class="text-sm text-gray-700">
+                    {{ item.poli | titlecase }} - {{ item.dokter }}
+                </p>
+            </div>
+            <div class="w-2/12">
+                <p class="text-sm text-gray-700 text-center">
+                    <i class="pi pi-chevron-right" style="font-size: 12px"></i>
+                </p>
+            </div>
+        </div>
+        } @else {
+        <p class="text-sm text-gray-700">
+            Tidak Ada Riwayat Kunjungan
+        </p>
+        }
+
+    </div>
+
+    <!-- Form -->
+    <div *ngIf="ShowForm"
+        class="flex flex-col gap-0 p-2 border-b-0 border-t border-x-0 border-dashed border-gray-300 bg-white rounded-md shadow-sm">
+        <p class="text-sm text-gray-700 mb-3 font-semibold cursor-pointer" (click)="ShowForm = false">
+            <span>
+                <i class="pi pi-chevron-left" style="font-size: 10px"></i>
+            </span>&nbsp;Kembali
+        </p>
+
+        <div class="grid w-full">
+            <app-dynamic-form #DynamicFormComps [props]="props.dynamic_form!"></app-dynamic-form>
+        </div>
+    </div>
+</div>

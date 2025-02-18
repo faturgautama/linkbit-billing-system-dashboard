@@ -1,0 +1,18 @@
+<div *ngIf="Breadcrumbs$ | async as breadcrumbs" class="flex gap-2 items-center">
+    <div *ngFor="let item of breadcrumbs; let first = first; let last = last; let i = index"
+        class="flex gap-2 items-center">
+        <p class="{{ last ? 'text-sm text-gray-700 font-medium' : 'text-xs text-gray-500' }}">
+            {{ item }}
+        </p>
+
+        <p *ngIf="!last" class="text-gray-700 text-xs">
+            <i class="pi pi-chevron-right" style="font-size: 10px;"></i>
+        </p>
+    </div>
+</div>
+
+<div *ngIf="Title$ | async as title" class="flex">
+    <p class="text-2xl font-medium text-gray-800">
+        {{ title }}
+    </p>
+</div>
