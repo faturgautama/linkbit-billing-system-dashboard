@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, map, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthenticationModel } from 'src/app/model/pages/authentication/authentication.model';
+import { SettingMenuRolesService } from '../management-user/setting-menu-roles.service';
 
 @Injectable({
     providedIn: 'root'
@@ -12,13 +13,14 @@ export class AuthenticationService {
 
     UserData$ = new BehaviorSubject<AuthenticationModel.IAuthentication>({} as any);
 
-    SidebarMenu$ = new BehaviorSubject<AuthenticationModel.ISidebarMenu[]>([]);
+    SidebarMenu$ = new BehaviorSubject<AuthenticationModel.IUserGroupMenu[]>([]);
 
     HotelId = 0;
 
     constructor(
         private _cookieService: CookieService,
         private _httpRequestService: HttpRequestService,
+        private _settingMenuRolesService: SettingMenuRolesService,
     ) { }
 
     signIn(payload: AuthenticationModel.ISignIn): Observable<AuthenticationModel.SignIn> {
@@ -54,9 +56,6 @@ export class AuthenticationService {
                 };
 
                 localStorage.setItem("_LBS_UD_", JSON.stringify(newRes));
-
-                localStorage.setItem("_LBS_MENU_", JSON.stringify(result.data.menu));
-                this.SidebarMenu$.next(result.data.menu);
             })
     }
 
@@ -72,9 +71,15 @@ export class AuthenticationService {
         return { ...JSON.parse(user_data as any), ...JSON.parse(layanan_data as any) };
     }
 
-    setMenu() {
-        const menu = localStorage.getItem('_LBS_MENU_');
-        this.SidebarMenu$.next(JSON.parse(menu as any));
+    setMenu(id_user_group: number) {
+        this._settingMenuRolesService
+            .getAllAssigned(id_user_group)
+            .subscribe((result) => {
+                if (result.status) {
+                    localStorage.setItem("_LBS_MENU_", JSON.stringify(result.data));
+                    this.SidebarMenu$.next(result.data);
+                }
+            })
     }
 
     private handleSignIn(data: AuthenticationModel.IAuthentication) {

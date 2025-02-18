@@ -29,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
         if (Object.keys(isUserLoggedIn).length) {
             this.isLoading = false;
-            this._authenticationService.setMenu();
+            this._authenticationService.setMenu(isUserLoggedIn.id_user_group);
         } else {
             this.isLoading = false;
         }

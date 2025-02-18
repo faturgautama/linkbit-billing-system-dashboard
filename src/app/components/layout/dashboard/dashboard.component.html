@@ -32,19 +32,19 @@
             <div *ngIf="SidebarMenu$ | async as sidebar_menu" class="flex-col gap-2 overflow-x-auto"
                 style="height: calc(100vh - 10rem);">
                 <div *ngFor="let item of sidebar_menu" class="flex flex-col w-full pr-3"
-                    (click)="item.is_parent ? item.toggle_child = !item.toggle_child : handleClickSidebarMenu(item)">
+                    (click)="!item.id_menu_parent ? item.is_assigned = !item.is_assigned : handleClickSidebarMenu(item)">
 
                     <div
-                        class="flex w-full {{ ShowSidebar ? 'items-center' : '' }} p-2 gap-2 cursor-pointer hover:bg-pink-100 text-gray-700 hover:text-pink-700 rounded-md transition-all duration-75 {{ item.sidebarChild && item.toggle_child ? 'mb-0' : 'mb-0' }}">
-                        <div *ngIf="item.is_parent && ShowSidebar" class="w-1/12">
-                            <i class="pi pi-chevron-{{ item.toggle_child ? 'down' : 'right' }}"
+                        class="flex w-full {{ ShowSidebar ? 'items-center' : '' }} p-2 gap-2 cursor-pointer hover:bg-pink-100 text-gray-700 hover:text-pink-700 rounded-md transition-all duration-75 {{ item.child && item.is_assigned ? 'mb-0' : 'mb-0' }}">
+                        <div *ngIf="!item.id_menu_parent && ShowSidebar" class="w-1/12">
+                            <i class="pi pi-chevron-{{ !item.is_assigned ? 'down' : 'right' }}"
                                 style="font-size: 10px;">
                             </i>
                         </div>
 
                         <div *ngIf="ShowSidebar" class="w-11/12 flex gap-2">
                             <span class="tracking-normal" style="font-size: 15px;">
-                                <i class="{{ item.icon }} mr-2" style="font-size: 13px;"></i>&nbsp;{{ item.caption }}
+                                <i class="{{ item.icon }} mr-2" style="font-size: 13px;"></i>&nbsp;{{ item.menu }}
                             </span>
                         </div>
 
@@ -55,13 +55,13 @@
                         </div>
                     </div>
 
-                    <div *ngIf="item.is_parent && item.toggle_child"
+                    <div *ngIf="!item.id_menu_parent && !item.is_assigned"
                         class="w-full flex flex-col pl-7 py-1 gap-2 cursor-pointer">
-                        <span *ngFor="let child of item.sidebarChild"
+                        <span *ngFor="let child of item.child"
                             class="flex text-gray-700 hover:bg-pink-100 hover:rounded-md p-2 items-center hover:text-pink-700 tracking-normal transition-all"
                             style="font-size: 14px;" (click)="handleClickSidebarMenu(child)">
                             <p *ngIf="ShowSidebar" class="ml-2 p-0 mt-0 mb-0">
-                                <i class="{{ child.icon }} mr-2" style="font-size: 14px;"></i>&nbsp;{{ child.caption }}
+                                <i class="{{ child.icon }} mr-2" style="font-size: 14px;"></i>&nbsp;{{ child.menu }}
                             </p>
 
                             <p *ngIf="!ShowSidebar" class="ml-2 p-0 mt-0 mb-0">

@@ -19,6 +19,10 @@ export class SettingMenuRolesService {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/cms/role-menu/GetByIdRole/${id_role}`);
     }
 
+    getAllAssigned(id_user_group: number): Observable<any> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/manajemen-menu/assigned/${id_user_group}`);
+    }
+
     create(payload: SettingUserRolesModel.CreateSettingUserRoles): Observable<HttpBaseResponse> {
         return this._httpRequestService.postRequest(`${environment.webApiUrl}/cms/role-menu`, payload);
     }

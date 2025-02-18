@@ -16,19 +16,17 @@ export namespace AuthenticationModel {
         token: string;
     }
 
-    export interface ISidebarMenu {
-        id_menu: string
-        urut?: number
-        caption: string
-        icon: string
-        toggle_child: boolean
-        url?: any
-        is_parent?: boolean
-        id_parent?: any
-        is_active?: boolean
-        is_admin?: boolean
-        is_client?: boolean
-        sidebarChild?: ISidebarMenu[]
+    export interface IUserGroupMenu {
+        id_user_group_menu: number;
+        id_user_group: number;
+        user_group: string;
+        id_menu: number;
+        id_menu_parent: number | null;
+        menu: string;
+        icon: string;
+        url: string;
+        is_assigned: boolean;
+        child: IUserGroupMenu[];
     }
 
     export interface ISignIn {

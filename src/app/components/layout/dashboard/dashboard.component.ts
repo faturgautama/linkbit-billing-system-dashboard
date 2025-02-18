@@ -94,7 +94,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         let sidebarMenu = this._authenticationService.SidebarMenu$.value.map((item) => {
             return {
                 ...item,
-                toggle_child: false
+                is_assigned: false
             }
         });
 
