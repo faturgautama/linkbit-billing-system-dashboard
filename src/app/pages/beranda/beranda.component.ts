@@ -5,9 +5,7 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { Subject, takeUntil } from 'rxjs';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import { ListChannelTvComponent } from '../channel-tv/components/list-channel-tv/list-channel-tv.component';
 import { ButtonModule } from 'primeng/button';
-import { ChannelListService } from 'src/app/services/setting-channel-tv/channel-list.service';
 import { BerandaService } from 'src/app/services/beranda/beranda.service';
 
 @Component({
@@ -17,7 +15,6 @@ import { BerandaService } from 'src/app/services/beranda/beranda.service';
         CommonModule,
         DashboardComponent,
         NgApexchartsModule,
-        ListChannelTvComponent,
         ButtonModule,
     ],
     templateUrl: './beranda.component.html',
@@ -32,8 +29,6 @@ export class BerandaComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.Destroy$));
 
     Menu: any[] = [];
-
-    @ViewChild('ListChannelTvComps') ListChannelTvComps!: ListChannelTvComponent;
 
     GreetingCards: number = 0;
 
@@ -59,16 +54,7 @@ export class BerandaComponent implements OnInit, OnDestroy {
     }
 
     private getDashboard() {
-        this._berandaService
-            .getAll()
-            .pipe(takeUntil(this.Destroy$))
-            .subscribe((result) => {
-                this.GreetingCards = result.greetingCard;
-                this.Facilities = result.ourFacilities;
-                this.EventPromo = result.eventPromo;
-                this.EntertainmentApp = result.entertainment;
 
-            })
     }
 
     handleNavigateToGreetingCard() {

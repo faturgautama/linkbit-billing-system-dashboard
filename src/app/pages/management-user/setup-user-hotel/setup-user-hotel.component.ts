@@ -13,7 +13,6 @@ import { LayoutModel } from 'src/app/model/components/layout.model';
 import { SetupRolesService } from 'src/app/services/management-user/setup-roles.service';
 import { SetupUserHotelService } from 'src/app/services/management-user/setup-user-hotel.service';
 import { SetupUserService } from 'src/app/services/management-user/setup-user.service';
-import { RegisterHotelService } from 'src/app/services/register-hotel/register-hotel.service';
 
 @Component({
     selector: 'app-setup-user-hotel',
@@ -71,7 +70,6 @@ export class SetupUserHotelComponent implements OnInit, OnDestroy {
         private _messageService: MessageService,
         private _setupRolesService: SetupRolesService,
         private _confirmationService: ConfirmationService,
-        private _registerHotelService: RegisterHotelService,
         private _setupUserHotelService: SetupUserHotelService,
     ) {
         this.FormProps = {
@@ -156,7 +154,6 @@ export class SetupUserHotelComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.getAll();
         this.getAllRole();
-        this.getAllHotel();
     }
 
     ngOnDestroy(): void {
@@ -171,17 +168,6 @@ export class SetupUserHotelComponent implements OnInit, OnDestroy {
             .subscribe((result) => {
                 if (result) {
                     this.GridProps.dataSource = result.data;
-                }
-            });
-    }
-
-    private getAllHotel() {
-        this._registerHotelService
-            .getAll()
-            .pipe(takeUntil(this.Destroy$))
-            .subscribe((result) => {
-                if (result) {
-                    this.FormProps.fields[1].dropdownProps.options = result.data;
                 }
             });
     }

@@ -12,7 +12,6 @@ import { FormModel } from 'src/app/model/components/form.model';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
 import { EntertainmentService } from 'src/app/services/entertainment/entertainment.service';
-import { MinioService } from 'src/app/services/minio/minio.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({

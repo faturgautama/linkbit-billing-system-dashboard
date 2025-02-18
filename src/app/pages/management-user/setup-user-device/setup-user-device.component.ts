@@ -11,9 +11,6 @@ import { FormModel } from 'src/app/model/components/form.model';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
 import { SetupUserDeviceService } from 'src/app/services/management-user/setup-user-device.service';
-import { MinioService } from 'src/app/services/minio/minio.service';
-import { RegisterHotelService } from 'src/app/services/register-hotel/register-hotel.service';
-import { UserDeviceService } from 'src/app/services/user-device/user-device.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
@@ -71,12 +68,9 @@ export class SetupUserDeviceComponent implements OnInit, OnDestroy {
     @ViewChild('FormComps') FormComps!: DynamicFormComponent;
 
     constructor(
-        private _minioService: MinioService,
         private _messageService: MessageService,
         private _utilityService: UtilityService,
-        private _userDeviceService: UserDeviceService,
         private _confirmationService: ConfirmationService,
-        private _registerHotelService: RegisterHotelService,
         private _setupUserDeviceService: SetupUserDeviceService,
     ) {
         this.FormProps = {
@@ -135,23 +129,11 @@ export class SetupUserDeviceComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.getAll();
-        this.getAllHotel();
     }
 
     ngOnDestroy(): void {
         this.Destroy$.next(0);
         this.Destroy$.complete();
-    }
-
-    private getAllHotel() {
-        this._registerHotelService
-            .getAll()
-            .pipe(takeUntil(this.Destroy$))
-            .subscribe((result) => {
-                if (result) {
-                    this.FormProps.fields[1].dropdownProps.options = result.data;
-                }
-            });
     }
 
     private getAll() {
@@ -163,15 +145,6 @@ export class SetupUserDeviceComponent implements OnInit, OnDestroy {
                     this.GridProps.dataSource = result.data;
                 }
             });
-    }
-
-    private getDeviceInfo(id_user_device: string) {
-        this._userDeviceService
-            .getDeviceInfo(id_user_device)
-            .pipe(takeUntil(this.Destroy$))
-            .subscribe((result) => {
-                this.DeviceInfo = result.data.device_info['any'];
-            })
     }
 
     handleClickButtonNavigation(data: LayoutModel.IButtonNavigation) {
@@ -211,7 +184,6 @@ export class SetupUserDeviceComponent implements OnInit, OnDestroy {
         setTimeout(() => {
             args.id_hotel = parseInt(args.id_hotel);
             this.FormComps.FormGroup.patchValue(args);
-            this.getDeviceInfo(args.id_user_device);
         }, 500);
     }
 
