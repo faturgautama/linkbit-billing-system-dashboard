@@ -2,12 +2,18 @@ import { HttpBaseResponse } from "../../http/http-request.model"
 
 export namespace AuthenticationModel {
     export interface IAuthentication {
-        nama: string
-        username: string
-        nama_hotel: string
-        role: string
-        token: string
-        is_admin: boolean;
+        id_user: number;
+        id_setting_company: number;
+        company_name: string;
+        id_user_group: number;
+        user_group: string;
+        username: string;
+        full_name: string;
+        email: string;
+        phone: string;
+        whatsapp: string;
+        notes: string;
+        token: string;
     }
 
     export interface ISidebarMenu {
