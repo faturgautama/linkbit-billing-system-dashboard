@@ -4,8 +4,8 @@
 
 export const environment = {
     production: false,
-    webApiUrl: 'https://api.unioniptv.id/api/v1',
-    socketUrl: 'https://api.unioniptv.id'
+    webApiUrl: 'http://localhost:5000/api/v1',
+    socketUrl: 'http://localhost:5000'
 };
 
 /*

@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    webApiUrl: 'https://api.unioniptv.id/api/v1',
-    socketUrl: 'https://api.unioniptv.id'
+    webApiUrl: 'https://staging-core.bill.linkbit.net.id/api/v1',
+    socketUrl: 'https://staging-core.bill.linkbit.net.id'
 };
