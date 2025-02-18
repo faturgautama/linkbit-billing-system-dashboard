@@ -13,15 +13,13 @@ export namespace SetupUserDeviceModel {
     }
 
     export class GetAllSetupUserDevice implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupUserDevice[]
     }
 
     export class GetByIdUserDevice implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupUserDevice
     }

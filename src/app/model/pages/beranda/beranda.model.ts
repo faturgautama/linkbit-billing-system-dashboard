@@ -28,8 +28,7 @@ export namespace BerandaModel {
     }
 
     export class GetAllDashboard implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: IBeranda
     }

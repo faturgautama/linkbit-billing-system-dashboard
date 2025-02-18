@@ -11,15 +11,13 @@ export namespace SetupUserModel {
     }
 
     export class GetAllSetupUser implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupUser[]
     }
 
     export class GetByIdSetupUser implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupUser
     }

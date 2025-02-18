@@ -31,8 +31,7 @@ export namespace AuthenticationModel {
     }
 
     export class SignIn implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: IAuthentication
     }

@@ -187,7 +187,7 @@ export class EntertainmentComponent implements OnInit, OnDestroy {
             .changeStatus(id)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
-                if (result.responseResult) {
+                if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Status app changed succesfully' });
                     this.getAll();

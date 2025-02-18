@@ -7,15 +7,13 @@ export namespace SetupMenuModel {
     }
 
     export class GetAllSetupMenu implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupMenu[]
     }
 
     export class GetByIdSetupMenu implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupMenu
     }

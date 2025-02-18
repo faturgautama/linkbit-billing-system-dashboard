@@ -254,7 +254,7 @@ export class AuthenticationService {
             .postRequest(`${environment.webApiUrl}/cms/users/login`, payload)
             .pipe(
                 tap((result) => {
-                    if (result.responseResult) {
+                    if (result.status) {
                         this.handleSignIn(result.data);
                     }
                 })
@@ -268,7 +268,7 @@ export class AuthenticationService {
             .getRequest(`${environment.webApiUrl}/cms/profile/getProfile`)
             .pipe(
                 tap((result) => {
-                    if (result.responseResult) {
+                    if (result.status) {
 
                     }
                 })

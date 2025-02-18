@@ -10,15 +10,13 @@ export namespace EntertainmentModel {
     }
 
     export class GetAllEntertainment implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: IEntertainment[]
     }
 
     export class GetByIdEntertainment implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: IEntertainment
     }

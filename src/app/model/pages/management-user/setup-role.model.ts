@@ -7,15 +7,13 @@ export namespace SetupRolesModel {
     }
 
     export class GetAllSetupRoles implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupRoles[]
     }
 
     export class GetByIdSetupRoles implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupRoles
     }

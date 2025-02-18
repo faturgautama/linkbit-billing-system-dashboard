@@ -33,7 +33,7 @@ export class HttpRequestService {
             map((result) => {
                 this._utilityService.ShowLoading$.next(false);
 
-                if (!result.responseResult) {
+                if (!result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
                 }
@@ -58,7 +58,7 @@ export class HttpRequestService {
             params: queryString
         }).pipe(
             map((result) => {
-                if (!result.responseResult) {
+                if (!result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
                 }
@@ -95,13 +95,13 @@ export class HttpRequestService {
                     this._utilityService.ShowLoading$.next(false);
 
                     // ** Show success notification
-                    if (result.responseResult && showSuccessNotif) {
+                    if (result.status && showSuccessNotif) {
                         this._messageService.clear();
                         this._messageService.add({ severity: 'success', summary: 'Success', detail: this._titleCasePipe.transform(result.message) });
                     }
 
-                    // ** Jika responseResult = false
-                    if (!result.responseResult) {
+                    // ** Jika status = false
+                    if (!result.status) {
                         this._messageService.clear();
                         (<any>result.message).forEach((item: string) => {
                             this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(item) })
@@ -134,8 +134,8 @@ export class HttpRequestService {
         return this._httpClient.post<HttpBaseResponse>(url, data)
             .pipe(
                 map((result) => {
-                    // ** Jika responseResult = false
-                    if (!result.responseResult) {
+                    // ** Jika status = false
+                    if (!result.status) {
                         this._messageService.clear();
                         (<any>result.message).forEach((item: string) => {
                             this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(item) })
@@ -173,7 +173,7 @@ export class HttpRequestService {
                         this._messageService.add({ severity: 'success', summary: 'Success', detail: this._titleCasePipe.transform(result.message) });
                     }
 
-                    // ** Jika responseResult = false
+                    // ** Jika status = false
                     if (!result) {
                         this._messageService.clear();
                         this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
@@ -212,13 +212,13 @@ export class HttpRequestService {
                     this._utilityService.ShowLoading$.next(false);
 
                     // ** Show success notification
-                    if (result.responseResult && showSuccessNotif) {
+                    if (result.status && showSuccessNotif) {
                         this._messageService.clear();
                         this._messageService.add({ severity: 'success', summary: 'Success', detail: this._titleCasePipe.transform(result.message) });
                     }
 
-                    // ** Jika responseResult = false
-                    if (!result.responseResult) {
+                    // ** Jika status = false
+                    if (!result.status) {
                         this._messageService.clear();
                         (<any>result.message).forEach((item: string) => {
                             this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(item) })
@@ -252,13 +252,13 @@ export class HttpRequestService {
                     this._utilityService.ShowLoading$.next(false);
 
                     // ** Show success notification
-                    if (result.responseResult && showSuccessNotif) {
+                    if (result.status && showSuccessNotif) {
                         this._messageService.clear();
                         this._messageService.add({ severity: 'success', summary: 'Success', detail: this._titleCasePipe.transform(result.message) });
                     }
 
-                    // ** Jika responseResult = false
-                    if (!result.responseResult) {
+                    // ** Jika status = false
+                    if (!result.status) {
                         this._messageService.clear();
                         (<any>result.message).forEach((item: string) => {
                             this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(item) })

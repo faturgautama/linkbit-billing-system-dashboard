@@ -10,15 +10,13 @@ export namespace SettingUserRolesModel {
     }
 
     export class GetAllSettingUserRoles implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISettingUserRoles[]
     }
 
     export class GetByIdSettingUserRoles implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISettingUserRoles
     }

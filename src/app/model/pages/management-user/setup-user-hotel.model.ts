@@ -13,15 +13,13 @@ export namespace SetupUserHotelModel {
     }
 
     export class GetAllSetupUserHotel implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupUserHotel[]
     }
 
     export class GetByIdSetupUserHotel implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupUserHotel
     }

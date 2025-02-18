@@ -263,7 +263,7 @@ export class SetupUserHotelComponent implements OnInit, OnDestroy {
             .create(data)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
-                if (result.responseResult) {
+                if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data saved succesfully' });
                     this.handleBackToList();
@@ -276,7 +276,7 @@ export class SetupUserHotelComponent implements OnInit, OnDestroy {
             .update(data)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
-                if (result.responseResult) {
+                if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
                     this.handleBackToList();
@@ -289,7 +289,7 @@ export class SetupUserHotelComponent implements OnInit, OnDestroy {
             .delete(id)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
-                if (result.responseResult) {
+                if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
                     this.handleBackToList();
