@@ -20,4 +20,4 @@ jobs:
           username: root
           key: SHA256:JOaWvJDLje2IIVjTBPse/nseS/OoHn55Lwnql2nLtAM
           script: |
-            /var/www/dashboard-staging/deploy.sh
+            /home/billing-system-fg-linkbit/deployer/dashboard-staging-deployer.sh
