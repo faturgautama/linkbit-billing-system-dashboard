@@ -16,8 +16,8 @@ jobs:
       - name: 🚀 Deploy to Staging Server
         uses: appleboy/ssh-action@master
         with:
-          host: 103.190.112.107
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 1999
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
           script: /home/billing-system-fg-linkbit/deployer/dashboard-staging-deployer.sh
