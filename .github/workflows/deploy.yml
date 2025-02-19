@@ -1,11 +1,19 @@
+name: Deploy Staging
+
+on:
+  push:
+    branches:
+      - staging # Run only when staging is updated
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: 🔄 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup SSH and Deploy
+      - name: 🚀 Deploy to Staging Server
         uses: appleboy/ssh-action@master
         with:
           host: 103.190.112.107
