@@ -18,6 +18,6 @@ jobs:
         with:
           host: 103.190.112.107
           username: root
-          key: SHA256:JOaWvJDLje2IIVjTBPse/nseS/OoHn55Lwnql2nLtAM
-          script: |
-            /home/billing-system-fg-linkbit/deployer/dashboard-staging-deployer.sh
+          key: SHA256:iE3taz76LJf/gJ8nJKO+O06h5B7wA+Kmw2Tqj6Hnu/4
+          port: 1999
+          script: /home/billing-system-fg-linkbit/deployer/dashboard-staging-deployer.sh
