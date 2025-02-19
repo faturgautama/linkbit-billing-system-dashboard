@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { HttpBaseResponse } from 'src/app/model/http/http-request.model';
 import { SetupUserModel } from 'src/app/model/pages/management-user/setup-user.model';
 import { environment } from 'src/environments/environment';
@@ -20,7 +20,23 @@ export class SettingMenuRolesService {
     }
 
     getAllAssigned(id_user_group: number): Observable<any> {
-        return this._httpRequestService.getRequest(`${environment.webApiUrl}/manajemen-menu/assigned/${id_user_group}`);
+        return this._httpRequestService
+            .getRequest(`${environment.webApiUrl}/manajemen-menu/assigned/${id_user_group}`)
+            .pipe(
+                map((result) => {
+                    if (result.status) {
+                        result.data = result.data.map((item: any) => {
+                            return {
+                                ...item,
+                                toggle_child: false,
+                                is_parent: item.child.length > 0
+                            }
+                        });
+                    }
+
+                    return result;
+                })
+            )
     }
 
     create(payload: SettingUserRolesModel.CreateSettingUserRoles): Observable<HttpBaseResponse> {

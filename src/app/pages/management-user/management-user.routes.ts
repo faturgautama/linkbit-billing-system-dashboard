@@ -3,6 +3,16 @@ import { Route } from '@angular/router';
 
 export const managementUserRoutes: Route[] = [
     {
+        path: 'setup-menu',
+        loadComponent: async () => (await import('./setup-menu/setup-menu.component')).SetupMenuComponent,
+        data: {
+            title: 'Setup Menu',
+            breadcrumbs: [
+                "Home", "Management User", "Setup Menu"
+            ]
+        }
+    },
+    {
         path: 'setup-role',
         loadComponent: async () => (await import('./setup-role/setup-role.component')).SetupRoleComponent,
         data: {

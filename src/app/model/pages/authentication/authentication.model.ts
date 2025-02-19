@@ -26,6 +26,8 @@ export namespace AuthenticationModel {
         icon: string;
         url: string;
         is_assigned: boolean;
+        is_parent: boolean;
+        toggle_child: boolean;
         child: IUserGroupMenu[];
     }
 

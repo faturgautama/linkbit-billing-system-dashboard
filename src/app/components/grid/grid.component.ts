@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { ColDef, GridApi, ColumnApi } from 'ag-grid-community';
@@ -8,22 +8,34 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import * as FileSaver from 'file-saver';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CalendarModule } from 'primeng/calendar';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { PaginatorModule } from 'primeng/paginator';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'app-grid',
     standalone: true,
     imports: [
         CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
         InputTextModule,
         ButtonModule,
         TableModule,
         OverlayPanelModule,
-        AvatarModule
+        AvatarModule,
+        InputNumberModule,
+        DropdownModule,
+        CalendarModule,
+        PaginatorModule
     ],
     templateUrl: './grid.component.html',
     styleUrls: ['./grid.component.scss']
 })
-export class GridComponent implements OnInit {
+export class GridComponent implements OnInit, AfterViewInit {
 
     @Input('props') props!: GridModel.IGrid;
 
@@ -32,6 +44,10 @@ export class GridComponent implements OnInit {
     @Output('rowDoubleClicked') rowDoubleClicked = new EventEmitter<any>();
 
     @Output('aksiClicked') aksiClicked = new EventEmitter<any>();
+
+    @Output('additionalButtonClicked') additionalButtonClicked = new EventEmitter<GridModel.IAdditionalButtonGrid>();
+
+    @Output('customSearchClicked') customSearchClicked = new EventEmitter<any>();
 
     defaultColDef: ColDef = {
         sortable: true,
@@ -49,17 +65,29 @@ export class GridComponent implements OnInit {
 
     SelectedRow: any;
 
+    CustomSearchForm: FormGroup;
+
+    CustomSearchLength$ = new BehaviorSubject<number>(1);
+
     constructor(
-        // private _documentService: DocumentService,
-    ) { };
+        private _formBuilder: FormBuilder,
+    ) {
+        this.CustomSearchForm = this._formBuilder.group({});
+    };
 
     ngOnInit(): void {
+        if (this.props.customSearchProps?.length) {
+            this.props.customSearchProps.forEach((item) => {
+                this.CustomSearchForm.addControl(item.id, new FormControl(null, []));
+            });
+        }
+    }
+
+    ngAfterViewInit(): void {
         this.onGridReady();
     }
 
     onGridReady(): void {
-        this.gridDatasource = this.props.dataSource;
-
         const column = this.props.column.map((item) => {
             return {
                 id: item.field,
@@ -90,14 +118,20 @@ export class GridComponent implements OnInit {
                     case 'Detail':
                         icon = 'pi pi-info-circle';
                         break;
-                    case 'Mulai Assesment':
-                        icon = 'pi pi-file-o';
+                    case 'Change to Sold Out':
+                        icon = 'pi pi-ban';
                         break;
-                    case 'Panggil':
-                        icon = 'pi pi-megaphone';
+                    case 'Change to Available':
+                        icon = 'pi pi-verified';
                         break;
-                    case 'Mulai Periksa':
-                        icon = 'pi pi-play';
+                    case 'Edit Guest':
+                        icon = 'pi pi-user-edit';
+                        break;
+                    case 'Edit Wifi':
+                        icon = 'pi pi-wifi';
+                        break;
+                    case 'Payment':
+                        icon = 'pi pi-credit-card';
                         break;
                     default:
                         break;
@@ -110,6 +144,11 @@ export class GridComponent implements OnInit {
                 });
             });
         };
+
+        setTimeout(() => {
+            this.gridDatasource = [...this.props.dataSource];
+        }, 1000);
+
     }
 
     onCellClicked(args: any): void {
@@ -128,15 +167,29 @@ export class GridComponent implements OnInit {
         // }
     }
 
+    onClickAdditionalButton(args: GridModel.IAdditionalButtonGrid) {
+        this.additionalButtonClicked.emit(args);
+    }
+
     onSearchKeyword(search: string) {
-        if (search) {
-            this.props.dataSource = this.props.dataSource.filter((item) => {
-                return item[this.props.searchKeyword!].toLowerCase().includes(search.toLowerCase());
+        if (!this.props.searchKeyword) {
+            console.warn("searchKeyword is undefined.");
+            return;
+        }
+
+        // Preserve the original data source
+        const originalDataSource = [...this.gridDatasource];
+
+        if (search.length) {
+            this.props.dataSource = originalDataSource.filter((item: any) => {
+                const value = item[this.props.searchKeyword!];
+                return value ? value.toString().toLowerCase().includes(search.toLowerCase()) : false;
             });
         } else {
-            this.props.dataSource = this.gridDatasource;
-        };
+            this.props.dataSource = originalDataSource;
+        }
     }
+
 
     onAksiClicked(type: string, data: any) {
         this.aksiClicked.emit({ type: type, data: data });
@@ -150,7 +203,7 @@ export class GridComponent implements OnInit {
         return value ? `<i class="pi pi-check text-emerald-600 font-medium" style="font-size: 12px">` : `<i class="pi pi-times text-red-600 font-medium" style="font-size: 12px">`;
     }
 
-    handleRenderStatusOrderManagement(value: 'ORDER' | 'DIPROSES' | 'DIANTAR' | 'DITERIMA') {
+    handleRenderStatusOrderManagement(value: 'ORDER' | 'DIPROSES' | 'DIANTAR' | 'DITERIMA' | 'AVAILABLE' | 'SOLD_OUT') {
         let pillClass = 'px-2 py-1 bg-blue-200 text-blue-700', text = 'ORDER PLACED';
 
         if (value == 'ORDER') {
@@ -173,7 +226,27 @@ export class GridComponent implements OnInit {
             pillClass = 'px-2 py-1 bg-emerald-200 text-emerald-700';
         };
 
+        if (value == 'AVAILABLE') {
+            text = 'Available';
+            pillClass = 'px-2 py-1 bg-emerald-200 text-emerald-700 text-xs';
+        };
+
+        if (value == 'SOLD_OUT') {
+            text = 'Sold Out';
+            pillClass = 'px-2 py-1 bg-rose-200 text-rose-700 text-xs';
+        };
+
         return [pillClass, text];
+    }
+
+    onClickCustomSearch() {
+        const value = this.CustomSearchForm.value;
+
+        const filteredObj = Object.fromEntries(
+            Object.entries(value).filter(([key, value]) => value !== null)
+        );
+
+        this.customSearchClicked.emit(filteredObj);
     }
 
     onExportExcel(): void {
