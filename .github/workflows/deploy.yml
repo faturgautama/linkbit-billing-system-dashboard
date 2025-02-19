@@ -1,23 +1,15 @@
-name: Deploy Staging
-
-on:
-  push:
-    branches:
-      - staging # Run only when staging is updated
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 🔄 Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: 🚀 Deploy to Staging Server
+      - name: Setup SSH and Deploy
         uses: appleboy/ssh-action@master
         with:
           host: 103.190.112.107
           username: root
-          key: SHA256:iE3taz76LJf/gJ8nJKO+O06h5B7wA+Kmw2Tqj6Hnu/4
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 1999
           script: /home/billing-system-fg-linkbit/deployer/dashboard-staging-deployer.sh
