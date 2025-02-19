@@ -203,9 +203,9 @@ export class SetupRoleComponent implements OnInit, OnDestroy {
             })
     }
 
-    private deleteData(id: string) {
+    private deleteData(data: any) {
         this._setupRoleService
-            .delete(id)
+            .delete(data)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result.status) {

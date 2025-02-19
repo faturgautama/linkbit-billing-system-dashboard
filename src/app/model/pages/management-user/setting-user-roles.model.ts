@@ -22,13 +22,7 @@ export namespace SettingUserRolesModel {
     }
 
     export interface CreateSettingUserRoles {
+        id_user_group: string
         id_menu: string
-        id_role: string
-    }
-
-    export interface UpdateSettingUserRoles {
-        id_role_menu: string
-        id_menu: string
-        id_role: string
     }
 }

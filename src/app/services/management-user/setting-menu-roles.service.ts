@@ -15,8 +15,8 @@ export class SettingMenuRolesService {
         private _httpRequestService: HttpRequestService
     ) { }
 
-    getAll(id_role: string): Observable<SettingUserRolesModel.GetAllSettingUserRoles> {
-        return this._httpRequestService.getRequest(`${environment.webApiUrl}/cms/role-menu/GetByIdRole/${id_role}`);
+    getAll(id_user_group: number): Observable<SettingUserRolesModel.GetAllSettingUserRoles> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/manajemen-menu`, { id_user_group: id_user_group });
     }
 
     getAllAssigned(id_user_group: number): Observable<any> {
@@ -40,18 +40,10 @@ export class SettingMenuRolesService {
     }
 
     create(payload: SettingUserRolesModel.CreateSettingUserRoles): Observable<HttpBaseResponse> {
-        return this._httpRequestService.postRequest(`${environment.webApiUrl}/cms/role-menu`, payload);
+        return this._httpRequestService.postRequest(`${environment.webApiUrl}/manajemen-menu`, payload);
     }
 
-    update(payload: SettingUserRolesModel.UpdateSettingUserRoles): Observable<HttpBaseResponse> {
-        return this._httpRequestService.putRequest(`${environment.webApiUrl}/cms/role-menu/${payload.id_role_menu}`, payload);
-    }
-
-    delete(id_role_menu: string): Observable<HttpBaseResponse> {
-        return this._httpRequestService.deleteRequest(`${environment.webApiUrl}/cms/role-menu/${id_role_menu}`);
-    }
-
-    assign(id_menu: string, id_role: string): Observable<HttpBaseResponse> {
-        return this._httpRequestService.putRequest(`${environment.webApiUrl}/cms/role-menu/updateStatusAssign/${id_menu}/${id_role}`, null);
+    delete(id_user_group_menu: string): Observable<HttpBaseResponse> {
+        return this._httpRequestService.deleteRequest(`${environment.webApiUrl}/manajemen-menu/${id_user_group_menu}`);
     }
 }

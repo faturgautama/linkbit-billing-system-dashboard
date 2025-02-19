@@ -20,15 +20,6 @@ const routes: Routes = [
         }
     },
     {
-        path: 'entertainment',
-        canActivate: [AuthGuard],
-        loadComponent: async () => (await import('./pages/entertainment/entertainment.component')).EntertainmentComponent,
-        data: {
-            title: 'Entertainment',
-            breadcrumbs: ['Home', 'Entertainment']
-        }
-    },
-    {
         path: 'user-management',
         canActivate: [AuthGuard],
         loadChildren: async () => (await import('./pages/management-user/management-user.routes')).managementUserRoutes
@@ -43,7 +34,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
+    imports: [RouterModule.forRoot(routes, { useHash: true })],
     exports: [RouterModule]
 })
 export class AppRoutingModule { }

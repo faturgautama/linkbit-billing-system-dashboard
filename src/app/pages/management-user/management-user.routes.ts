@@ -33,32 +33,12 @@ export const managementUserRoutes: Route[] = [
         }
     },
     {
-        path: 'setup-user-hotel',
-        loadComponent: async () => (await import('./setup-user-hotel/setup-user-hotel.component')).SetupUserHotelComponent,
-        data: {
-            title: 'Setup User Hotel',
-            breadcrumbs: [
-                "Home", "Management User", "Setup User Hotel"
-            ]
-        }
-    },
-    {
-        path: 'setup-user-device',
-        loadComponent: async () => (await import('./setup-user-device/setup-user-device.component')).SetupUserDeviceComponent,
-        data: {
-            title: 'Setup User Device',
-            breadcrumbs: [
-                "Home", "Management User", "Setup User Device"
-            ]
-        }
-    },
-    {
-        path: 'setting-role-menu',
+        path: 'setting-menu-akses',
         loadComponent: async () => (await import('./setting-menu-role/setting-menu-role.component')).SettingMenuRoleComponent,
         data: {
-            title: 'Setting Role Menu',
+            title: 'Setting Menu Akses',
             breadcrumbs: [
-                "Home", "Management User", "Setting Role Menu"
+                "Home", "Management User", "Setting Menu Akses"
             ]
         }
     },
