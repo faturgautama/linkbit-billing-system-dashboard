@@ -29,7 +29,7 @@ export class SetupRolesService {
     delete(payload: SetupRolesModel.UpdateSetupRoles): Observable<HttpBaseResponse> {
         return this._httpRequestService.putRequest(`${environment.webApiUrl}/user-group`, {
             ...payload,
-            is_active: false
+            is_active: !payload.is_active
         });
     }
 }

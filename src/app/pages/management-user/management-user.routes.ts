@@ -13,12 +13,12 @@ export const managementUserRoutes: Route[] = [
         }
     },
     {
-        path: 'setup-role',
+        path: 'setup-group-user',
         loadComponent: async () => (await import('./setup-role/setup-role.component')).SetupRoleComponent,
         data: {
-            title: 'Setup Role',
+            title: 'Setup Group User',
             breadcrumbs: [
-                "Home", "Management User", "Setup Role"
+                "Home", "Management User", "Setup Group User"
             ]
         }
     },

@@ -16,8 +16,8 @@
             <p-button severity="secondary" label="Back" styleClass="p-button-sm" (onClick)="handleBackToList()">
             </p-button>
 
-            <p-button *ngIf="FormState == 'insert'" severity="secondary" label="Save"
-                styleClass="p-button-sm bg-pink-600 text-white" (onClick)="saveData(FormComps.FormGroup.value)">
+            <p-button *ngIf="FormState == 'insert'" severity="info" label="Save" styleClass="p-button-sm"
+                (onClick)="saveData(FormComps.FormGroup.value)">
             </p-button>
 
             <p-button *ngIf="FormState == 'update'" severity="warning" label="Update" styleClass="p-button-sm"

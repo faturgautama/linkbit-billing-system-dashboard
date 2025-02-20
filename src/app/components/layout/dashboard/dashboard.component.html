@@ -83,9 +83,8 @@
                     <app-breadcrumbs></app-breadcrumbs>
 
                     <div *ngIf="ButtonNavigation" class="flex gap-3">
-                        <p-button *ngFor="let item of ButtonNavigation" severity="secondary"
-                            styleClass="p-button-sm bg-sky-600 text-white" [label]="item.title" [icon]="item.icon"
-                            (onClick)="handleClickButtonNavigation(item)">
+                        <p-button *ngFor="let item of ButtonNavigation" severity="info" styleClass="p-button-sm"
+                            [label]="item.title" [icon]="item.icon" (onClick)="handleClickButtonNavigation(item)">
                         </p-button>
                     </div>
                 </div>
