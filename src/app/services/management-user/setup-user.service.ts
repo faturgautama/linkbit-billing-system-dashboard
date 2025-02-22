@@ -14,20 +14,22 @@ export class SetupUserService {
         private _httpRequestService: HttpRequestService
     ) { }
 
-    getAll(): Observable<SetupUserModel.GetAllSetupUser> {
-        return this._httpRequestService.getRequest(`${environment.webApiUrl}/cms/users`);
+    getAll(query?: SetupUserModel.IUserQueryParams): Observable<SetupUserModel.GetAllSetupUser> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/user`, query);
     }
 
     create(payload: SetupUserModel.CreateSetupUser): Observable<HttpBaseResponse> {
-        return this._httpRequestService.postRequest(`${environment.webApiUrl}/cms/users`, payload);
+        return this._httpRequestService.postRequest(`${environment.webApiUrl}/authentication/register`, payload);
     }
 
     update(payload: SetupUserModel.UpdateSetupUser): Observable<HttpBaseResponse> {
-        const { id_user, ...newObject } = payload;
-        return this._httpRequestService.putRequest(`${environment.webApiUrl}/cms/users/${id_user}`, newObject);
+        return this._httpRequestService.putRequest(`${environment.webApiUrl}/user`, payload);
     }
 
-    delete(id_user: string): Observable<HttpBaseResponse> {
-        return this._httpRequestService.deleteRequest(`${environment.webApiUrl}/cms/users/${id_user}`);
+    delete(payload: SetupUserModel.UpdateSetupUser): Observable<HttpBaseResponse> {
+        return this._httpRequestService.putRequest(`${environment.webApiUrl}/user`, {
+            ...payload,
+            is_active: false
+        });
     }
 }

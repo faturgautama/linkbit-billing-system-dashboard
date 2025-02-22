@@ -10,8 +10,10 @@ import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboar
 import { FormModel } from 'src/app/model/components/form.model';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
+import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { SetupRolesService } from 'src/app/services/management-user/setup-roles.service';
 import { SetupUserService } from 'src/app/services/management-user/setup-user.service';
+import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
 
 @Component({
     selector: 'app-setup-user',
@@ -29,6 +31,8 @@ import { SetupUserService } from 'src/app/services/management-user/setup-user.se
 })
 export class SetupUserComponent implements OnInit, OnDestroy {
 
+    UserData = this._authenticationService.getUserData();
+
     Destroy$ = new Subject();
 
     PageState: 'list' | 'form' = 'list';
@@ -44,9 +48,12 @@ export class SetupUserComponent implements OnInit, OnDestroy {
     GridProps: GridModel.IGrid = {
         id: 'Setup_Data',
         column: [
-            { field: 'role', headerName: 'Role', },
-            { field: 'nama', headerName: 'Name', },
+            { field: 'full_name', headerName: 'Nama User', class: 'text-sky-500 font-semibold' },
+            { field: 'user_group', headerName: 'Group User', },
+            { field: 'company_name', headerName: 'Nama Perusahaan', },
+            { field: 'email', headerName: 'Email', },
             { field: 'username', headerName: 'Username', },
+            { field: 'is_active', headerName: 'Is Active', class: 'text-center', renderAsCheckbox: true },
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
@@ -55,7 +62,35 @@ export class SetupUserComponent implements OnInit, OnDestroy {
         showSearch: true,
         showSort: false,
         searchKeyword: 'nama',
-        searchPlaceholder: 'Find User Name Here'
+        searchPlaceholder: 'Find User Name Here',
+        isCustomSearch: true,
+        customSearchProps: [
+            {
+                id: 'id_user_group',
+                placeholder: 'Cari User Group Disini',
+                type: 'dropdown',
+                dropdownProps: {
+                    options: [],
+                    optionName: 'user_group',
+                    optionValue: 'id_user_group'
+                }
+            },
+            {
+                id: 'id_setting_company',
+                placeholder: 'Cari Perusahaan Disini',
+                type: 'dropdown',
+                dropdownProps: {
+                    options: [],
+                    optionName: 'company_name',
+                    optionValue: 'id_setting_company'
+                }
+            },
+            {
+                id: 'full_name',
+                placeholder: 'Cari Nama User Disini',
+                type: 'text'
+            },
+        ],
     };
     GridSelectedData: any;
 
@@ -68,9 +103,11 @@ export class SetupUserComponent implements OnInit, OnDestroy {
         private _setupUserService: SetupUserService,
         private _setupRolesService: SetupRolesService,
         private _confirmationService: ConfirmationService,
+        private _settingCompanyService: SettingCompanyService,
+        private _authenticationService: AuthenticationService,
     ) {
         this.FormProps = {
-            id: 'form_channel_group',
+            id: 'form_setup_user',
             fields: [
                 {
                     id: 'id_user',
@@ -81,20 +118,32 @@ export class SetupUserComponent implements OnInit, OnDestroy {
                     hidden: true
                 },
                 {
-                    id: 'id_role',
-                    label: 'Role',
+                    id: 'id_setting_company',
+                    label: 'Nama Perusahaan',
                     required: true,
                     type: 'select',
                     dropdownProps: {
                         options: [],
-                        optionName: 'role',
-                        optionValue: 'id_role'
+                        optionName: 'company_name',
+                        optionValue: 'id_setting_company'
                     },
                     value: '',
                 },
                 {
-                    id: 'nama',
-                    label: 'Name',
+                    id: 'id_user_group',
+                    label: 'Group User',
+                    required: true,
+                    type: 'select',
+                    dropdownProps: {
+                        options: [],
+                        optionName: 'user_group',
+                        optionValue: 'id_user_group'
+                    },
+                    value: '',
+                },
+                {
+                    id: 'full_name',
+                    label: 'Nama Lengkap',
                     required: true,
                     type: 'text',
                     value: '',
@@ -113,16 +162,52 @@ export class SetupUserComponent implements OnInit, OnDestroy {
                     type: 'password',
                     value: '',
                 },
+                {
+                    id: 'email',
+                    label: 'Email',
+                    required: false,
+                    type: 'text',
+                    value: '',
+                },
+                {
+                    id: 'address',
+                    label: 'Alamat Lengkap',
+                    required: false,
+                    type: 'text',
+                    value: '',
+                },
+                {
+                    id: 'phone',
+                    label: 'No. Telepon',
+                    required: false,
+                    type: 'text',
+                    value: '',
+                },
+                {
+                    id: 'whatsapp',
+                    label: 'No. Whatsapp',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                },
+                {
+                    id: 'notes',
+                    label: 'Keterangan',
+                    required: false,
+                    type: 'text',
+                    value: '',
+                },
             ],
             style: 'not_inline',
-            class: 'grid-rows-4 grid-cols-1',
+            class: 'grid-rows-5 grid-cols-2',
             state: 'write',
             defaultValue: null,
         };
     }
 
     ngOnInit(): void {
-        this.getAll();
+        this.onMapCompanyType();
+        this.getAll({ id_setting_company: this.UserData.id_setting_company });
         this.getAllRole();
     }
 
@@ -131,13 +216,44 @@ export class SetupUserComponent implements OnInit, OnDestroy {
         this.Destroy$.complete();
     }
 
-    private getAll() {
+    private onMapCompanyType() {
+        if (this.UserData.company_type != 'KANTOR PUSAT') {
+            const index = this.GridProps.customSearchProps?.findIndex(item => item.id == 'id_setting_company');
+            this.GridProps.customSearchProps?.splice(index!, 1);
+
+            const indexForm = this.FormProps.fields.findIndex(item => item.id == 'id_setting_company');
+            this.FormProps.fields[indexForm].hidden = true;
+        } else {
+            this.getAllSettingCompany();
+        }
+    }
+
+    private getAll(query?: any) {
+        if (this.UserData.company_type != 'KANTOR PUSAT') {
+            query.id_setting_company = this.UserData.id_setting_company;
+        };
+
         this._setupUserService
-            .getAll()
+            .getAll(query)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
                     this.GridProps.dataSource = result.data;
+                }
+            });
+    }
+
+    private getAllSettingCompany() {
+        this._settingCompanyService
+            .getAll()
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    const indexGrid = this.GridProps.customSearchProps?.findIndex(item => item.id == 'id_setting_company');
+                    this.GridProps.customSearchProps![indexGrid!].dropdownProps!.options = result.data;
+
+                    const index = this.FormProps.fields.findIndex(item => item.id == 'id_setting_company');
+                    this.FormProps.fields[index].dropdownProps.options = result.data;
                 }
             });
     }
@@ -147,8 +263,12 @@ export class SetupUserComponent implements OnInit, OnDestroy {
             .getAll()
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
-                if (result) {
-                    this.FormProps.fields[1].dropdownProps.options = result.data;
+                if (result.status) {
+                    const indexGrid = this.GridProps.customSearchProps?.findIndex(item => item.id == 'id_user_group');
+                    this.GridProps.customSearchProps![indexGrid!].dropdownProps!.options = result.data;
+
+                    const index = this.FormProps.fields.findIndex(item => item.id == 'id_user_group');
+                    this.FormProps.fields[index].dropdownProps.options = result.data;
                 }
             });
     }
@@ -158,6 +278,10 @@ export class SetupUserComponent implements OnInit, OnDestroy {
             this.PageState = 'form';
             this.ButtonNavigation = [];
         };
+    }
+
+    onSearchGrid(args: any) {
+        this.getAll(args);
     }
 
     handleBackToList() {
@@ -207,7 +331,7 @@ export class SetupUserComponent implements OnInit, OnDestroy {
                 rejectIcon: "none",
                 rejectLabel: 'No, back',
                 accept: () => {
-                    this.deleteData(args.data.id_user);
+                    this.deleteData(args.data);
                 }
             });
         }
@@ -245,9 +369,9 @@ export class SetupUserComponent implements OnInit, OnDestroy {
             })
     }
 
-    private deleteData(id: string) {
+    private deleteData(data: any) {
         this._setupUserService
-            .delete(id)
+            .delete(data)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result.status) {

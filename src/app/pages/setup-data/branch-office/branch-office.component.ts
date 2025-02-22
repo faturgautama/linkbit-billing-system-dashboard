@@ -64,7 +64,7 @@ export class BranchOfficeComponent implements OnInit, OnDestroy {
         customSearchProps: [
             {
                 id: 'company_name',
-                placeholder: 'Cari Nama Kantor Cabang Disini',
+                placeholder: 'Cari Nama Perusahaan Disini',
                 type: 'text'
             },
         ],
