@@ -33,8 +33,6 @@
                             "src/styles.scss",
                             "node_modules/primeng/resources/themes/aura-light-blue/theme.css",
                             "node_modules/primeng/resources/primeng.min.css",
-                            "node_modules/quill/dist/quill.core.css",
-                            "node_modules/quill/dist/quill.snow.css",
                             "node_modules/@videogular/ngx-videogular/fonts/videogular.css"
                         ],
                         "scripts": [
@@ -43,7 +41,21 @@
                         "allowedCommonJsDependencies": [
                             "apexcharts",
                             "file-saver",
-                            "exceljs"
+                            "exceljs",
+                            "chart.js",
+                            "xlsx",
+                            "jspdf-autotable",
+                            "file-saver",
+                            "jspdf",
+                            "quill",
+                            "core-js",
+                            "raf",
+                            "rgbcolor",
+                            "quill-delta",
+                            "dom-to-image",
+                            "html2canvas",
+                            "moment",
+                            "moment/locale/id"
                         ]
                     },
                     "configurations": {

@@ -7,6 +7,7 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { Subject, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-authentication',
@@ -27,7 +28,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     FormProps: FormModel.IForm;
     @ViewChild('FormComps') FormComps!: DynamicFormComponent;
 
-    Version = this._utilityService.getVersion();
+    Version = environment.version;
 
     Year = new Date().getFullYear();
 

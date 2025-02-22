@@ -20,6 +20,11 @@ const routes: Routes = [
         }
     },
     {
+        path: 'setup-data',
+        canActivate: [AuthGuard],
+        loadChildren: async () => (await import('./pages/setup-data/setup-data.routes')).setupDataRoutes
+    },
+    {
         path: 'user-management',
         canActivate: [AuthGuard],
         loadChildren: async () => (await import('./pages/management-user/management-user.routes')).managementUserRoutes
