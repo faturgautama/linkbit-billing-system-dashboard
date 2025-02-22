@@ -381,6 +381,4 @@ export class SetupUserComponent implements OnInit, OnDestroy {
                 }
             })
     }
-
-
 }
