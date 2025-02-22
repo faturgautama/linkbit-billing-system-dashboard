@@ -15,8 +15,6 @@ export class AuthenticationService {
 
     SidebarMenu$ = new BehaviorSubject<AuthenticationModel.IUserGroupMenu[]>([]);
 
-    HotelId = 0;
-
     constructor(
         private _cookieService: CookieService,
         private _httpRequestService: HttpRequestService,
@@ -48,8 +46,6 @@ export class AuthenticationService {
                 })
             )
             .subscribe((result) => {
-                this.HotelId = result.data.id_hotel;
-
                 const newRes = {
                     ...loginResult,
                     ...result.data,

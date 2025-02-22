@@ -10,5 +10,25 @@ export const setupDataRoutes: Route[] = [
                 "Home", "Setup Data", "Setting Company"
             ]
         }
+    },
+    {
+        path: 'branch-office',
+        loadComponent: async () => (await import('./branch-office/branch-office.component')).BranchOfficeComponent,
+        data: {
+            title: 'Kantor Cabang',
+            breadcrumbs: [
+                "Home", "Setup Data", "Kantor Cabang"
+            ]
+        }
+    },
+    {
+        path: 'mitra',
+        loadComponent: async () => (await import('./branch-office/branch-office.component')).BranchOfficeComponent,
+        data: {
+            title: 'Mitra',
+            breadcrumbs: [
+                "Home", "Setup Data", "Mitra"
+            ]
+        }
     }
 ];

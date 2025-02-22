@@ -7,6 +7,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { ButtonModule } from 'primeng/button';
 import { BerandaService } from 'src/app/services/beranda/beranda.service';
+import { SettingMenuRolesService } from 'src/app/services/management-user/setting-menu-roles.service';
 
 @Component({
     selector: 'app-beranda',
@@ -42,6 +43,7 @@ export class BerandaComponent implements OnInit, OnDestroy {
         private _router: Router,
         private _berandaService: BerandaService,
         private _authenticationService: AuthenticationService,
+        private _settingMenuRolesService: SettingMenuRolesService,
     ) { }
 
     ngOnInit(): void {
@@ -55,6 +57,14 @@ export class BerandaComponent implements OnInit, OnDestroy {
 
     private getDashboard() {
 
+    }
+
+    private getMenu() {
+        const userData = this._authenticationService.getUserData();
+
+        this._settingMenuRolesService
+            .getAllAssigned(userData.id_user_group)
+            .pipe(takeUntil(this.Destroy$));
     }
 
     handleNavigateToGreetingCard() {

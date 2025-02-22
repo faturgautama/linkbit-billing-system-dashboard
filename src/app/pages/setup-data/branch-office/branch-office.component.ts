@@ -1,44 +1,75 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Subject, takeUntil } from 'rxjs';
 import { DynamicFormComponent } from 'src/app/components/form/dynamic-form/dynamic-form.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
 import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboard.component';
 import { FormModel } from 'src/app/model/components/form.model';
+import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
-import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
+import { SetupMenuService } from 'src/app/services/management-user/setup-menu.service';
 import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
 
 @Component({
-    selector: 'app-setting-company',
+    selector: 'app-branch-office',
     standalone: true,
     imports: [
-        FormsModule,
-        ButtonModule,
         CommonModule,
         DashboardComponent,
-        ConfirmDialogModule,
+        GridComponent,
         DynamicFormComponent,
+        ButtonModule,
+        ConfirmDialogModule
     ],
-    templateUrl: './setting-company.component.html',
-    styleUrl: './setting-company.component.scss'
+    templateUrl: './branch-office.component.html',
+    styleUrl: './branch-office.component.scss'
 })
-export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy {
+export class BranchOfficeComponent implements OnInit, OnDestroy {
 
     Destroy$ = new Subject();
+
+    IsFormCabang = true;
 
     PageState: 'list' | 'form' = 'list';
 
     ButtonNavigation: LayoutModel.IButtonNavigation[] = [
         {
-            id: 'update',
-            title: 'Update',
-            icon: 'pi pi-save'
+            id: 'add',
+            title: 'Add',
+            icon: 'pi pi-plus'
         }
     ];
+
+    GridProps: GridModel.IGrid = {
+        id: 'GridSetupMenu',
+        column: [
+            { field: 'company_name', headerName: 'Nama Perusahaan', },
+            { field: 'company_email', headerName: 'Email Perusahaan', },
+            { field: 'company_address', headerName: 'Alamat Perusahaan', },
+            { field: 'is_active', headerName: 'Is Active', renderAsCheckbox: true, class: 'text-center' },
+        ],
+        dataSource: [],
+        height: "calc(100vh - 14.5rem)",
+        toolbar: ['Delete', 'Detail'],
+        showPaging: true,
+        showSearch: true,
+        showSort: false,
+        searchKeyword: 'role',
+        searchPlaceholder: 'Find Role Name Here',
+        isCustomSearch: true,
+        customSearchProps: [
+            {
+                id: 'company_name',
+                placeholder: 'Cari Nama Kantor Cabang Disini',
+                type: 'text'
+            },
+        ],
+    };
+    GridSelectedData: any;
 
     FormState: 'insert' | 'update' = 'update';
     FormProps: FormModel.IForm;
@@ -51,9 +82,9 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
     @ViewChild('FormPaymentGatewayComps') FormPaymentGatewayComps!: DynamicFormComponent;
 
     constructor(
+        private _router: Router,
         private _messageService: MessageService,
         private _confirmationService: ConfirmationService,
-        private _authenticationService: AuthenticationService,
         private _settingCompanyService: SettingCompanyService,
     ) {
         this.FormProps = {
@@ -80,7 +111,7 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     label: 'Is Mitra',
                     required: true,
                     type: 'text',
-                    value: '',
+                    value: false,
                     hidden: true
                 },
                 {
@@ -88,7 +119,7 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     label: 'Is Cabang',
                     required: true,
                     type: 'text',
-                    value: '',
+                    value: true,
                     hidden: true
                 },
                 {
@@ -260,15 +291,7 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     ngOnInit(): void {
-        setTimeout(() => {
-
-        }, 1000);
-    }
-
-    ngAfterViewInit(): void {
-        setTimeout(() => {
-            this.getById();
-        }, 1);
+        this.getAll();
     }
 
     ngOnDestroy(): void {
@@ -276,45 +299,177 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
         this.Destroy$.complete();
     }
 
-    private getById() {
-        const userData = this._authenticationService.getUserData();
+    private getAll(query?: any) {
+        this.IsFormCabang = this._router.url.includes('branch-office');
 
         this._settingCompanyService
-            .getById(userData.id_setting_company)
+            .getAll({ ...query, is_cabang: this.IsFormCabang, is_mitra: !this.IsFormCabang })
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
-                if (result.status) {
-                    this.FormComps.FormGroup.patchValue(result.data);
-                    this.FormTagihanComps.FormGroup.patchValue(result.data);
-                    this.FormPaymentGatewayComps.FormGroup.patchValue(result.data);
+                if (result) {
+                    this.GridProps.dataSource = result.data;
                 }
             });
     }
 
+    onSearchGrid(args: any) {
+        this.getAll(args);
+    }
+
     handleClickButtonNavigation(data: LayoutModel.IButtonNavigation) {
-        if (data.id == 'update') {
-            let payload = {
-                ...this.FormComps.FormGroup.value,
-                ...this.FormTagihanComps.FormGroup.value,
-                ...this.FormPaymentGatewayComps.FormGroup.value
-            };
-
-            delete payload.payment_gateway;
-
-            this.onUpdateData(payload);
+        if (data.id == 'add') {
+            this.PageState = 'form';
+            this.ButtonNavigation = [];
+            this.FormState = 'insert';
         };
     }
 
-    private onUpdateData(data: any) {
+    handleBackToList() {
+        this.FormComps.onResetForm();
+
+        setTimeout(() => {
+            this.PageState = 'list';
+            this.FormState = 'insert';
+            this.ButtonNavigation = [
+                {
+                    id: 'add',
+                    title: 'Add',
+                    icon: 'pi pi-plus'
+                }
+            ];
+
+            this.getAll();
+        }, 100);
+    }
+
+    onCellClicked(args: any): void {
+        this.GridSelectedData = args;
+    }
+
+    onRowDoubleClicked(args: any): void {
+        this.PageState = 'form';
+        this.FormState = 'update';
+        this.ButtonNavigation = [];
+        // ** Set value ke Dynamic form components
+        setTimeout(() => {
+            this.FormComps.FormGroup.patchValue(args);
+            this.FormTagihanComps.FormGroup.patchValue(args);
+            this.FormPaymentGatewayComps.FormGroup.patchValue(args);
+        }, 500);
+    }
+
+    onToolbarClicked(args: any): void {
+        if (args.type == 'delete') {
+            this._confirmationService.confirm({
+                target: (<any>event).target as EventTarget,
+                message: 'Deleted data can not be reverted',
+                header: 'Are you sure?',
+                icon: 'pi pi-info-circle',
+                acceptButtonStyleClass: "p-button-danger p-button-sm",
+                rejectButtonStyleClass: "p-button-secondary p-button-sm",
+                acceptIcon: "none",
+                acceptLabel: 'Yes, sure',
+                rejectIcon: "none",
+                rejectLabel: 'No, back',
+                accept: () => {
+                    this.deleteData(args.data);
+                }
+            });
+        }
+
+        if (args.type == 'detail') {
+            this.onRowDoubleClicked(args.data);
+        }
+    }
+
+    saveData(data: any) {
+        let payload = {
+            ...data,
+            ...this.FormTagihanComps.FormGroup.value,
+            ...this.FormPaymentGatewayComps.FormGroup.value,
+        };
+
+        payload.tagihan_use_unik_kode = payload.tagihan_use_unik_kode ? payload.tagihan_use_unik_kode : false;
+        payload.is_cabang = this.IsFormCabang;
+        payload.is_mitra = !this.IsFormCabang;
+
+        delete payload.id_setting_company;
+        delete payload.is_active;
+        delete payload.payment_gateway;
+
+        if (this.IsFormCabang) {
+            this._settingCompanyService
+                .createCabang(payload)
+                .pipe(takeUntil(this.Destroy$))
+                .subscribe((result) => {
+                    if (result.status) {
+                        this._messageService.clear();
+                        this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data saved succesfully' });
+                        this.handleBackToList();
+                    }
+                })
+        } else {
+            this._settingCompanyService
+                .createMitra(payload)
+                .pipe(takeUntil(this.Destroy$))
+                .subscribe((result) => {
+                    if (result.status) {
+                        this._messageService.clear();
+                        this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data saved succesfully' });
+                        this.handleBackToList();
+                    }
+                })
+        }
+    }
+
+    updateData(data: any) {
+        let payload = {
+            ...data,
+            ...this.FormTagihanComps.FormGroup.value,
+            ...this.FormPaymentGatewayComps.FormGroup.value,
+        };
+
+        payload.tagihan_use_unik_kode = payload.tagihan_use_unik_kode ? payload.tagihan_use_unik_kode : false;
+        payload.is_cabang = this.IsFormCabang;
+        payload.is_mitra = !this.IsFormCabang;
+
+        delete payload.payment_gateway;
+
         this._settingCompanyService
-            .update(data)
+            .update(payload)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
-                    this.getById();
+                    this.handleBackToList();
                 }
             })
     }
+
+    private deleteData(data: any) {
+        let payload = {
+            ...data,
+            ...this.FormTagihanComps.FormGroup.value,
+            ...this.FormPaymentGatewayComps.FormGroup.value,
+        };
+
+        payload.tagihan_use_unik_kode = payload.tagihan_use_unik_kode ? payload.tagihan_use_unik_kode : false;
+        payload.is_cabang = this.IsFormCabang;
+        payload.is_mitra = !this.IsFormCabang;
+
+        delete payload.payment_gateway;
+
+        this._settingCompanyService
+            .delete(payload)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this._messageService.clear();
+                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
+                    this.getAll();
+                }
+            })
+    }
+
 }

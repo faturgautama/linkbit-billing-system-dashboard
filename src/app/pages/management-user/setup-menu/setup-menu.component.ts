@@ -11,7 +11,6 @@ import { FormModel } from 'src/app/model/components/form.model';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
 import { SetupMenuService } from 'src/app/services/management-user/setup-menu.service';
-import { SetupRolesService } from 'src/app/services/management-user/setup-roles.service';
 
 @Component({
     selector: 'app-setup-menu',
