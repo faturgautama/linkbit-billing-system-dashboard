@@ -29,6 +29,9 @@ export class VoiceNoteService {
     stopRecording(): Promise<string> {
         return new Promise((resolve) => {
             this.mediaRecorder.stop();
+            this.audioChunks = [];
+            this.audioBlob = null as any;
+
             setTimeout(() => {
                 this.convertToBase64(this.audioBlob).then((base64String) => {
                     resolve(base64String);

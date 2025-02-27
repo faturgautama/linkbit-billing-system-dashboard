@@ -30,14 +30,6 @@ const routes: Routes = [
         loadChildren: async () => (await import('./pages/management-user/management-user.routes')).managementUserRoutes
     },
     {
-        path: 'voice-notes',
-        loadComponent: async () => (await import('./pages/voice-note/voice-note.component')).VoiceNoteComponent,
-        data: {
-            title: 'Voice Notes',
-            breadcrumbs: ['Voice Notes']
-        }
-    },
-    {
         path: '**',
         loadComponent: async () => (await import('./pages/wildcard-not-found/wildcard-not-found.component')).WildcardNotFoundComponent,
         data: {

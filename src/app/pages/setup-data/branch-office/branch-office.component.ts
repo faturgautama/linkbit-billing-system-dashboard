@@ -11,7 +11,6 @@ import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboar
 import { FormModel } from 'src/app/model/components/form.model';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
-import { SetupMenuService } from 'src/app/services/management-user/setup-menu.service';
 import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
 
 @Component({
