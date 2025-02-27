@@ -43,6 +43,15 @@ const routes: Routes = [
         }
     },
     {
+        path: 'pembayaran',
+        canActivate: [AuthGuard],
+        loadComponent: async () => (await import('./pages/payment/payment.component')).PaymentComponent,
+        data: {
+            title: 'Pembayaran',
+            breadcrumbs: ['Home', 'Pembayaran']
+        }
+    },
+    {
         path: 'user-management',
         canActivate: [AuthGuard],
         loadChildren: async () => (await import('./pages/management-user/management-user.routes')).managementUserRoutes
