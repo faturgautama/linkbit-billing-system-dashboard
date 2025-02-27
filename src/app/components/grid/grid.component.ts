@@ -124,7 +124,7 @@ export class GridComponent implements OnInit, AfterViewInit {
                     case 'Change to Available':
                         icon = 'pi pi-verified';
                         break;
-                    case 'Edit Guest':
+                    case 'Layanan':
                         icon = 'pi pi-user-edit';
                         break;
                     case 'Edit Wifi':

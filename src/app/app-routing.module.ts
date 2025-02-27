@@ -25,6 +25,15 @@ const routes: Routes = [
         loadChildren: async () => (await import('./pages/setup-data/setup-data.routes')).setupDataRoutes
     },
     {
+        path: 'pelanggan',
+        canActivate: [AuthGuard],
+        loadComponent: async () => (await import('./pages/pelanggan/pelanggan.component')).PelangganComponent,
+        data: {
+            title: 'Pelanggan',
+            breadcrumbs: ['Home', 'Pelanggan']
+        }
+    },
+    {
         path: 'user-management',
         canActivate: [AuthGuard],
         loadChildren: async () => (await import('./pages/management-user/management-user.routes')).managementUserRoutes
