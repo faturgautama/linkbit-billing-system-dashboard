@@ -49,6 +49,12 @@
                 (onSelect)="handleChangeCalendar($event, item)">
             </p-calendar>
 
+            <!-- Month Picker -->
+            <p-calendar *ngIf="item.type == 'monthpicker'" appendTo="body" styleClass="p-inputtext-sm w-full"
+                dateFormat="MM yy" view="month" [showClear]="true" formControlName="{{ item.id }}"
+                [readonlyInput]="true" (onSelect)="handleChangeCalendar($event, item)">
+            </p-calendar>
+
             <!-- Daterange -->
             <p-calendar *ngIf="item.type == 'daterange'" appendTo="body" styleClass="p-inputtext-sm w-full"
                 dateFormat="dd MM yy" [showClear]="true" selectionMode="range" formControlName="{{ item.id }}">

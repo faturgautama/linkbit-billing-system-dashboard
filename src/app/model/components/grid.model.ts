@@ -10,7 +10,7 @@ export namespace GridModel {
     export interface IGridColumn {
         field: string;
         headerName: string;
-        format?: 'date' | 'number' | 'currency' | 'image' | 'html' | 'icon_boolean';
+        format?: 'date' | 'number' | 'currency' | 'image' | 'html' | 'icon_boolean' | 'monthpicker';
         class?: string;
         renderAsCheckbox?: boolean;
         renderAsPills?: boolean;
@@ -21,7 +21,7 @@ export namespace GridModel {
     export interface IGridCustomSearch {
         id: string;
         placeholder: string;
-        type: 'text' | 'dropdown' | 'date' | 'number';
+        type: 'text' | 'dropdown' | 'date' | 'number' | 'monthpicker';
         dropdownProps?: FormModel.DropdownProps;
     }
 

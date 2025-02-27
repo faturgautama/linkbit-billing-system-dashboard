@@ -12,7 +12,6 @@
 
         <p-button severity="info" label="Export" styleClass="p-button-sm" (onClick)="onExportExcel()"></p-button>
 
-
         <p-button *ngFor="let item of props.additionalButtons" [severity]="item.severity" [label]="item.label"
             styleClass="p-button-sm" (onClick)="onClickAdditionalButton(item)">
         </p-button>
@@ -39,6 +38,12 @@
             <p-calendar *ngIf="item.type == 'date'" appendTo="body" styleClass="p-inputtext-sm w-full"
                 dateFormat="dd MM yy" [showClear]="true" formControlName="{{ item.id }}" [readonlyInput]="true"
                 placeholder="{{ item.placeholder ? item.placeholder : '' }}">
+            </p-calendar>
+
+            <!-- Month Picker -->
+            <p-calendar *ngIf="item.type == 'monthpicker'" appendTo="body" styleClass="p-inputtext-sm w-full"
+                view="month" dateFormat="MM yy" [showClear]="true" formControlName="{{ item.id }}"
+                [readonlyInput]="true" placeholder="{{ item.placeholder ? item.placeholder : '' }}">
             </p-calendar>
 
             <!-- Dropdown -->
@@ -101,6 +106,9 @@
                         }
                         @case ('date') {
                         {{ rowData[col.field] | date: 'dd-MM-yyyy' }}
+                        }
+                        @case ('monthpicker') {
+                        {{ rowData[col.field] | date: 'MM yyyy' }}
                         }
                         @case ('number') {
                         {{ handleFormatStringToNumber(rowData[col.field]) | number: '' }}

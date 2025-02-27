@@ -118,17 +118,14 @@ export class GridComponent implements OnInit, AfterViewInit {
                     case 'Detail':
                         icon = 'pi pi-info-circle';
                         break;
-                    case 'Change to Sold Out':
-                        icon = 'pi pi-ban';
-                        break;
-                    case 'Change to Available':
-                        icon = 'pi pi-verified';
-                        break;
                     case 'Layanan':
                         icon = 'pi pi-user-edit';
                         break;
-                    case 'Edit Wifi':
-                        icon = 'pi pi-wifi';
+                    case 'Kirim Pesan Tagihan':
+                        icon = 'pi pi-whatsapp';
+                        break;
+                    case 'Kirim Pesan Lunas':
+                        icon = 'pi pi-send';
                         break;
                     case 'Payment':
                         icon = 'pi pi-credit-card';

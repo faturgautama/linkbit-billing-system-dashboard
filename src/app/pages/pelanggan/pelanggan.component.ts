@@ -213,7 +213,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     required: true,
                     type: 'text',
                     value: '',
-                    hidden: true
+                    hidden: true,
                 },
                 {
                     id: 'id_product',

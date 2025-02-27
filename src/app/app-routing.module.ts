@@ -34,6 +34,15 @@ const routes: Routes = [
         }
     },
     {
+        path: 'tagihan',
+        canActivate: [AuthGuard],
+        loadComponent: async () => (await import('./pages/invoice/invoice.component')).InvoiceComponent,
+        data: {
+            title: 'Tagihan',
+            breadcrumbs: ['Home', 'Tagihan']
+        }
+    },
+    {
         path: 'user-management',
         canActivate: [AuthGuard],
         loadChildren: async () => (await import('./pages/management-user/management-user.routes')).managementUserRoutes
