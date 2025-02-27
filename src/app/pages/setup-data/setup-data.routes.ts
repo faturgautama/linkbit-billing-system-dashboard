@@ -40,5 +40,15 @@ export const setupDataRoutes: Route[] = [
                 "Home", "Setup Data", "Group Pelanggan"
             ]
         }
+    },
+    {
+        path: 'produk',
+        loadComponent: async () => (await import('./product/product.component')).ProductComponent,
+        data: {
+            title: 'Produk Layanan',
+            breadcrumbs: [
+                "Home", "Setup Data", "Produk Layanan"
+            ]
+        }
     }
 ];
