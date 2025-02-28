@@ -478,7 +478,8 @@ export class PelangganComponent implements OnInit, OnDestroy {
     }
 
     saveData(data: any) {
-        delete data.id_role;
+        delete data.id_pelanggan;
+        delete data.is_active;
 
         this._pelangganService
             .create(data)
