@@ -13,7 +13,7 @@ jobs:
       - name: 🔄 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: 🚀 Deploy to Staging Server
+      - name: 🚀 Deploy Checkout Page
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
