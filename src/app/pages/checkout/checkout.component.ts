@@ -70,7 +70,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                 if (result.status) {
                     this.InvoiceDatasource = result.data;
                     this.IsPaymentGenerated = result.data.is_payment_generated;
-                    this.IsPaymentSuccess = result.data.payment.status == 'PAID';
+                    if (result.data.payment) {
+                        this.IsPaymentSuccess = result.data.payment.status == 'PAID';
+                    } else {
+                        this.IsPaymentSuccess = false;
+                    }
                     this.DetailPayment = result.data.payment;
                     this.getPaymentMethod(token, this.IsPaymentGenerated);
                 }
