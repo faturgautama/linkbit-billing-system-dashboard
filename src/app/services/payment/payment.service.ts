@@ -32,7 +32,7 @@ export class PaymentService {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/payment/get-checkout-url/${id_invoice}`);
     }
 
-    getFromToken(token: string): Observable<PaymentModel.GetAllPayment> {
+    getFromToken(token: string): Observable<PaymentModel.GetByIdPayment> {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/payment/get-from-token/${token}`);
     }
 

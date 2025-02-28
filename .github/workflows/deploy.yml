@@ -1,9 +1,9 @@
-name: Deploy Staging
+name: Deploy Checkout Page
 
 on:
   push:
     branches:
-      - staging # Run only when staging is updated
+      - checkout # Run only when checkout is updated
 
 jobs:
   deploy:
@@ -20,4 +20,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: /home/billing-system-fg-linkbit/deployer/dashboard-staging-deployer.sh
+          script: /home/billing-system-fg-linkbit/deployer/checkout-deployer.sh

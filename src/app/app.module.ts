@@ -14,9 +14,10 @@ import { CookieService } from 'ngx-cookie-service';
 import { JwtInterceptor } from './middleware/jwt.interceptor';
 import { TitleCasePipe } from '@angular/common';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+import { environment } from 'src/environments/environment';
 
 const config: SocketIoConfig = {
-    url: 'https://api.unioniptv.id',
+    url: environment.socketUrl,
     options: {}
 };
 

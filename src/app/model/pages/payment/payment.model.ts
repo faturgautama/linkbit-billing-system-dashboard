@@ -20,6 +20,8 @@ export namespace PaymentModel {
         payment_status: string;
         payment_amount: number;
         payment_provider: string;
+        payment: any;
+        is_payment_generated: boolean;
         create_at: Date;
         create_by: number;
         update_at: Date;
