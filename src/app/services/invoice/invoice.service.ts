@@ -39,4 +39,8 @@ export class InvoiceService {
     delete(id_invoice: number): Observable<HttpBaseResponse> {
         return this._httpRequestService.deleteRequest(`${environment.webApiUrl}/invoice/${id_invoice}`);
     }
+
+    sendMessage(id_invoice: number): Observable<HttpBaseResponse> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/invoice/send-message/${id_invoice}`);
+    }
 }

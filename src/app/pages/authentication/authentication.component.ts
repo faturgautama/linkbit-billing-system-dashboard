@@ -52,7 +52,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
                     label: 'Password',
                     required: true,
                     type: 'password',
-                    value: 'Semarang2708_',
+                    value: '1234',
                 },
             ],
             style: 'not_inline',

@@ -363,10 +363,18 @@ export class InvoiceComponent implements OnInit, OnDestroy {
         const queryDate = new Date(invoice_date);
         const day = this.SettingCompany.tagihan_jatuh_tempo;
         const year = queryDate.getFullYear();
-        const month = queryDate.getMonth() + 2;
-        const tanggal_jatuh_tempo = new Date(`${year}-${month < 10 ? `0${month}` : `${month}`}-${day} 00:00:00`);
-        this.FormComps.FormGroup.get('due_date')?.setValue(this._utilityService.onFormatDate(tanggal_jatuh_tempo, 'yyyy-MM-DD HH:mm:ss'));
-        this.FormComps.FormGroup.get('notes')?.setValue(`${this.FormComps.FormGroup.get('product_name')?.value}-${this._utilityService.onFormatDate(tanggal_jatuh_tempo, 'yyyy-MM-DD')}`);
+        const month = queryDate.getMonth() + 2; // Adding 2 months
+
+        // Handling December case properly
+        const dueDate = new Date(year, month - 1, day, 0, 0, 0);
+
+        this.FormComps.FormGroup.get('due_date')?.setValue(
+            this._utilityService.onFormatDate(dueDate, 'yyyy-MM-DD HH:mm:ss')
+        );
+
+        this.FormComps.FormGroup.get('notes')?.setValue(
+            `${this.FormComps.FormGroup.get('product_name')?.value}-${this._utilityService.onFormatDate(dueDate, 'yyyy-MM-DD')}`
+        );
     }
 
     private countSubtotalForm() {
@@ -450,39 +458,48 @@ export class InvoiceComponent implements OnInit, OnDestroy {
         }
 
         if (args.type == 'kirim pesan tagihan') {
-            this._paymentService
-                .getCheckoutUrl(args.data.id_invoice)
+            // this._paymentService
+            //     .getCheckoutUrl(args.data.id_invoice)
+            //     .pipe(takeUntil(this.Destroy$))
+            //     .subscribe((result) => {
+            //         if (result.status) {
+            //             const payload = {
+            //                 ...args.data,
+            //                 invoice_date: this._utilityService.onFormatDate(new Date(args.data.invoice_date), 'yyyy-MM-DD'),
+            //                 checkout_url: result.data,
+            //                 total: formatCurrency(args.data.total, 'EN', 'Rp. ')
+            //             };
+
+            //             const template = this.SettingCompany.tagihan_pesan_invoice;
+            //             const newTemplate = template.replace(/\${(.*?)}/g, (_, key) => payload[key.trim()] || "");
+
+            //             // Remove HTML tags and replace `<br>` with newlines
+            //             const messageText = newTemplate
+            //                 .replace(/<\/?p>/g, '\n') // Convert paragraphs to new lines
+            //                 .replace(/<\/?[^>]+(>|$)/g, "") // Remove any remaining HTML tags
+            //                 .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces with normal spaces
+            //                 .replace(/&gt;/g, '>') // Replace `&gt;` with `>`
+            //                 .replace(/&lt;/g, '<') // Replace `&lt;` with `<`
+            //                 .replace(/&amp;/g, '&'); // Replace `&amp;` with `&`
+
+            //             // Format WhatsApp URL
+            //             const phoneNumber = payload.whatsapp.replace(/^0/, '62'); // Ensure proper format
+            //             const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(messageText)}`;
+
+            //             // Open in new tab
+            //             window.open(whatsappURL, '_blank');
+            //         }
+            //     })
+
+            this._invoiceService
+                .sendMessage(args.data.id_invoice)
                 .pipe(takeUntil(this.Destroy$))
                 .subscribe((result) => {
                     if (result.status) {
-                        const payload = {
-                            ...args.data,
-                            invoice_date: this._utilityService.onFormatDate(new Date(args.data.invoice_date), 'yyyy-MM-DD'),
-                            checkout_url: result.data,
-                            total: formatCurrency(args.data.total, 'EN', 'Rp. ')
-                        };
-
-                        const template = this.SettingCompany.tagihan_pesan_invoice;
-                        const newTemplate = template.replace(/\${(.*?)}/g, (_, key) => payload[key.trim()] || "");
-
-                        // Remove HTML tags and replace `<br>` with newlines
-                        const messageText = newTemplate
-                            .replace(/<\/?p>/g, '\n') // Convert paragraphs to new lines
-                            .replace(/<\/?[^>]+(>|$)/g, "") // Remove any remaining HTML tags
-                            .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces with normal spaces
-                            .replace(/&gt;/g, '>') // Replace `&gt;` with `>`
-                            .replace(/&lt;/g, '<') // Replace `&lt;` with `<`
-                            .replace(/&amp;/g, '&'); // Replace `&amp;` with `&`
-
-                        // Format WhatsApp URL
-                        const phoneNumber = payload.whatsapp.replace(/^0/, '62'); // Ensure proper format
-                        const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(messageText)}`;
-
-                        // Open in new tab
-                        window.open(whatsappURL, '_blank');
+                        this._messageService.clear();
+                        this._messageService.add({ severity: 'success', summary: 'Berhasil', detail: 'Pesan Whatsapp Berhasil Dikirim' })
                     }
                 })
-
         };
     }
 

@@ -130,6 +130,13 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     value: '',
                 },
                 {
+                    id: 'pelanggan_code',
+                    label: 'Kode Pelanggan',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                },
+                {
                     id: 'email',
                     label: 'Email',
                     required: true,
@@ -161,6 +168,10 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     required: true,
                     type: 'text',
                     value: '',
+                    dropSpecialCharacters: true,
+                    mask: '00-0000-0000',
+                    maskPrefix: '+62-8',
+                    placeholder: 'Masukkan no. wa disini tanpa 628 contoh : 5156781165'
                 },
                 {
                     id: 'whatsapp',
@@ -168,6 +179,10 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     required: true,
                     type: 'text',
                     value: '',
+                    dropSpecialCharacters: true,
+                    mask: '00-0000-0000',
+                    maskPrefix: '+62-8',
+                    placeholder: 'Masukkan no. wa disini tanpa 628 contoh : 5156781165'
                 },
                 {
                     id: 'identity_number',
@@ -175,6 +190,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     required: false,
                     type: 'text',
                     value: '',
+                    mask: '0000-0000-0000-0000',
                 },
                 {
                     id: 'subscribe_start_date',
@@ -199,7 +215,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 },
             ],
             style: 'not_inline',
-            class: 'grid-rows-11 grid-cols-1',
+            class: 'grid-rows-12 grid-cols-1',
             state: 'write',
             defaultValue: null,
         };
@@ -432,10 +448,11 @@ export class PelangganComponent implements OnInit, OnDestroy {
         this.FormState = 'update';
         // ** Set value ke Dynamic form components
         setTimeout(() => {
-            setTimeout(() => {
-                this.FormComps.FormGroup.patchValue(args);
-            }, 500);
-        }, 100);
+            args.phone = args.phone ? args.phone.slice(3) : "";
+            args.whatsapp = args.whatsapp ? args.whatsapp.slice(3) : "";
+
+            this.FormComps.FormGroup.patchValue(args);
+        }, 500);
     }
 
     onToolbarClicked(args: any): void {
@@ -481,6 +498,9 @@ export class PelangganComponent implements OnInit, OnDestroy {
         delete data.id_pelanggan;
         delete data.is_active;
 
+        data.phone = `628${data.phone}`;
+        data.whatsapp = `628${data.whatsapp}`;
+
         this._pelangganService
             .create(data)
             .pipe(takeUntil(this.Destroy$))
@@ -494,6 +514,9 @@ export class PelangganComponent implements OnInit, OnDestroy {
     }
 
     updateData(data: any) {
+        data.phone = `628${data.phone}`;
+        data.whatsapp = `628${data.whatsapp}`;
+
         this._pelangganService
             .update(data)
             .pipe(takeUntil(this.Destroy$))

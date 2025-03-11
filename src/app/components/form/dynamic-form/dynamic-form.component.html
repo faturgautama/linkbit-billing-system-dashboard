@@ -23,7 +23,8 @@
                 class="p-inputtext-sm w-full {{ props.state == 'read' || item.readonly ? 'readonlyState' : '' }}"
                 formControlName="{{ item.id }}" [readonly]="props.state == 'read' || item.readonly "
                 (change)="handleChangeInputText($event, item)" [value]="item.value"
-                placeholder="{{ item.placeholder ? item.placeholder : '' }}" [mask]="item.mask"
+                placeholder="{{ item.placeholder ? item.placeholder : '' }}"
+                [prefix]="item.maskPrefix ? item.maskPrefix: ''" [mask]="item.mask"
                 [dropSpecialCharacters]="item.dropSpecialCharacters ? item.dropSpecialCharacters : false" />
 
             <!-- Textarea -->
