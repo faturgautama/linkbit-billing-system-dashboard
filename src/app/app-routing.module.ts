@@ -57,6 +57,11 @@ const routes: Routes = [
         loadChildren: async () => (await import('./pages/management-user/management-user.routes')).managementUserRoutes
     },
     {
+        path: 'laporan',
+        canActivate: [AuthGuard],
+        loadChildren: async () => (await import('./pages/laporan/laporan.routes')).laporanRoutes
+    },
+    {
         path: '**',
         loadComponent: async () => (await import('./pages/wildcard-not-found/wildcard-not-found.component')).WildcardNotFoundComponent,
         data: {
