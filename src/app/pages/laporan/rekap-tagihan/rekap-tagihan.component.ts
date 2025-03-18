@@ -104,8 +104,13 @@ export class RekapTagihanComponent implements OnInit, OnDestroy {
     }
 
     private getAll(query: LaporanModel.IQueryParamLaporanTagihan) {
+        const queries = {
+            ...query,
+            date: this._utilityService.onFormatDate(new Date(query.date), 'yyyy-MM-DD'),
+        }
+
         this._laporanService
-            .getRekapTagihan(query)
+            .getRekapTagihan(queries)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {

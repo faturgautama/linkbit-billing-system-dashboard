@@ -1,1 +1,6 @@
-<p>detail-pembayaran works!</p>
+<app-dashboard>
+    <div class="grid w-full bg-white rounded-lg shadow-sm p-2">
+        <app-grid [props]="GridProps" (customSearchClicked)="onSearchGrid($event)">
+        </app-grid>
+    </div>
+</app-dashboard>

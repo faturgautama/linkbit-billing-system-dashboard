@@ -33,7 +33,7 @@ export class LaporanService {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/laporan/tagihan-kso-mitra/${periode}`);
     }
 
-    updateTagihanKsoMitra(payload: LaporanModel.IUpdateTagihanKsoMitra): Observable<LaporanModel.GetTagihanKsoMitra> {
-        return this._httpRequestService.putRequest(`${environment.webApiUrl}/laporan/tagihan-kso-mitra`, payload);
+    updateTagihanKsoMitra(id_tagihan_kso: any): Observable<LaporanModel.GetTagihanKsoMitra> {
+        return this._httpRequestService.putRequest(`${environment.webApiUrl}/laporan/tagihan-kso-mitra/update-paid/${id_tagihan_kso}`, null);
     }
 }
