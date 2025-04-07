@@ -105,10 +105,8 @@ export class InvoiceComponent implements OnInit, OnDestroy {
 
     constructor(
         private _messageService: MessageService,
-        private _productService: ProductService,
         private _utilityService: UtilityService,
         private _invoiceService: InvoiceService,
-        private _paymentService: PaymentService,
         private _pelangganService: PelangganService,
         private _confirmationService: ConfirmationService,
         private _settingCompanyService: SettingCompanyService,
@@ -308,7 +306,7 @@ export class InvoiceComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.getAll();
+        this.getAll({ invoice_date: new Date() });
         this.getAllPelanggan();
         this.getSettingCompany();
     }

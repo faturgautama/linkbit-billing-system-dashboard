@@ -12,10 +12,12 @@ import { FormModel } from 'src/app/model/components/form.model';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
+import { InvoiceService } from 'src/app/services/invoice/invoice.service';
 import { PelangganService } from 'src/app/services/pelanggan/pelanggan.service';
 import { GroupPelangganService } from 'src/app/services/setup-data/group-pelanggan.service';
 import { ProductService } from 'src/app/services/setup-data/product.service';
 import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
+import { UtilityService } from 'src/app/services/utility/utility.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -61,7 +63,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
-        toolbar: ['Delete', 'Layanan', 'Detail'],
+        toolbar: ['Delete', 'Produk Layanan', 'Detail'],
         showPaging: true,
         showSearch: true,
         showSort: false,
@@ -76,6 +78,24 @@ export class PelangganComponent implements OnInit, OnDestroy {
     FormProps: FormModel.IForm;
     @ViewChild('FormComps') FormComps!: DynamicFormComponent;
 
+    GridHistoryTagihanProps: GridModel.IGrid = {
+        id: 'GridHistoryTagihan',
+        column: [
+            { field: 'invoice_number', headerName: 'No. Tagihan', class: 'font-semibold text-sky-500' },
+            { field: 'invoice_date', headerName: 'Tagihan Bulan', },
+            { field: 'product_name', headerName: 'Produk', },
+            { field: 'total', headerName: 'Subtotal', format: 'currency', class: 'text-end' },
+            { field: 'invoice_status', headerName: 'Status', class: 'text-center' },
+        ],
+        dataSource: [],
+        height: "calc(100vh - 14.5rem)",
+        showPaging: false,
+        showSearch: false,
+        showSort: false,
+        searchKeyword: 'role',
+        searchPlaceholder: 'Find Role Name Here',
+    };
+
     FormProductPelangganProps: FormModel.IForm;
     @ViewChild('FormProductPelangganComps') FormProductPelangganComps!: DynamicFormComponent;
 
@@ -84,6 +104,8 @@ export class PelangganComponent implements OnInit, OnDestroy {
     constructor(
         private _productService: ProductService,
         private _messageService: MessageService,
+        private _invoiceService: InvoiceService,
+        private _utilityService: UtilityService,
         private _pelangganService: PelangganService,
         private _confirmationService: ConfirmationService,
         private _authenticationService: AuthenticationService,
@@ -165,13 +187,13 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 {
                     id: 'phone',
                     label: 'No. Handphone',
-                    required: true,
+                    required: false,
                     type: 'text',
                     value: '',
                     dropSpecialCharacters: true,
                     mask: '00-0000-0000',
                     maskPrefix: '+62-8',
-                    placeholder: 'Masukkan no. wa disini tanpa 628 contoh : 5156781165'
+                    placeholder: 'Masukkan no. hp disini tanpa 628 contoh : 5156781165'
                 },
                 {
                     id: 'whatsapp',
@@ -197,7 +219,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     label: 'Tgl. Pemasangan',
                     required: true,
                     type: 'date',
-                    value: '',
+                    value: new Date(),
                 },
                 {
                     id: 'pic_name',
@@ -215,7 +237,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 },
             ],
             style: 'not_inline',
-            class: 'grid-rows-12 grid-cols-1',
+            class: 'grid-rows-6 grid-cols-2',
             state: 'write',
             defaultValue: null,
         };
@@ -366,6 +388,22 @@ export class PelangganComponent implements OnInit, OnDestroy {
             });
     }
 
+    private getAllInvoice(query?: any) {
+        this._invoiceService
+            .getAll(query)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result) {
+                    this.GridHistoryTagihanProps.dataSource = result.data.map((item: any) => {
+                        return {
+                            ...item,
+                            invoice_date: this._utilityService.onFormatDate(new Date(item.invoice_date), 'MMMM yyyy')
+                        }
+                    });
+                }
+            });
+    }
+
     private getAllGroupPelanggan() {
         this._groupPelangganService
             .getAll()
@@ -416,7 +454,11 @@ export class PelangganComponent implements OnInit, OnDestroy {
             this.ButtonNavigation = [];
 
             setTimeout(() => {
-                if (this.UserData) this.FormComps.FormGroup.get('id_setting_company')?.setValue(this.UserData.id_setting_company);
+                if (this.UserData) {
+                    this.FormComps.FormGroup.get('id_setting_company')?.setValue(this.UserData.id_setting_company);
+                }
+
+                this.FormComps.FormGroup.get('subscribe_start_date')?.setValue(new Date());
             }, 500);
         };
     }
@@ -446,12 +488,14 @@ export class PelangganComponent implements OnInit, OnDestroy {
     onRowDoubleClicked(args: any): void {
         this.PageState = 'form';
         this.FormState = 'update';
+        this.ButtonNavigation = [];
         // ** Set value ke Dynamic form components
         setTimeout(() => {
             args.phone = args.phone ? args.phone.slice(3) : "";
             args.whatsapp = args.whatsapp ? args.whatsapp.slice(3) : "";
-
+            args.subscribe_start_date = new Date(args.subscribe_start_date);
             this.FormComps.FormGroup.patchValue(args);
+            this.getAllInvoice({ id_pelanggan: args.id_pelanggan });
         }, 500);
     }
 
@@ -475,17 +519,18 @@ export class PelangganComponent implements OnInit, OnDestroy {
         }
 
         if (args.type == 'detail') {
+            this.ButtonNavigation = [];
             this.onRowDoubleClicked(args.data);
         }
 
-        if (args.type == 'layanan') {
+        if (args.type == 'produk layanan') {
             this.ShowDialogProduct = true;
 
             setTimeout(() => {
                 this.FormProductPelangganComps.FormGroup.patchValue({
                     id_pelanggan: args.data.id_pelanggan,
                     id_product: args.data.product_id,
-                    start_date: new Date(args.data.product_start_date),
+                    start_date: args.data.product_start_date ? new Date(args.data.product_start_date) : new Date(),
                     price: args.data.product_price,
                     days_before_send_invoice: args.data.product_days_before_send_invoice,
                     invoice_cycle: args.data.product_invoice_cycle,

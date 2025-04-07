@@ -171,6 +171,9 @@
 
             <p-button *ngIf="GridSelectedData?.status_bayar == 'PENDING'" label="Ubah Status Menjadi Terbayar"
                 styleClass="p-button-sm" severity="warning" (onClick)="handleChangeStatus(GridSelectedData)" />
+
+            <p-button *ngIf="GridSelectedData?.status_bayar == 'PAID'" label="Ubah Status Menjadi Pending"
+                styleClass="p-button-sm" severity="warning" (onClick)="handleChangeStatus(GridSelectedData)" />
         </div>
     </p-dialog>
 </app-dashboard>

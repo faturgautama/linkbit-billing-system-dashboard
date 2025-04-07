@@ -309,6 +309,7 @@ export class SetupUserComponent implements OnInit, OnDestroy {
     onRowDoubleClicked(args: any): void {
         this.PageState = 'form';
         this.FormState = 'update';
+        this.ButtonNavigation = [];
         // ** Set value ke Dynamic form components
         setTimeout(() => {
             setTimeout(() => {
@@ -377,7 +378,7 @@ export class SetupUserComponent implements OnInit, OnDestroy {
                 if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
-                    this.handleBackToList();
+                    this.getAll();
                 }
             })
     }

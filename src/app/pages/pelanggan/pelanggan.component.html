@@ -8,22 +8,32 @@
     </div>
 
     <!-- Form -->
-    <div *ngIf="PageState == 'form'" class="flex flex-col w-6/12 p-3 bg-white rounded-lg shadow-sm">
-        <div class="grid w-full">
+    <div *ngIf="PageState == 'form'" class="flex flex-col w-10/12 gap-3">
+        <div class="grid w-full p-3 bg-white rounded-lg shadow-sm">
             <app-dynamic-form #FormComps [props]="FormProps"></app-dynamic-form>
+
+            <div class="flex w-full justify-end mt-4 gap-4">
+                <p-button severity="secondary" label="Back" styleClass="p-button-sm" (onClick)="handleBackToList()">
+                </p-button>
+
+                <p-button *ngIf="FormState == 'insert'" severity="info" label="Save" styleClass="p-button-sm text-white"
+                    (onClick)="saveData(FormComps.FormGroup.value)">
+                </p-button>
+
+                <p-button *ngIf="FormState == 'update'" severity="warning" label="Update" styleClass="p-button-sm"
+                    (onClick)="updateData(FormComps.FormGroup.value)">
+                </p-button>
+            </div>
         </div>
 
-        <div class="flex w-full justify-end mt-4 gap-4">
-            <p-button severity="secondary" label="Back" styleClass="p-button-sm" (onClick)="handleBackToList()">
-            </p-button>
-
-            <p-button *ngIf="FormState == 'insert'" severity="info" label="Save" styleClass="p-button-sm text-white"
-                (onClick)="saveData(FormComps.FormGroup.value)">
-            </p-button>
-
-            <p-button *ngIf="FormState == 'update'" severity="warning" label="Update" styleClass="p-button-sm"
-                (onClick)="updateData(FormComps.FormGroup.value)">
-            </p-button>
+        <div *ngIf="FormState == 'update'" class="grid w-full bg-white rounded-lg shadow-sm p-3">
+            <p class="text-base font-medium text-gray-700">
+                History Tagihan
+            </p>
+            <p class="text-xs text-gray-600 mb-3 pb-3 border-b border-t-0 border-x-0 border-dashed border-gray-300">
+                Riwayat tagihan pelanggan
+            </p>
+            <app-grid [props]="GridHistoryTagihanProps"> </app-grid>
         </div>
     </div>
 
@@ -43,7 +53,6 @@
                 (onClick)="handleUpdateProductPelanggan(FormProductPelangganComps.FormGroup.value)" />
         </ng-template>
     </p-dialog>
-
 
     <p-confirmDialog />
 </app-dashboard>

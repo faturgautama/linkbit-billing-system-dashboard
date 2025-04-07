@@ -277,6 +277,6 @@ export class HttpRequestService {
     private handlingError(error: HttpErrorResponse): void {
         this._utilityService.ShowLoading$.next(false);
         this._messageService.clear();
-        this._messageService.add({ severity: 'error', summary: error.statusText, detail: error.error.message.message })
+        this._messageService.add({ severity: 'error', summary: error.statusText, detail: error.error.message })
     }
 }
