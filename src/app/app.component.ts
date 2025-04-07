@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthenticationService } from './services/authentication/authentication.service';
@@ -21,8 +21,11 @@ export class AppComponent implements OnInit, OnDestroy {
         private _store: Store,
         private _router: Router,
         private _renderer: Renderer2,
+        private _activatedRoute: ActivatedRoute,
         private _authenticationService: AuthenticationService,
-    ) { }
+    ) {
+
+    }
 
     ngOnInit(): void {
         const isUserLoggedIn = this._authenticationService.getUserData();

@@ -47,7 +47,14 @@ export class BerandaComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
+        const isUserLoggedIn = this._authenticationService.getUserData();
+
+        if (Object.keys(isUserLoggedIn).length) {
+            this._authenticationService.setMenu(isUserLoggedIn.id_user_group);
+        }
+
         this.getDashboard();
+
     }
 
     ngOnDestroy(): void {
