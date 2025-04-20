@@ -47,4 +47,8 @@ export class PaymentService {
     update(payload: PaymentModel.UpdatePayment): Observable<HttpBaseResponse> {
         return this._httpRequestService.putRequest(`${environment.webApiUrl}/payment/edit-payment`, payload);
     }
+
+    sendMessage(id_payment: number): Observable<HttpBaseResponse> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/payment/send-message/${id_payment}`);
+    }
 }

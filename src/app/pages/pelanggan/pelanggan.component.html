@@ -33,7 +33,8 @@
             <p class="text-xs text-gray-600 mb-3 pb-3 border-b border-t-0 border-x-0 border-dashed border-gray-300">
                 Riwayat tagihan pelanggan
             </p>
-            <app-grid [props]="GridHistoryTagihanProps"> </app-grid>
+            <app-grid [props]="GridHistoryTagihanProps" (aksiClicked)="onToolbarClickedHistoryInvoice($event)">
+            </app-grid>
         </div>
     </div>
 

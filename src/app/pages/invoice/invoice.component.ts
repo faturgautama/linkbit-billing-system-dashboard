@@ -107,6 +107,7 @@ export class InvoiceComponent implements OnInit, OnDestroy {
         private _messageService: MessageService,
         private _utilityService: UtilityService,
         private _invoiceService: InvoiceService,
+        private _paymentService: PaymentService,
         private _pelangganService: PelangganService,
         private _confirmationService: ConfirmationService,
         private _settingCompanyService: SettingCompanyService,
@@ -456,39 +457,6 @@ export class InvoiceComponent implements OnInit, OnDestroy {
         }
 
         if (args.type == 'kirim pesan tagihan') {
-            // this._paymentService
-            //     .getCheckoutUrl(args.data.id_invoice)
-            //     .pipe(takeUntil(this.Destroy$))
-            //     .subscribe((result) => {
-            //         if (result.status) {
-            //             const payload = {
-            //                 ...args.data,
-            //                 invoice_date: this._utilityService.onFormatDate(new Date(args.data.invoice_date), 'yyyy-MM-DD'),
-            //                 checkout_url: result.data,
-            //                 total: formatCurrency(args.data.total, 'EN', 'Rp. ')
-            //             };
-
-            //             const template = this.SettingCompany.tagihan_pesan_invoice;
-            //             const newTemplate = template.replace(/\${(.*?)}/g, (_, key) => payload[key.trim()] || "");
-
-            //             // Remove HTML tags and replace `<br>` with newlines
-            //             const messageText = newTemplate
-            //                 .replace(/<\/?p>/g, '\n') // Convert paragraphs to new lines
-            //                 .replace(/<\/?[^>]+(>|$)/g, "") // Remove any remaining HTML tags
-            //                 .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces with normal spaces
-            //                 .replace(/&gt;/g, '>') // Replace `&gt;` with `>`
-            //                 .replace(/&lt;/g, '<') // Replace `&lt;` with `<`
-            //                 .replace(/&amp;/g, '&'); // Replace `&amp;` with `&`
-
-            //             // Format WhatsApp URL
-            //             const phoneNumber = payload.whatsapp.replace(/^0/, '62'); // Ensure proper format
-            //             const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(messageText)}`;
-
-            //             // Open in new tab
-            //             window.open(whatsappURL, '_blank');
-            //         }
-            //     })
-
             this._invoiceService
                 .sendMessage(args.data.id_invoice)
                 .pipe(takeUntil(this.Destroy$))
@@ -498,6 +466,23 @@ export class InvoiceComponent implements OnInit, OnDestroy {
                         this._messageService.add({ severity: 'success', summary: 'Berhasil', detail: 'Pesan Whatsapp Berhasil Dikirim' })
                     }
                 })
+        };
+
+        if (args.type == 'kirim pesan lunas') {
+            if (args.data.id_payment) {
+                this._paymentService
+                    .sendMessage(args.data.id_payment)
+                    .pipe(takeUntil(this.Destroy$))
+                    .subscribe((result) => {
+                        if (result.status) {
+                            this._messageService.clear();
+                            this._messageService.add({ severity: 'success', summary: 'Berhasil', detail: 'Pesan Whatsapp Berhasil Dikirim' })
+                        }
+                    })
+            } else {
+                this._messageService.clear();
+                this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Tagihan Belum Dibayarkan' })
+            }
         };
     }
 

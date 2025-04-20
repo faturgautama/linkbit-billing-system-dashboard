@@ -50,6 +50,8 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
     FormPaymentGatewayProps: FormModel.IForm;
     @ViewChild('FormPaymentGatewayComps') FormPaymentGatewayComps!: DynamicFormComponent;
 
+    IsMitra = false;
+
     constructor(
         private _messageService: MessageService,
         private _confirmationService: ConfirmationService,
@@ -153,6 +155,13 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     required: true,
                     type: 'text',
                     textareaRow: 4,
+                    value: '',
+                },
+                {
+                    id: 'api_key_wa',
+                    label: 'API Key WA',
+                    required: true,
+                    type: 'text',
                     value: '',
                 },
             ],
@@ -284,6 +293,7 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result.status) {
+                    this.IsMitra = result.data.is_mitra;
                     this.FormComps.FormGroup.patchValue(result.data);
                     this.FormTagihanComps.FormGroup.patchValue(result.data);
                     this.FormPaymentGatewayComps.FormGroup.patchValue(result.data);

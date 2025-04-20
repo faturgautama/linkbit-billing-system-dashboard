@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -13,6 +13,7 @@ import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { InvoiceService } from 'src/app/services/invoice/invoice.service';
+import { PaymentService } from 'src/app/services/payment/payment.service';
 import { PelangganService } from 'src/app/services/pelanggan/pelanggan.service';
 import { GroupPelangganService } from 'src/app/services/setup-data/group-pelanggan.service';
 import { ProductService } from 'src/app/services/setup-data/product.service';
@@ -63,7 +64,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
-        toolbar: ['Delete', 'Produk Layanan', 'Detail'],
+        toolbar: ['Delete', 'Detail', 'Produk Layanan'],
         showPaging: true,
         showSearch: true,
         showSort: false,
@@ -86,9 +87,11 @@ export class PelangganComponent implements OnInit, OnDestroy {
             { field: 'product_name', headerName: 'Produk', },
             { field: 'total', headerName: 'Subtotal', format: 'currency', class: 'text-end' },
             { field: 'invoice_status', headerName: 'Status', class: 'text-center' },
+            { field: 'payment_date', headerName: 'Tgl. Bayar', format: 'date' },
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
+        toolbar: ['Delete', 'Detail', 'Kirim Pesan Tagihan', 'Kirim Pesan Lunas'],
         showPaging: false,
         showSearch: false,
         showSort: false,
@@ -106,6 +109,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
         private _messageService: MessageService,
         private _invoiceService: InvoiceService,
         private _utilityService: UtilityService,
+        private _paymentService: PaymentService,
         private _pelangganService: PelangganService,
         private _confirmationService: ConfirmationService,
         private _authenticationService: AuthenticationService,
@@ -375,7 +379,13 @@ export class PelangganComponent implements OnInit, OnDestroy {
 
     private getAll(query?: any) {
         if (this.UserData.company_type != 'KANTOR PUSAT') {
-            query.id_setting_company = this.UserData.id_setting_company;
+            if (query && Object.keys(query).length) {
+                query.id_setting_company = this.UserData.id_setting_company;
+            } else {
+                query = {
+                    id_setting_company: this.UserData.id_setting_company
+                }
+            }
         };
 
         this._pelangganService
@@ -559,19 +569,33 @@ export class PelangganComponent implements OnInit, OnDestroy {
     }
 
     updateData(data: any) {
-        data.phone = `628${data.phone}`;
-        data.whatsapp = `628${data.whatsapp}`;
+        this._confirmationService.confirm({
+            target: (<any>event).target as EventTarget,
+            message: 'Data will be updated',
+            header: 'Are you sure?',
+            icon: 'pi pi-info-circle',
+            acceptButtonStyleClass: "p-button-warning p-button-sm",
+            rejectButtonStyleClass: "p-button-secondary p-button-sm",
+            acceptIcon: "none",
+            acceptLabel: 'Yes, sure',
+            rejectIcon: "none",
+            rejectLabel: 'No, back',
+            accept: () => {
+                data.phone = `628${data.phone}`;
+                data.whatsapp = `628${data.whatsapp}`;
 
-        this._pelangganService
-            .update(data)
-            .pipe(takeUntil(this.Destroy$))
-            .subscribe((result) => {
-                if (result.status) {
-                    this._messageService.clear();
-                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
-                    this.handleBackToList();
-                }
-            })
+                this._pelangganService
+                    .update(data)
+                    .pipe(takeUntil(this.Destroy$))
+                    .subscribe((result) => {
+                        if (result.status) {
+                            this._messageService.clear();
+                            this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
+                            this.handleBackToList();
+                        }
+                    })
+            }
+        });
     }
 
     private deleteData(data: any) {
@@ -601,4 +625,56 @@ export class PelangganComponent implements OnInit, OnDestroy {
             })
     }
 
+    onToolbarClickedHistoryInvoice(args: any): void {
+        if (args.type == 'delete') {
+            this._confirmationService.confirm({
+                target: (<any>event).target as EventTarget,
+                message: 'Deleted data can not be reverted',
+                header: 'Are you sure?',
+                icon: 'pi pi-info-circle',
+                acceptButtonStyleClass: "p-button-danger p-button-sm",
+                rejectButtonStyleClass: "p-button-secondary p-button-sm",
+                acceptIcon: "none",
+                acceptLabel: 'Yes, sure',
+                rejectIcon: "none",
+                rejectLabel: 'No, back',
+                accept: () => {
+                    this.deleteData(args.data);
+                }
+            });
+        }
+
+        if (args.type == 'detail') {
+            this.onRowDoubleClicked(args.data);
+        }
+
+        if (args.type == 'kirim pesan tagihan') {
+            this._invoiceService
+                .sendMessage(args.data.id_invoice)
+                .pipe(takeUntil(this.Destroy$))
+                .subscribe((result) => {
+                    if (result.status) {
+                        this._messageService.clear();
+                        this._messageService.add({ severity: 'success', summary: 'Berhasil', detail: 'Pesan Whatsapp Berhasil Dikirim' })
+                    }
+                })
+        };
+
+        if (args.type == 'kirim pesan lunas') {
+            if (args.data.id_payment) {
+                this._paymentService
+                    .sendMessage(args.data.id_payment)
+                    .pipe(takeUntil(this.Destroy$))
+                    .subscribe((result) => {
+                        if (result.status) {
+                            this._messageService.clear();
+                            this._messageService.add({ severity: 'success', summary: 'Berhasil', detail: 'Pesan Whatsapp Berhasil Dikirim' })
+                        }
+                    })
+            } else {
+                this._messageService.clear();
+                this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Tagihan Belum Dibayarkan' })
+            }
+        };
+    }
 }
