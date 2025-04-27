@@ -1,5 +1,6 @@
 import { CommonModule, formatCurrency } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -33,9 +34,13 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
     templateUrl: './invoice.component.html',
     styleUrl: './invoice.component.scss'
 })
-export class InvoiceComponent implements OnInit, OnDestroy {
+export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
 
     Destroy$ = new Subject();
+
+    FromPelanggan = false;
+
+    QueryParams: any = null;
 
     PageState: 'list' | 'form' = 'list';
 
@@ -104,6 +109,8 @@ export class InvoiceComponent implements OnInit, OnDestroy {
     @ViewChild('FormComps') FormComps!: DynamicFormComponent;
 
     constructor(
+        private _router: Router,
+        private _activatedRoute: ActivatedRoute,
         private _messageService: MessageService,
         private _utilityService: UtilityService,
         private _invoiceService: InvoiceService,
@@ -312,9 +319,41 @@ export class InvoiceComponent implements OnInit, OnDestroy {
         this.getSettingCompany();
     }
 
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.checkQueryParams();
+        }, 100);
+    }
+
     ngOnDestroy(): void {
         this.Destroy$.next(0);
         this.Destroy$.complete();
+    }
+
+    private checkQueryParams() {
+        const queryParams = this._activatedRoute.snapshot.queryParams;
+        if (queryParams) {
+            this.FromPelanggan = true;
+            this.QueryParams = queryParams;
+
+            if (queryParams['state'] == 'add') {
+                this.PageState = 'form';
+                this.ButtonNavigation = [];
+            }
+
+            if (queryParams['state'] == 'edit') {
+                this._invoiceService
+                    .getById(queryParams['id_invoice'])
+                    .pipe(takeUntil(this.Destroy$))
+                    .subscribe((result) => {
+                        if (result.status) {
+                            this.onRowDoubleClicked(result.data);
+                        }
+                    })
+            }
+        } else {
+            this.FromPelanggan = false;
+        }
     }
 
     private getAll(query?: any) {
@@ -341,6 +380,15 @@ export class InvoiceComponent implements OnInit, OnDestroy {
                 if (result) {
                     const index = this.FormProps.fields.findIndex(item => item.id == 'id_pelanggan')
                     this.FormProps.fields[index].dropdownProps.options = result.data;
+
+                    this._activatedRoute
+                        .queryParams
+                        .pipe(takeUntil(this.Destroy$))
+                        .subscribe((result) => {
+                            if (result && result['state'] == 'add') {
+                                this.FormComps.FormGroup.get('id_pelanggan')?.setValue(parseInt(result['id_pelanggan']));
+                            };
+                        });
                 }
             });
     }
@@ -398,21 +446,26 @@ export class InvoiceComponent implements OnInit, OnDestroy {
     }
 
     handleBackToList() {
-        this.FormComps.onResetForm();
+        if (this.FromPelanggan) {
+            this._router.navigateByUrl(`/pelanggan?id_pelanggan=${this.QueryParams.id_pelanggan || this.FormComps.FormGroup.get('id_pelanggan')?.value}`);
+        } else {
+            this.FormComps.onResetForm();
 
-        setTimeout(() => {
-            this.PageState = 'list';
-            this.FormState = 'insert';
-            this.ButtonNavigation = [
-                {
-                    id: 'add',
-                    title: 'Add',
-                    icon: 'pi pi-plus'
-                }
-            ];
+            setTimeout(() => {
+                this.PageState = 'list';
+                this.FormState = 'insert';
+                this.ButtonNavigation = [
+                    {
+                        id: 'add',
+                        title: 'Add',
+                        icon: 'pi pi-plus'
+                    }
+                ];
 
-            this.getAll();
-        }, 100);
+                this.getAll();
+            }, 100);
+        }
+
     }
 
     onCellClicked(args: any): void {

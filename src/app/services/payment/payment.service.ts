@@ -51,4 +51,12 @@ export class PaymentService {
     sendMessage(id_payment: number): Observable<HttpBaseResponse> {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/payment/send-message/${id_payment}`);
     }
+
+    createPaymentCash(payload: any): Observable<HttpBaseResponse> {
+        return this._httpRequestService.postRequest(`${environment.webApiUrl}/payment/create-payment-cash`, payload);
+    }
+
+    cancel(id_payment: number): Observable<HttpBaseResponse> {
+        return this._httpRequestService.putRequest(`${environment.webApiUrl}/payment/cancel/${id_payment}`, null);
+    }
 }

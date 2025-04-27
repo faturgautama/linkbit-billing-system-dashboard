@@ -8,9 +8,13 @@
     </div>
 
     <!-- Form -->
-    <div *ngIf="PageState == 'form'" class="flex flex-col w-6/12 p-3 bg-white rounded-lg shadow-sm">
+    <div *ngIf="PageState == 'form'" class="flex flex-col w-8/12 p-3 bg-white rounded-lg shadow-sm">
         <div class="grid w-full">
+            @if(FormState == 'detail') {
+            <app-dynamic-form #FormDetailComps [props]="FormDetailProps"></app-dynamic-form>
+            } @else {
             <app-dynamic-form #FormComps [props]="FormProps"></app-dynamic-form>
+            }
         </div>
 
         <div class="flex w-full justify-end mt-4 gap-4">

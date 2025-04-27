@@ -100,45 +100,8 @@ export class GridComponent implements OnInit, AfterViewInit {
 
         if (this.props.toolbar?.length) {
             this.props.toolbar.forEach((item) => {
-                let icon = "";
-
-                switch (item) {
-                    case 'Add':
-                        icon = 'pi pi-plus';
-                        break;
-                    case 'Edit':
-                        icon = 'pi pi-file-edit';
-                        break;
-                    case 'Delete':
-                        icon = 'pi pi-trash';
-                        break;
-                    case 'Change Status':
-                        icon = 'pi pi-sync';
-                        break;
-                    case 'Detail':
-                        icon = 'pi pi-info-circle';
-                        break;
-                    case 'Produk Layanan':
-                        icon = 'pi pi-user-edit';
-                        break;
-                    case 'Kirim Pesan Tagihan':
-                        icon = 'pi pi-whatsapp';
-                        break;
-                    case 'Kirim Pesan Lunas':
-                        icon = 'pi pi-send';
-                        break;
-                    case 'Payment':
-                        icon = 'pi pi-credit-card';
-                        break;
-                    default:
-                        break;
-                }
-
-                this.gridToolbar.push({
-                    id: item.toLowerCase(),
-                    title: item,
-                    icon: icon
-                });
+                const toolbar = this.renderToolbarAction(item);
+                this.gridToolbar.push(toolbar);
             });
         };
 
@@ -146,6 +109,51 @@ export class GridComponent implements OnInit, AfterViewInit {
             this.gridDatasource = [...this.props.dataSource];
         }, 1000);
 
+    }
+
+    private renderToolbarAction(type: string) {
+        let icon = "";
+
+        switch (type) {
+            case 'Add':
+                icon = 'pi pi-plus';
+                break;
+            case 'Edit':
+                icon = 'pi pi-file-edit';
+                break;
+            case 'Delete':
+                icon = 'pi pi-trash';
+                break;
+            case 'Cancel':
+                icon = 'pi pi-times';
+                break;
+            case 'Change Status':
+                icon = 'pi pi-sync';
+                break;
+            case 'Detail':
+                icon = 'pi pi-info-circle';
+                break;
+            case 'Produk Layanan':
+                icon = 'pi pi-user-edit';
+                break;
+            case 'Kirim Pesan Tagihan':
+                icon = 'pi pi-whatsapp';
+                break;
+            case 'Kirim Pesan Lunas':
+                icon = 'pi pi-send';
+                break;
+            case 'Payment':
+                icon = 'pi pi-credit-card';
+                break;
+            default:
+                break;
+        }
+
+        return {
+            id: type.toLowerCase(),
+            title: type,
+            icon: icon
+        }
     }
 
     onCellClicked(args: any): void {
@@ -186,7 +194,6 @@ export class GridComponent implements OnInit, AfterViewInit {
             this.props.dataSource = originalDataSource;
         }
     }
-
 
     onAksiClicked(type: string, data: any) {
         this.aksiClicked.emit({ type: type, data: data });

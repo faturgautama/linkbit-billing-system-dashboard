@@ -48,6 +48,30 @@ export class HttpRequestService {
     }
 
     /**
+     * @description Get File Request Method
+     * @param url 
+     * @param queryString 
+     * @returns Observable<HttpBaseResponse>
+    */
+    getFileRequest(url: string) {
+        this._utilityService.ShowLoading$.next(true);
+
+        this._httpClient
+            .get(url, { responseType: 'blob' })
+            .subscribe((blob) => {
+                this._utilityService.ShowLoading$.next(false);
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'pelanggan_import_template.xlsx'; // <- file name
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            })
+    }
+
+    /**
      * @description Get Request Method
      * @param url 
      * @param queryString 
@@ -79,14 +103,16 @@ export class HttpRequestService {
      * @param showSuccessNotif -> (Optional) jika ingin menampilkan notification success
      * @returns Observable<HttpBaseResponse>
     */
-    postRequest(url: string, data: any, showSuccessNotif?: boolean): Observable<HttpBaseResponse> {
+    postRequest(url: string, data: any, showSuccessNotif?: boolean, isFormData?: boolean): Observable<HttpBaseResponse> {
         this._utilityService.ShowLoading$.next(true);
 
-        for (const item in data) {
-            if (item.includes('tanggal') || item.includes('tgl') || item.includes('tangal')) {
-                data[item] = this._utilityService.onFormatDate(data[item], 'yyyy-MM-DD HH:mm:ss')
-            }
-        };
+        if (!isFormData) {
+            for (const item in data) {
+                if (item.includes('tanggal') || item.includes('tgl') || item.includes('tangal')) {
+                    data[item] = this._utilityService.onFormatDate(data[item], 'yyyy-MM-DD HH:mm:ss')
+                }
+            };
+        }
 
         return this._httpClient.post<HttpBaseResponse>(url, data)
             .pipe(

@@ -1,6 +1,6 @@
 import { CommonModule, formatCurrency } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Subject, takeUntil } from 'rxjs';
@@ -10,8 +10,9 @@ import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboar
 import { FormModel } from 'src/app/model/components/form.model';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
-import { SettingCompanyModel } from 'src/app/model/pages/setup-data/setting-company.model';
+import { InvoiceService } from 'src/app/services/invoice/invoice.service';
 import { PaymentService } from 'src/app/services/payment/payment.service';
+import { PelangganService } from 'src/app/services/pelanggan/pelanggan.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
@@ -37,7 +38,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     ButtonNavigation: LayoutModel.IButtonNavigation[] = [
         {
             id: 'add',
-            title: 'Add',
+            title: 'Add Payment Cash',
             icon: 'pi pi-plus'
         }
     ];
@@ -57,7 +58,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
-        toolbar: ['Detail'],
+        toolbar: ['Detail', 'Edit', 'Cancel'],
         showPaging: true,
         showSearch: true,
         showSort: false,
@@ -78,69 +79,78 @@ export class PaymentComponent implements OnInit, OnDestroy {
         ],
     };
     GridSelectedData: any;
+    GridQueryParams: any;
 
-    FormState: 'insert' | 'update' = 'insert';
+    FormState: 'insert' | 'update' | 'detail' = 'insert';
     FormProps: FormModel.IForm;
     @ViewChild('FormComps') FormComps!: DynamicFormComponent;
+
+    FormDetailProps: FormModel.IForm;
+    @ViewChild('FormDetailComps') FormDetailComps!: DynamicFormComponent;
 
     constructor(
         private _messageService: MessageService,
         private _paymentService: PaymentService,
         private _utilityService: UtilityService,
+        private _invoiceService: InvoiceService,
+        private _pelangganService: PelangganService,
+        private _confirmationService: ConfirmationService,
     ) {
         this.FormProps = {
             id: 'form_tagihan',
             fields: [
                 {
-                    id: 'id_invoice',
-                    label: 'Id Invoice',
-                    required: true,
-                    type: 'text',
-                    value: '',
-                    hidden: true
-                },
-                {
-                    id: 'id_pelanggan_product',
-                    label: 'Id Pelanggan Product',
-                    required: true,
-                    type: 'text',
-                    value: '',
-                    hidden: true
-                },
-                {
-                    id: 'id_product',
-                    label: 'Id Product',
-                    required: true,
-                    type: 'text',
-                    value: '',
-                    hidden: true
-                },
-                {
-                    id: 'product_name',
-                    label: 'Product Name',
-                    required: true,
-                    type: 'text',
-                    value: '',
-                    hidden: true
-                },
-                {
                     id: 'id_pelanggan',
-                    label: 'Pelanggan',
+                    label: 'Pilih Pelanggan',
                     required: true,
                     type: 'select',
+                    value: '',
                     dropdownProps: {
                         options: [],
                         optionName: 'full_name',
                         optionValue: 'id_pelanggan'
                     },
+                    onChange: (args: any) => {
+                        if (args) {
+                            this.getAllInvoice(args.id_pelanggan);
+                        }
+                    }
+                },
+                {
+                    id: 'id_invoice',
+                    label: 'Pilih Invoice',
+                    required: true,
+                    type: 'select',
                     value: '',
+                    dropdownProps: {
+                        options: [],
+                        optionName: 'invoice_number',
+                        optionValue: 'id_invoice',
+                        customField: {
+                            title: 'invoice_number',
+                            subtitle: 'product_name',
+                            description: 'notes'
+                        }
+                    },
+                    onChange: (args: any) => {
+                        if (args) {
+                            const payload = {
+                                invoice_date: this._utilityService.onFormatDate(new Date(args.invoice_date), 'MMM yyyy'),
+                                due_date: this._utilityService.onFormatDate(new Date(args.due_date), 'DD-MM-yyyy'),
+                                product_name: args.product_name,
+                                total: formatCurrency(args.total, 'EN', 'Rp. '),
+                            };
+                            this.FormComps.FormGroup.patchValue(payload);
+                        }
+                    }
                 },
                 {
                     id: 'invoice_date',
                     label: 'Tagihan Bulan',
                     required: true,
-                    type: 'monthpicker',
+                    type: 'text',
                     value: '',
+                    readonly: true
                 },
                 {
                     id: 'due_date',
@@ -159,74 +169,112 @@ export class PaymentComponent implements OnInit, OnDestroy {
                     readonly: true
                 },
                 {
-                    id: 'notes',
-                    label: 'Tagihan',
-                    required: true,
-                    type: 'text',
-                    value: '',
-                    readonly: true
-                },
-                {
-                    id: 'price',
-                    label: 'Harga',
-                    required: true,
-                    type: 'number',
-                    value: '',
-                    readonly: true
-                },
-                {
-                    id: 'diskon_percentage',
-                    label: 'Diskon (%)',
-                    required: false,
-                    type: 'number',
-                    value: 0,
-                },
-                {
-                    id: 'diskon_rupiah',
-                    label: 'Diskon (Rp. )',
-                    required: false,
-                    type: 'number',
-                    value: 0,
-                },
-                {
-                    id: 'pajak',
-                    label: 'Pajak',
-                    required: false,
-                    type: 'number',
-                    value: 0,
-                },
-                {
-                    id: 'admin_fee',
-                    label: 'Biaya Admin',
-                    required: false,
-                    type: 'number',
-                    value: 0,
-                },
-                {
                     id: 'total',
-                    label: 'Subtotal',
-                    required: false,
-                    type: 'number',
-                    value: 0,
-                    readonly: true
-                },
-                {
-                    id: 'unique_code',
-                    label: 'Kode Unik',
+                    label: 'Sub Total',
                     required: false,
                     type: 'text',
                     value: '',
+                    readonly: true
+                },
+                {
+                    id: 'payment_date',
+                    label: 'Tgl. Pembayaran',
+                    required: true,
+                    type: 'date',
+                    value: "",
+                },
+                {
+                    id: 'payment_amount',
+                    label: 'Jumlah Pembayaran',
+                    required: true,
+                    type: 'number',
+                    value: 0,
                 },
             ],
             style: 'not_inline',
-            class: 'grid-rows-12 grid-cols-1',
+            class: 'grid-rows-4 grid-cols-2',
+            state: 'write',
+            defaultValue: null,
+        };
+
+        this.FormDetailProps = {
+            id: 'form_tagihan_edit',
+            fields: [
+                {
+                    id: 'full_name',
+                    label: 'Nama Pelanggan',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    readonly: true
+                },
+                {
+                    id: 'invoice_number',
+                    label: 'No. Invoice',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    readonly: true
+                },
+                {
+                    id: 'invoice_date',
+                    label: 'Tagihan Bulan',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    readonly: true
+                },
+                {
+                    id: 'due_date',
+                    label: 'Tgl. Jatuh Tempo',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    readonly: true
+                },
+                {
+                    id: 'product_name',
+                    label: 'Nama Layanan',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    readonly: true
+                },
+                {
+                    id: 'total',
+                    label: 'Sub Total',
+                    required: false,
+                    type: 'text',
+                    value: '',
+                    readonly: true
+                },
+                {
+                    id: 'payment_date',
+                    label: 'Tgl. Pembayaran',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    readonly: true
+                },
+                {
+                    id: 'payment_amount',
+                    label: 'Jumlah Pembayaran',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    readonly: true
+                },
+            ],
+            style: 'not_inline',
+            class: 'grid-rows-4 grid-cols-2',
             state: 'write',
             defaultValue: null,
         };
     }
 
     ngOnInit(): void {
-        this.getAll();
+        this.getAll({ invoice_date: new Date() });
+        this.getAllPelanggan();
     }
 
     ngOnDestroy(): void {
@@ -235,6 +283,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
     }
 
     private getAll(query?: any) {
+        this.GridQueryParams = query;
+
         this._paymentService
             .getAll(query)
             .pipe(takeUntil(this.Destroy$))
@@ -246,6 +296,36 @@ export class PaymentComponent implements OnInit, OnDestroy {
                             invoice_date: this._utilityService.onFormatDate(new Date(item.invoice_date), 'MMMM yyyy')
                         }
                     });
+                }
+            });
+    }
+
+    private getAllPelanggan(query?: any) {
+        this._pelangganService
+            .getAll(query)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result) {
+                    const index = this.FormProps.fields.findIndex(item => item.id == 'id_pelanggan');
+                    this.FormProps.fields[index].dropdownProps.options = result.data;
+                }
+            });
+    }
+
+    private getAllInvoice(id_pelanggan: string, is_set?: boolean, id_invoice?: number) {
+        this._invoiceService
+            .getAll({ id_pelanggan: id_pelanggan })
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result) {
+                    const index = this.FormProps.fields.findIndex(item => item.id == 'id_invoice');
+                    this.FormProps.fields[index].dropdownProps.options = result.data;
+
+                    if (is_set) {
+                        setTimeout(() => {
+                            this.FormComps.FormGroup.get('id_invoice')?.setValue(id_invoice);
+                        }, 1000);
+                    }
                 }
             });
     }
@@ -262,7 +342,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     }
 
     handleBackToList() {
-        this.FormComps.onResetForm();
+        this.FormState == 'detail' ? this.FormDetailComps.onResetForm() : this.FormComps.onResetForm();
 
         setTimeout(() => {
             this.PageState = 'list';
@@ -275,7 +355,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
                 }
             ];
 
-            this.getAll();
+            this.getAll(this.GridQueryParams);
         }, 100);
     }
 
@@ -285,32 +365,62 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
     onRowDoubleClicked(args: any): void {
         this.PageState = 'form';
-        this.FormState = 'update';
+        this.FormState = 'detail';
         this.ButtonNavigation = [];
         // ** Set value ke Dynamic form components
         setTimeout(() => {
-            setTimeout(() => {
-                args.invoice_date = new Date(args.invoice_date);
-                this.FormComps.FormGroup.patchValue(args);
-            }, 500);
-        }, 100);
+            args.due_date = args.due_date ? this._utilityService.onFormatDate(new Date(args.due_date), 'DD MMMM yyyy') : 'Invoice Telah Dibatalkan';
+            args.payment_date = this._utilityService.onFormatDate(new Date(args.invoice_date), 'MMMM yyyy');
+            args.invoice_date = this._utilityService.onFormatDate(new Date(args.invoice_date), 'MMMM yyyy');
+            this.FormDetailComps.FormGroup.patchValue(args);
+        }, 500);
     }
 
     onToolbarClicked(args: any): void {
         if (args.type == 'detail') {
             this.onRowDoubleClicked(args.data);
         }
+
+        if (args.type == 'edit') {
+            if (args.data.payment_status == 'PENDING' || args.data.payment_status == 'ACTIVE') {
+                this.onRowDoubleClicked(args.data);
+            } else {
+                this._messageService.clear();
+                this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Aksi ini hanya untuk PENDING payment' });
+            }
+        }
+
+        if (args.type == 'cancel') {
+            if (args.data.payment_status == 'PENDING' || args.data.payment_status == 'ACTIVE') {
+                this._confirmationService.confirm({
+                    target: (<any>event).target as EventTarget,
+                    message: 'Canceled data can not be reverted',
+                    header: 'Are you sure?',
+                    icon: 'pi pi-info-circle',
+                    acceptButtonStyleClass: "p-button-danger p-button-sm",
+                    rejectButtonStyleClass: "p-button-secondary p-button-sm",
+                    acceptIcon: "none",
+                    acceptLabel: 'Yes, sure',
+                    rejectIcon: "none",
+                    rejectLabel: 'No, back',
+                    accept: () => {
+                        this.cancelData(args.data.id_payment);
+                    }
+                });
+            } else {
+                this._messageService.clear();
+                this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Aksi ini hanya untuk PENDING payment' });
+            }
+        }
     }
 
     saveData(data: any) {
-        delete data.id_invoice;
-        delete data.product_name;
-        data.invoice_date = new Date(this._utilityService.onFormatDate(new Date(data.invoice_date), 'yyyy-MM-DD'));
-        data.due_date = new Date(data.due_date).toISOString();
-        data.diskon_percentage = parseFloat(data.diskon_percentage);
-
         this._paymentService
-            .create(data)
+            .createPaymentCash({
+                id_invoice: data.id_invoice,
+                payment_date: data.payment_date,
+                payment_amount: data.payment_amount,
+            })
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result.status) {
@@ -335,6 +445,19 @@ export class PaymentComponent implements OnInit, OnDestroy {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
                     this.handleBackToList();
+                }
+            })
+    }
+
+    private cancelData(id_payment: any) {
+        this._paymentService
+            .cancel(id_payment)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this._messageService.clear();
+                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data canceled succesfully' });
+                    this.getAll(this.GridQueryParams);
                 }
             })
     }

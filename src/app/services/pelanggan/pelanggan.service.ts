@@ -40,4 +40,12 @@ export class PelangganService {
     updateProductPelanggan(payload: PelangganModel.UpdateProductPelanggan): Observable<HttpBaseResponse> {
         return this._httpRequestService.putRequest(`${environment.webApiUrl}/pelanggan/update-product-pelanggan`, payload);
     }
+
+    getFileTemplate() {
+        this._httpRequestService.getFileRequest(`${environment.webApiUrl}/pelanggan/template-import`);
+    }
+
+    import(payload: any): Observable<PelangganModel.GetAllPelanggan> {
+        return this._httpRequestService.postRequest(`${environment.webApiUrl}/pelanggan/import`, payload, false, true);
+    }
 }

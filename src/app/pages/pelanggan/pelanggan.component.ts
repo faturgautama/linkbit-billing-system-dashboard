@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
 import { Subject, takeUntil } from 'rxjs';
 import { DynamicFormComponent } from 'src/app/components/form/dynamic-form/dynamic-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -19,7 +21,6 @@ import { GroupPelangganService } from 'src/app/services/setup-data/group-pelangg
 import { ProductService } from 'src/app/services/setup-data/product.service';
 import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-pelanggan',
@@ -31,7 +32,8 @@ import { environment } from 'src/environments/environment';
         DynamicFormComponent,
         ButtonModule,
         ConfirmDialogModule,
-        DialogModule
+        DialogModule,
+        InputTextModule,
     ],
     templateUrl: './pelanggan.component.html',
     styleUrl: './pelanggan.component.scss'
@@ -49,7 +51,17 @@ export class PelangganComponent implements OnInit, OnDestroy {
             id: 'add',
             title: 'Add',
             icon: 'pi pi-plus'
-        }
+        },
+        {
+            id: 'unduh',
+            title: 'Unduh Contoh Format Import',
+            icon: 'pi pi-download'
+        },
+        {
+            id: 'import',
+            title: 'Import',
+            icon: 'pi pi-file-import'
+        },
     ];
 
     GridProps: GridModel.IGrid = {
@@ -104,7 +116,11 @@ export class PelangganComponent implements OnInit, OnDestroy {
 
     ShowDialogProduct = false;
 
+    ShowDialogImport = false;
+
     constructor(
+        private _router: Router,
+        private _activatedRoute: ActivatedRoute,
         private _productService: ProductService,
         private _messageService: MessageService,
         private _invoiceService: InvoiceService,
@@ -372,9 +388,31 @@ export class PelangganComponent implements OnInit, OnDestroy {
         }
     }
 
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.checkQueryParams();
+        }, 100);
+    }
+
     ngOnDestroy(): void {
         this.Destroy$.next(0);
         this.Destroy$.complete();
+    }
+
+    private checkQueryParams() {
+        const queryParams = this._activatedRoute.snapshot.queryParams;
+
+        if (queryParams && queryParams['id_pelanggan']) {
+            this._pelangganService
+                .getById(queryParams['id_pelanggan'])
+                .pipe(takeUntil(this.Destroy$))
+                .subscribe((result) => {
+                    if (result.status) {
+                        this.GridSelectedData = result.data;
+                        this.onRowDoubleClicked(result.data);
+                    }
+                })
+        }
     }
 
     private getAll(query?: any) {
@@ -471,9 +509,18 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 this.FormComps.FormGroup.get('subscribe_start_date')?.setValue(new Date());
             }, 500);
         };
+
+        if (data.id == 'unduh') {
+            this._pelangganService.getFileTemplate();
+        };
+
+        if (data.id == 'import') {
+            this.ShowDialogImport = true;
+        }
     }
 
     handleBackToList() {
+        this._router.navigateByUrl("/pelanggan");
         this.FormComps.onResetForm();
 
         setTimeout(() => {
@@ -484,7 +531,17 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     id: 'add',
                     title: 'Add',
                     icon: 'pi pi-plus'
-                }
+                },
+                {
+                    id: 'Unduh Contoh Format Import',
+                    title: 'Import',
+                    icon: 'pi pi-download'
+                },
+                {
+                    id: 'import',
+                    title: 'Import',
+                    icon: 'pi pi-file-import'
+                },
             ];
 
             this.getAll();
@@ -625,6 +682,10 @@ export class PelangganComponent implements OnInit, OnDestroy {
             })
     }
 
+    handleGoToAddInvoice(id_pelanggan: number) {
+        this._router.navigateByUrl(`/tagihan?state=add&id_pelanggan=${id_pelanggan}`);
+    }
+
     onToolbarClickedHistoryInvoice(args: any): void {
         if (args.type == 'delete') {
             this._confirmationService.confirm({
@@ -645,7 +706,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
         }
 
         if (args.type == 'detail') {
-            this.onRowDoubleClicked(args.data);
+            this._router.navigateByUrl(`/tagihan?state=edit&id_invoice=${args.data.id_invoice}`);
         }
 
         if (args.type == 'kirim pesan tagihan') {
@@ -677,4 +738,25 @@ export class PelangganComponent implements OnInit, OnDestroy {
             }
         };
     }
+
+    importData() {
+        const el = document.getElementById('fileInput') as any;
+
+        const formData = new FormData();
+        formData.append('file', el.files[0]);
+
+        this._pelangganService
+            .import(formData)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this._messageService.clear();
+                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data imported succesfully' });
+                    el.value = "";
+                    this.ShowDialogImport = false;
+                    this.getAll();
+                }
+            })
+    }
+
 }
