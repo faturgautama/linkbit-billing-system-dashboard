@@ -65,16 +65,6 @@ export class DetailTagihanComponent implements OnInit, OnDestroy {
                 type: 'monthpicker',
             },
             {
-                id: 'id_setting_company',
-                placeholder: 'Cari Company Disini',
-                type: 'dropdown',
-                dropdownProps: {
-                    options: [],
-                    optionName: 'company_name',
-                    optionValue: 'id_setting_company'
-                }
-            },
-            {
                 id: 'id_product',
                 placeholder: 'Cari Product Disini',
                 type: 'dropdown',

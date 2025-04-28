@@ -11,6 +11,7 @@ import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboar
 import { FormModel } from 'src/app/model/components/form.model';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
+import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { InvoiceService } from 'src/app/services/invoice/invoice.service';
 import { PaymentService } from 'src/app/services/payment/payment.service';
 import { PelangganService } from 'src/app/services/pelanggan/pelanggan.service';
@@ -34,6 +35,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
     Destroy$ = new Subject();
 
+    UserData = this._authenticationService.getUserData();
+
     PageState: 'list' | 'form' = 'list';
 
     ButtonNavigation: LayoutModel.IButtonNavigation[] = [
@@ -51,10 +54,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
             { field: 'invoice_date', headerName: 'Periode', class: 'text-xs' },
             { field: 'pelanggan_code', headerName: 'Kode Plgn', class: 'text-xs' },
             { field: 'full_name', headerName: 'Pelanggan', class: 'text-xs' },
+            { field: 'alamat', headerName: 'Alamat', class: 'text-xs' },
             { field: 'product_name', headerName: 'Produk', class: 'text-xs' },
             { field: 'payment_date', headerName: 'Tgl. Bayar', format: 'date', class: 'text-xs' },
             { field: 'payment_method', headerName: 'Metode Bayar', class: 'text-xs' },
-            { field: 'payment_amount', headerName: 'Total Bayar', format: 'currency', class: 'text-end text-xs' },
+            { field: 'payment_amount', headerName: 'Total Bayar', format: 'currency', class: 'text-start text-xs' },
             { field: 'payment_status', headerName: 'Status', class: 'text-center text-xs' },
         ],
         dataSource: [],
@@ -97,6 +101,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
         private _invoiceService: InvoiceService,
         private _pelangganService: PelangganService,
         private _confirmationService: ConfirmationService,
+        private _authenticationService: AuthenticationService,
     ) {
         this.FormProps = {
             id: 'form_tagihan',
@@ -275,6 +280,24 @@ export class PaymentComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        if (this.UserData.company_type == 'MITRA') {
+            this.ButtonNavigation = [
+                {
+                    id: 'add',
+                    title: 'Add Payment',
+                    icon: 'pi pi-plus'
+                },
+            ]
+        } else {
+            this.ButtonNavigation = [
+                {
+                    id: 'add',
+                    title: 'Add Payment Cash',
+                    icon: 'pi pi-plus'
+                },
+            ]
+        }
+
         this.getAll({ invoice_date: new Date() });
         this.getAllPelanggan();
     }

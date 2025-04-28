@@ -332,7 +332,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private checkQueryParams() {
         const queryParams = this._activatedRoute.snapshot.queryParams;
-        if (queryParams) {
+        if (Object.keys(queryParams).length) {
             this.FromPelanggan = true;
             this.QueryParams = queryParams;
 

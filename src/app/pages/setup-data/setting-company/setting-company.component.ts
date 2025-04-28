@@ -355,13 +355,22 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
 
     handleClickButtonNavigation(data: LayoutModel.IButtonNavigation) {
         if (data.id == 'update') {
-            let payload = {
-                ...this.FormComps.FormGroup.value,
-                ...this.FormTagihanComps.FormGroup.value,
-                ...this.FormPaymentGatewayComps.FormGroup.value
-            };
+            let payload: any = {};
 
-            delete payload.payment_gateway;
+            if (this.FormPaymentGatewayComps) {
+                payload = {
+                    ...this.FormComps.FormGroup.value,
+                    ...this.FormTagihanComps.FormGroup.value,
+                    ...this.FormPaymentGatewayComps.FormGroup.value
+                };
+
+                delete payload.payment_gateway;
+            } else {
+                payload = {
+                    ...this.FormComps.FormGroup.value,
+                    ...this.FormTagihanComps.FormGroup.value,
+                };
+            }
 
             this.onUpdateData(payload);
         };
@@ -394,7 +403,6 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
             rejectLabel: 'Tidak, kembali',
             accept: () => {
                 if (this.TemplateEditor) {
-                    console.log(this.TemplateEditor[tag_id]);
                     this.FormTagihanComps.FormGroup.get(form_id)?.setValue(this.TemplateEditor[tag_id]);
                 }
             }

@@ -59,16 +59,6 @@ export class RekapTagihanComponent implements OnInit, OnDestroy {
                 type: 'monthpicker',
             },
             {
-                id: 'id_setting_company',
-                placeholder: 'Cari Company Disini',
-                type: 'dropdown',
-                dropdownProps: {
-                    options: [],
-                    optionName: 'company_name',
-                    optionValue: 'id_setting_company'
-                }
-            },
-            {
                 id: 'invoice_status',
                 placeholder: 'Cari Status Tagihan Disini',
                 type: 'dropdown',
