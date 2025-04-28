@@ -24,6 +24,7 @@
         "@videogular/ngx-videogular": "^10.0.1",
         "ag-grid-angular": "^29.2.0",
         "ag-grid-community": "^29.2.0",
+        "angularx-qrcode": "^17.0.1",
         "aos": "^3.0.0-beta.6",
         "apexcharts": "3.44.0",
         "dom-to-image": "^2.6.0",

@@ -1,5 +1,6 @@
 import { CommonModule, formatCurrency } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -40,7 +41,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
             id: 'add',
             title: 'Add Payment Cash',
             icon: 'pi pi-plus'
-        }
+        },
     ];
 
     GridProps: GridModel.IGrid = {
@@ -58,7 +59,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
-        toolbar: ['Detail', 'Edit', 'Cancel'],
+        toolbar: ['Print', 'Detail', 'Edit', 'Cancel'],
         showPaging: true,
         showSearch: true,
         showSort: false,
@@ -89,6 +90,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
     @ViewChild('FormDetailComps') FormDetailComps!: DynamicFormComponent;
 
     constructor(
+        private _router: Router,
         private _messageService: MessageService,
         private _paymentService: PaymentService,
         private _utilityService: UtilityService,
@@ -387,6 +389,15 @@ export class PaymentComponent implements OnInit, OnDestroy {
             } else {
                 this._messageService.clear();
                 this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Aksi ini hanya untuk PENDING payment' });
+            }
+        }
+
+        if (args.type == 'print') {
+            if (args.data.payment_status == 'PAID') {
+                this._router.navigateByUrl(`/print-out/pos?id_payment=${args.data.id_payment}`)
+            } else {
+                this._messageService.clear();
+                this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Aksi ini hanya untuk PAID payment' });
             }
         }
 

@@ -1,0 +1,4 @@
+<div class="flex flex-col w-full items-center justify-center p-10">
+    <p [innerHTML]="Editor" class="text-center"></p>
+    <qrcode *ngIf="QrCode" [qrdata]="QrCode" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+</div>

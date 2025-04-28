@@ -62,6 +62,10 @@ const routes: Routes = [
         loadChildren: async () => (await import('./pages/laporan/laporan.routes')).laporanRoutes
     },
     {
+        path: 'print-out',
+        loadChildren: async () => (await import('./pages/print-out/print-out.routes')).printOurRoutes
+    },
+    {
         path: '**',
         loadComponent: async () => (await import('./pages/wildcard-not-found/wildcard-not-found.component')).WildcardNotFoundComponent,
         data: {
