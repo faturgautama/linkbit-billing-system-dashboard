@@ -9,8 +9,10 @@ import { DynamicFormComponent } from 'src/app/components/form/dynamic-form/dynam
 import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboard.component';
 import { FormModel } from 'src/app/model/components/form.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
+import { TemplateEditorModel } from 'src/app/model/pages/setup-data/template-editor.model';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
+import { TemplateEditorService } from 'src/app/services/setup-data/template-editor.service';
 
 @Component({
     selector: 'app-setting-company',
@@ -52,11 +54,14 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
 
     IsMitra = false;
 
+    TemplateEditor!: TemplateEditorModel.ITemplateEditor;
+
     constructor(
         private _messageService: MessageService,
         private _confirmationService: ConfirmationService,
         private _authenticationService: AuthenticationService,
         private _settingCompanyService: SettingCompanyService,
+        private _templateEditorService: TemplateEditorService,
     ) {
         this.FormProps = {
             id: 'form_setting_company',
@@ -198,6 +203,15 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     required: true,
                     type: 'editor',
                     value: '',
+                    label_tag: {
+                        id: 'template_pesan_invoice',
+                        label: 'Ambil Dari Template',
+                        icon: 'pi pi-sync',
+                        severity: 'warn'
+                    },
+                    onTagClick: (args: any) => {
+                        this.syncTemplate(args.id, 'tagihan_pesan_invoice');
+                    }
                 },
                 {
                     id: 'tagihan_pesan_lunas',
@@ -205,6 +219,15 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     required: true,
                     type: 'editor',
                     value: '',
+                    label_tag: {
+                        id: 'template_pesan_lunas',
+                        label: 'Ambil Dari Template',
+                        icon: 'pi pi-sync',
+                        severity: 'warn'
+                    },
+                    onTagClick: (args: any) => {
+                        this.syncTemplate(args.id, 'tagihan_pesan_lunas');
+                    }
                 },
                 {
                     id: 'tagihan_jatuh_tempo',
@@ -226,6 +249,15 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     required: true,
                     type: 'editor',
                     value: '',
+                    label_tag: {
+                        id: 'template_editor_invoice',
+                        label: 'Ambil Dari Template',
+                        icon: 'pi pi-sync',
+                        severity: 'warn'
+                    },
+                    onTagClick: (args: any) => {
+                        this.syncTemplate(args.id, 'tagihan_editor_invoice');
+                    }
                 },
                 {
                     id: 'tagihan_editor_pos',
@@ -233,6 +265,15 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     required: true,
                     type: 'editor',
                     value: '',
+                    label_tag: {
+                        id: 'template_editor_pos',
+                        label: 'Ambil Dari Template',
+                        icon: 'pi pi-sync',
+                        severity: 'warn'
+                    },
+                    onTagClick: (args: any) => {
+                        this.syncTemplate(args.id, 'tagihan_editor_pos');
+                    }
                 },
             ],
             style: 'not_inline',
@@ -270,7 +311,7 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
 
     ngOnInit(): void {
         setTimeout(() => {
-
+            this.getTemplateEditor();
         }, 1000);
     }
 
@@ -301,6 +342,17 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
             });
     }
 
+    private getTemplateEditor() {
+        this._templateEditorService
+            .getAll()
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this.TemplateEditor = result.data;
+                }
+            });
+    }
+
     handleClickButtonNavigation(data: LayoutModel.IButtonNavigation) {
         if (data.id == 'update') {
             let payload = {
@@ -326,5 +378,26 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     this.getById();
                 }
             })
+    }
+
+    private syncTemplate(tag_id: keyof TemplateEditorModel.ITemplateEditor, form_id: string) {
+        this._confirmationService.confirm({
+            target: (<any>event).target as EventTarget,
+            message: 'Editor akan tersinkron dengan template',
+            header: 'Apakah Anda Yakin?',
+            icon: 'pi pi-info-circle',
+            acceptButtonStyleClass: "p-button-danger p-button-sm",
+            rejectButtonStyleClass: "p-button-secondary p-button-sm",
+            acceptIcon: "none",
+            acceptLabel: 'Iya, yakin',
+            rejectIcon: "none",
+            rejectLabel: 'Tidak, kembali',
+            accept: () => {
+                if (this.TemplateEditor) {
+                    console.log(this.TemplateEditor[tag_id]);
+                    this.FormTagihanComps.FormGroup.get(form_id)?.setValue(this.TemplateEditor[tag_id]);
+                }
+            }
+        });
     }
 }

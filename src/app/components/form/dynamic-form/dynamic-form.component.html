@@ -3,11 +3,18 @@
         class="flex {{ props.style == 'inline' ? 'flex-row' : 'flex-col' }} {{ item.type == 'textarea' ? 'items-start' : 'items-center' }} gap-1"
         [class.hidden]="item.hidden">
         <!-- Label -->
-        <div *ngIf="!item.hideLabel" class="{{ props.style == 'inline' ? 'w-4/12' : 'w-full'  }}">
+        <div *ngIf="!item.hideLabel"
+            class="{{ props.style == 'inline' ? 'w-4/12' : 'flex justify-between items-center w-full'  }}">
             <p class="text-sm text-gray-600 font-medium {{ item.type == 'textarea' ? 'pt-3' : '' }}">
                 {{ item.label }}
                 <span *ngIf="item.required" class="text-xs text-red-500">*</span>
             </p>
+
+            <div *ngIf="item.label_tag" class="flex cursor-pointer mb-1">
+                <p-tag [icon]="item.label_tag.icon" [value]="item.label_tag.label" [severity]="item.label_tag.severity"
+                    (click)="handleTagClick(item.label_tag, item)">
+                </p-tag>
+            </div>
         </div>
 
         <div class="{{ props.style == 'inline' ? 'w-8/12' : 'w-full'  }}">

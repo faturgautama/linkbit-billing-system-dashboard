@@ -50,5 +50,15 @@ export const setupDataRoutes: Route[] = [
                 "Home", "Setup Data", "Produk Layanan"
             ]
         }
+    },
+    {
+        path: 'template-editor',
+        loadComponent: async () => (await import('./template-editor/template-editor.component')).TemplateEditorComponent,
+        data: {
+            title: 'Template Editor',
+            breadcrumbs: [
+                "Home", "Setup Data", "Template Editor"
+            ]
+        }
     }
 ];

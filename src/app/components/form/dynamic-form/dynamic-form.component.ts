@@ -22,6 +22,7 @@ import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { InputOtpModule } from 'primeng/inputotp';
+import { TagModule } from 'primeng/tag';
 
 @Component({
     selector: 'app-dynamic-form',
@@ -49,7 +50,8 @@ import { InputOtpModule } from 'primeng/inputotp';
         VgOverlayPlayModule,
         VgBufferingModule,
         MultiSelectModule,
-        InputOtpModule
+        InputOtpModule,
+        TagModule
     ],
     templateUrl: './dynamic-form.component.html',
     styleUrls: ['./dynamic-form.component.scss'],
@@ -254,6 +256,10 @@ export class DynamicFormComponent implements OnInit {
             this.ImagePreviews[fields.id] = reader.result; // Store the image preview based on item.id
         };
         reader.readAsDataURL(files);
+    }
+
+    handleTagClick(args: any, fields: FormModel.IFormFields): any {
+        return fields?.onTagClick?.(args);
     }
 
     // Check if the accepted file type is an image
