@@ -101,6 +101,19 @@ export class CheckoutComponent implements OnInit, OnDestroy {
             })
     }
 
+    changePaymentMethod() {
+        const token = this._activatedRoute.snapshot.queryParams['token'];
+
+        this._paymentService
+            .changePaymentMethod(token)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this.getDetailInvoice(token);
+                }
+            })
+    }
+
     createPayment(data: any) {
         this.SelectedPaymentMethod = data;
 

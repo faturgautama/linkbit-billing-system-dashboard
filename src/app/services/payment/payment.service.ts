@@ -47,4 +47,8 @@ export class PaymentService {
     update(payload: PaymentModel.UpdatePayment): Observable<HttpBaseResponse> {
         return this._httpRequestService.putRequest(`${environment.webApiUrl}/payment/edit-payment`, payload);
     }
+
+    changePaymentMethod(token: string): Observable<PaymentModel.GetAllPayment> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/payment/change-payment-method/${token}`);
+    }
 }
