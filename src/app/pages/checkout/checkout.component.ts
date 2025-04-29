@@ -11,6 +11,7 @@ import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboar
 import { PaymentService } from 'src/app/services/payment/payment.service';
 import { environment } from 'src/environments/environment';
 import { Socket } from 'ngx-socket-io';
+import { QRCodeModule } from 'angularx-qrcode';
 
 @Component({
     selector: 'app-checkout',
@@ -19,6 +20,7 @@ import { Socket } from 'ngx-socket-io';
         FormsModule,
         ButtonModule,
         CommonModule,
+        QRCodeModule,
         DashboardComponent,
         ConfirmDialogModule,
         DynamicFormComponent,
