@@ -1,6 +1,6 @@
 import { CommonModule, formatCurrency } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -31,9 +31,13 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
     templateUrl: './payment.component.html',
     styleUrl: './payment.component.scss'
 })
-export class PaymentComponent implements OnInit, OnDestroy {
+export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
     Destroy$ = new Subject();
+
+    FromPelanggan = false;
+
+    QueryParams: any;
 
     UserData = this._authenticationService.getUserData();
 
@@ -95,6 +99,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
     constructor(
         private _router: Router,
+        private _activatedRoute: ActivatedRoute,
         private _messageService: MessageService,
         private _paymentService: PaymentService,
         private _utilityService: UtilityService,
@@ -115,7 +120,12 @@ export class PaymentComponent implements OnInit, OnDestroy {
                     dropdownProps: {
                         options: [],
                         optionName: 'full_name',
-                        optionValue: 'id_pelanggan'
+                        optionValue: 'id_pelanggan',
+                        customField: {
+                            title: 'full_name',
+                            subtitle: 'pelanggan_code',
+                            description: 'alamat'
+                        }
                     },
                     onChange: (args: any) => {
                         if (args) {
@@ -146,6 +156,8 @@ export class PaymentComponent implements OnInit, OnDestroy {
                                 due_date: this._utilityService.onFormatDate(new Date(args.due_date), 'DD-MM-yyyy'),
                                 product_name: args.product_name,
                                 total: formatCurrency(args.total, 'EN', 'Rp. '),
+                                payment_date: new Date(),
+                                payment_amount: args.total,
                             };
                             this.FormComps.FormGroup.patchValue(payload);
                         }
@@ -196,6 +208,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
                     required: true,
                     type: 'number',
                     value: 0,
+                    readonly: true
                 },
             ],
             style: 'not_inline',
@@ -302,9 +315,32 @@ export class PaymentComponent implements OnInit, OnDestroy {
         this.getAllPelanggan();
     }
 
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.checkQueryParams();
+        }, 100);
+    }
+
     ngOnDestroy(): void {
         this.Destroy$.next(0);
         this.Destroy$.complete();
+    }
+
+    private checkQueryParams() {
+        const queryParams = this._activatedRoute.snapshot.queryParams;
+        if (Object.keys(queryParams).length) {
+            this.FromPelanggan = true;
+            this.QueryParams = queryParams;
+
+            if (queryParams['state'] == 'cash') {
+                this.PageState = 'form';
+                this.ButtonNavigation = [];
+
+                this.getAllInvoice(this.QueryParams.id_pelanggan, true, this.QueryParams.id_invoice);
+            }
+        } else {
+            this.FromPelanggan = false;
+        }
     }
 
     private getAll(query?: any) {
@@ -348,7 +384,19 @@ export class PaymentComponent implements OnInit, OnDestroy {
 
                     if (is_set) {
                         setTimeout(() => {
-                            this.FormComps.FormGroup.get('id_invoice')?.setValue(id_invoice);
+                            this.FormComps.FormGroup.get('id_pelanggan')?.setValue(parseInt(id_pelanggan));
+                            this.FormComps.FormGroup.get('id_invoice')?.setValue(parseInt(id_invoice as any));
+
+                            const invoice = result.data.find(item => item.id_invoice == parseInt(id_invoice as any));
+                            const payload = {
+                                invoice_date: this._utilityService.onFormatDate(new Date(invoice!.invoice_date), 'MMM yyyy'),
+                                due_date: this._utilityService.onFormatDate(new Date(invoice!.due_date), 'DD-MM-yyyy'),
+                                product_name: invoice!.product_name,
+                                total: formatCurrency(invoice!.total, 'EN', 'Rp. '),
+                                payment_date: new Date(),
+                                payment_amount: invoice!.total,
+                            };
+                            this.FormComps.FormGroup.patchValue(payload);
                         }, 1000);
                     }
                 }
@@ -367,21 +415,25 @@ export class PaymentComponent implements OnInit, OnDestroy {
     }
 
     handleBackToList() {
-        this.FormState == 'detail' ? this.FormDetailComps.onResetForm() : this.FormComps.onResetForm();
+        if (this.FromPelanggan) {
+            this._router.navigateByUrl(`/pelanggan?id_pelanggan=${this.QueryParams.id_pelanggan || this.FormComps.FormGroup.get('id_pelanggan')?.value}`);
+        } else {
+            this.FormState == 'detail' ? this.FormDetailComps.onResetForm() : this.FormComps.onResetForm();
 
-        setTimeout(() => {
-            this.PageState = 'list';
-            this.FormState = 'insert';
-            this.ButtonNavigation = [
-                {
-                    id: 'add',
-                    title: 'Add',
-                    icon: 'pi pi-plus'
-                }
-            ];
+            setTimeout(() => {
+                this.PageState = 'list';
+                this.FormState = 'insert';
+                this.ButtonNavigation = [
+                    {
+                        id: 'add',
+                        title: 'Add',
+                        icon: 'pi pi-plus'
+                    }
+                ];
 
-            this.getAll(this.GridQueryParams);
-        }, 100);
+                this.getAll(this.GridQueryParams);
+            }, 100);
+        }
     }
 
     onCellClicked(args: any): void {

@@ -96,4 +96,8 @@ export class UtilityService {
 
         return endDate.diff(startDate, 'days');
     }
+
+    onFormatPhoneNumber(phone_number: string): string {
+        return phone_number.replace(/^(\+62|0)/, '62');
+    }
 }

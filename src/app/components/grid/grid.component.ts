@@ -148,6 +148,9 @@ export class GridComponent implements OnInit, AfterViewInit {
             case 'Print':
                 icon = 'pi pi-print';
                 break;
+            case 'Add Pembayaran Cash':
+                icon = 'pi pi-money-bill';
+                break;
             default:
                 break;
         }

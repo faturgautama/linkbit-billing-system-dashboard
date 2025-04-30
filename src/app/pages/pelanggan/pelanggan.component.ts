@@ -103,7 +103,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
-        toolbar: ['Delete', 'Detail', 'Kirim Pesan Tagihan', 'Kirim Pesan Lunas'],
+        toolbar: ['Delete', 'Detail', 'Kirim Pesan Tagihan', 'Kirim Pesan Lunas', 'Add Pembayaran Cash'],
         showPaging: false,
         showSearch: false,
         showSort: false,
@@ -210,10 +210,6 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     required: false,
                     type: 'text',
                     value: '',
-                    dropSpecialCharacters: true,
-                    mask: '00-0000-0000',
-                    maskPrefix: '+62-8',
-                    placeholder: 'Masukkan no. hp disini tanpa 628 contoh : 5156781165'
                 },
                 {
                     id: 'whatsapp',
@@ -221,10 +217,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     required: true,
                     type: 'text',
                     value: '',
-                    dropSpecialCharacters: true,
-                    mask: '00-0000-0000',
-                    maskPrefix: '+62-8',
-                    placeholder: 'Masukkan no. wa disini tanpa 628 contoh : 5156781165'
+
                 },
                 {
                     id: 'identity_number',
@@ -558,8 +551,8 @@ export class PelangganComponent implements OnInit, OnDestroy {
         this.ButtonNavigation = [];
         // ** Set value ke Dynamic form components
         setTimeout(() => {
-            args.phone = args.phone ? args.phone.slice(3) : "";
-            args.whatsapp = args.whatsapp ? args.whatsapp.slice(3) : "";
+            args.phone = args.phone;
+            args.whatsapp = args.whatsapp;
             args.subscribe_start_date = new Date(args.subscribe_start_date);
             this.FormComps.FormGroup.patchValue(args);
             this.getAllInvoice({ id_pelanggan: args.id_pelanggan });
@@ -610,8 +603,8 @@ export class PelangganComponent implements OnInit, OnDestroy {
         delete data.id_pelanggan;
         delete data.is_active;
 
-        data.phone = `628${data.phone}`;
-        data.whatsapp = `628${data.whatsapp}`;
+        data.phone = data.phone ? this._utilityService.onFormatPhoneNumber(data.phone) : "";
+        data.whatsapp = data.whatsapp ? this._utilityService.onFormatPhoneNumber(data.whatsapp) : "";
 
         this._pelangganService
             .create(data)
@@ -638,8 +631,8 @@ export class PelangganComponent implements OnInit, OnDestroy {
             rejectIcon: "none",
             rejectLabel: 'No, back',
             accept: () => {
-                data.phone = `628${data.phone}`;
-                data.whatsapp = `628${data.whatsapp}`;
+                data.phone = data.phone ? this._utilityService.onFormatPhoneNumber(data.phone) : "";
+                data.whatsapp = data.whatsapp ? this._utilityService.onFormatPhoneNumber(data.whatsapp) : "";
 
                 this._pelangganService
                     .update(data)
@@ -683,6 +676,10 @@ export class PelangganComponent implements OnInit, OnDestroy {
     }
 
     handleGoToAddInvoice(id_pelanggan: number) {
+        this._router.navigateByUrl(`/tagihan?state=add&id_pelanggan=${id_pelanggan}`);
+    }
+
+    handleGoToAddPaymentCash(id_pelanggan: number) {
         this._router.navigateByUrl(`/tagihan?state=add&id_pelanggan=${id_pelanggan}`);
     }
 
@@ -737,6 +734,10 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Tagihan Belum Dibayarkan' })
             }
         };
+
+        if (args.type == 'add pembayaran cash') {
+            this._router.navigateByUrl(`/pembayaran?state=cash&id_invoice=${args.data.id_invoice}&id_pelanggan=${args.data.id_pelanggan}`);
+        }
     }
 
     importData() {
