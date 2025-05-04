@@ -2,6 +2,6 @@ export const environment = {
     production: true,
     webApiUrl: 'https://staging-core.bill.linkbit.net.id/api/v1',
     socketUrl: 'https://staging-core.bill.linkbit.net.id',
-    version: 'v0.7.5-alpha',
+    version: 'v0.8.5-alpha',
     urlPrintOutTagihan: 'https://dashboard-staging.linkbit.net.id/print-out/tagihan',
 };

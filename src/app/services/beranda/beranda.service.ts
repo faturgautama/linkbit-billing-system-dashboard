@@ -17,11 +17,19 @@ export class BerandaService {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/dashboard/count`);
     }
 
+    getLatestPayment(): Observable<HttpBaseResponse> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/dashboard/latest-payment`);
+    }
+
     getPaymentWeekly(start_date: string, end_date: string): Observable<HttpBaseResponse> {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/dashboard/payment-weekly/${start_date}/${end_date}`);
     }
 
     getPaymentMonthly(date: string): Observable<HttpBaseResponse> {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/dashboard/payment-monthly/${date}`);
+    }
+
+    getPaymentYearly(year: string): Observable<HttpBaseResponse> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/dashboard/payment-yearly/${year}`);
     }
 }
