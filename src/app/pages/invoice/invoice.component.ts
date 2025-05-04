@@ -51,7 +51,17 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
             id: 'add',
             title: 'Add',
             icon: 'pi pi-plus'
-        }
+        },
+        {
+            id: 'retrigger_job_invoice',
+            title: 'Rerun Job Invoice',
+            icon: 'pi pi-play-circle'
+        },
+        {
+            id: 'retrigger_job_message',
+            title: 'Rerun Job Message',
+            icon: 'pi pi-whatsapp'
+        },
     ];
 
     GridProps: GridModel.IGrid = {
@@ -447,6 +457,30 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
             this.PageState = 'form';
             this.ButtonNavigation = [];
         };
+
+        if (data.id == 'retrigger_job_invoice') {
+            this._invoiceService
+                .retriggerJobInvoice()
+                .pipe(takeUntil(this.Destroy$))
+                .subscribe((result) => {
+                    if (result.status) {
+                        this._messageService.clear();
+                        this._messageService.add({ severity: 'success', summary: 'Berhasil', detail: 'Job Generate Invoice Telah Berjalan' })
+                    }
+                })
+        };
+
+        if (data.id == 'retrigger_job_message') {
+            this._invoiceService
+                .retriggerJobSendMessage()
+                .pipe(takeUntil(this.Destroy$))
+                .subscribe((result) => {
+                    if (result.status) {
+                        this._messageService.clear();
+                        this._messageService.add({ severity: 'success', summary: 'Berhasil', detail: 'Job Send Message Telah Berjalan' })
+                    }
+                })
+        };
     }
 
     handleBackToList() {
@@ -463,7 +497,17 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                         id: 'add',
                         title: 'Add',
                         icon: 'pi pi-plus'
-                    }
+                    },
+                    {
+                        id: 'retrigger_job_invoice',
+                        title: 'Rerun Job Invoice',
+                        icon: 'pi pi-play-circle'
+                    },
+                    {
+                        id: 'retrigger_job_message',
+                        title: 'Rerun Job Message',
+                        icon: 'pi pi-whatsapp'
+                    },
                 ];
 
                 this.getAll();
