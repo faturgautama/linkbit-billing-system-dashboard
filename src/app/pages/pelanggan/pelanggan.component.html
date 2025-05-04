@@ -1,6 +1,10 @@
 <app-dashboard [ButtonNavigation]="ButtonNavigation" (onClickButtonNavigation)="handleClickButtonNavigation($event)">
     <!-- Grid -->
     <div *ngIf="PageState == 'list'" class="grid w-full bg-white rounded-lg shadow-sm p-2">
+        <div class="grid w-full mb-3">
+            <p-tabMenu [model]="Tab" [activeItem]="ActiveTab" (activeItemChange)="handleChangeTab($event)" />
+        </div>
+
         <app-grid [props]="GridProps" (cellClicked)="onCellClicked($event)"
             (rowDoubleClicked)="onRowDoubleClicked($event)" (aksiClicked)="onToolbarClicked($event)"
             (customSearchClicked)="onSearchGrid($event)">

@@ -21,6 +21,7 @@ import { GroupPelangganService } from 'src/app/services/setup-data/group-pelangg
 import { ProductService } from 'src/app/services/setup-data/product.service';
 import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
+import { TabMenuModule } from 'primeng/tabmenu';
 
 @Component({
     selector: 'app-pelanggan',
@@ -34,6 +35,7 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
         ConfirmDialogModule,
         DialogModule,
         InputTextModule,
+        TabMenuModule
     ],
     templateUrl: './pelanggan.component.html',
     styleUrl: './pelanggan.component.scss'
@@ -43,6 +45,12 @@ export class PelangganComponent implements OnInit, OnDestroy {
     Destroy$ = new Subject();
 
     PageState: 'list' | 'form' = 'list';
+
+    Tab = [
+        { label: 'Aktif', icon: 'pi pi-check' },
+        { label: 'Non Aktif', icon: 'pi pi-times' },
+    ];
+    ActiveTab = this.Tab[0];
 
     UserData = this._authenticationService.getUserData();
 
@@ -408,6 +416,11 @@ export class PelangganComponent implements OnInit, OnDestroy {
         }
     }
 
+    handleChangeTab(args: any) {
+        this.ActiveTab = args;
+        this.getAll();
+    }
+
     private getAll(query?: any) {
         if (this.UserData.company_type != 'KANTOR PUSAT') {
             if (query && Object.keys(query).length) {
@@ -418,6 +431,18 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 }
             }
         };
+
+        if (this.ActiveTab.label == 'Aktif') {
+            query = {
+                ...query,
+                is_active: true
+            };
+        } else {
+            query = {
+                ...query,
+                is_active: false
+            };
+        }
 
         this._pelangganService
             .getAll(query)
