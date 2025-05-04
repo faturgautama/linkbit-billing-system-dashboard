@@ -15,6 +15,7 @@ import { AuthenticationService } from 'src/app/services/authentication/authentic
 import { InvoiceService } from 'src/app/services/invoice/invoice.service';
 import { PaymentService } from 'src/app/services/payment/payment.service';
 import { PelangganService } from 'src/app/services/pelanggan/pelanggan.service';
+import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
@@ -107,6 +108,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         private _pelangganService: PelangganService,
         private _confirmationService: ConfirmationService,
         private _authenticationService: AuthenticationService,
+        private _settingCompanyService: SettingCompanyService,
     ) {
         this.FormProps = {
             id: 'form_tagihan',
@@ -208,7 +210,20 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                     required: true,
                     type: 'number',
                     value: 0,
-                    readonly: true
+                    readonly: true,
+                    hidden: true
+                },
+                {
+                    id: 'id_payment_method_manual',
+                    label: 'Payment Method',
+                    required: true,
+                    type: 'select',
+                    value: '',
+                    dropdownProps: {
+                        options: [],
+                        optionName: 'payment_method',
+                        optionValue: 'id_payment_method_manual'
+                    }
                 },
             ],
             style: 'not_inline',
@@ -280,9 +295,22 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                     id: 'payment_amount',
                     label: 'Jumlah Pembayaran',
                     required: true,
-                    type: 'text',
+                    type: 'number',
                     value: '',
-                    readonly: true
+                    readonly: true,
+                    hidden: true,
+                },
+                {
+                    id: 'id_payment_method_manual',
+                    label: 'Payment Method',
+                    required: true,
+                    type: 'select',
+                    value: '',
+                    dropdownProps: {
+                        options: [],
+                        optionName: 'payment_method',
+                        optionValue: 'id_payment_method_manual'
+                    }
                 },
             ],
             style: 'not_inline',
@@ -313,6 +341,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.getAll({ invoice_date: new Date() });
         this.getAllPelanggan();
+        this.getAllPaymentMethodManual();
     }
 
     ngAfterViewInit(): void {
@@ -401,6 +430,20 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 }
             });
+    }
+
+    private getAllPaymentMethodManual() {
+        const userData = this._authenticationService.getUserData();
+
+        this._settingCompanyService
+            .getAllPaymentMethodManual(userData.id_setting_company)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    const index = this.FormProps.fields.findIndex(item => item.id == 'id_payment_method_manual');
+                    this.FormProps.fields[index].dropdownProps.options = result.data;
+                }
+            })
     }
 
     onSearchGrid(args: any) {
@@ -506,6 +549,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                 id_invoice: data.id_invoice,
                 payment_date: data.payment_date,
                 payment_amount: data.payment_amount,
+                id_payment_method_manual: data.id_payment_method_manual
             })
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {

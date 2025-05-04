@@ -47,7 +47,54 @@
                 <app-dynamic-form #FormPaymentGatewayComps [props]="FormPaymentGatewayProps"></app-dynamic-form>
             </div>
         </div>
+
+        <!-- Form Payment Gateway -->
+        <div class="flex flex-col w-full bg-white rounded-lg shadow-sm p-3">
+            <div
+                class="flex flex-row justify-between items-center w-full pb-2 mb-3 border-b border-dashed border-gray-300 border-t-0 border-x-0">
+                <div class="flex flex-col">
+                    <p class="text-lg text-gray-700 font-semibold">
+                        Setting Chanel Pembayaran Internal
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        Setting chanel pembayaran internal perusahaan
+                    </p>
+                </div>
+
+                <p-button label="Add" severity="info" styleClass="p-button-sm"
+                    (onClick)="FormPaymentManualState = 'insert'; ShowDialogPaymentManual = true;">
+                </p-button>
+            </div>
+
+            <div class="grid w-full">
+                <app-grid [props]="GridPaymentManualProps" (aksiClicked)="onToolbarPaymentManualClicked($event)">
+                </app-grid>
+            </div>
+        </div>
     </div>
+
+    <p-dialog [header]="FormPaymentManualState == 'insert' ? 'Add Chanel' : 'Edit Chanel'"
+        [(visible)]="ShowDialogPaymentManual" [modal]="true" [style]="{ width: '35rem' }" [draggable]="false"
+        [resizable]="false">
+
+        <div class="grid w-full my-2">
+            <app-dynamic-form #FormPaymentManualComps [props]="FormPaymentManualProps"></app-dynamic-form>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <p-button label="Cancel" severity="secondary" styleClass="p-button-sm"
+                (onClick)="ShowDialogPaymentManual = false" />
+
+            <p-button *ngIf="FormPaymentManualState == 'insert'" label="Save" severity="info" styleClass="p-button-sm"
+                (onClick)="savePaymentMethodManual(FormPaymentManualComps.FormGroup.value)">
+            </p-button>
+
+            <p-button *ngIf="FormPaymentManualState == 'update'" label="Update" severity="warning"
+                styleClass="p-button-sm" (onClick)="updatePaymentMethodManual(FormPaymentManualComps.FormGroup.value)">
+            </p-button>
+        </ng-template>
+    </p-dialog>
+
 
     <p-confirmDialog />
 </app-dashboard>

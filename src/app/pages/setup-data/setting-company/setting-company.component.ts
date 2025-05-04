@@ -4,10 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
 import { Subject, takeUntil } from 'rxjs';
 import { DynamicFormComponent } from 'src/app/components/form/dynamic-form/dynamic-form.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
 import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboard.component';
 import { FormModel } from 'src/app/model/components/form.model';
+import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
 import { TemplateEditorModel } from 'src/app/model/pages/setup-data/template-editor.model';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
@@ -21,6 +24,8 @@ import { TemplateEditorService } from 'src/app/services/setup-data/template-edit
         FormsModule,
         ButtonModule,
         CommonModule,
+        DialogModule,
+        GridComponent,
         DashboardComponent,
         ConfirmDialogModule,
         DynamicFormComponent,
@@ -55,6 +60,29 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
     IsMitra = false;
 
     TemplateEditor!: TemplateEditorModel.ITemplateEditor;
+
+    GridPaymentManualProps: GridModel.IGrid = {
+        id: 'GridSetupMenu',
+        column: [
+            { field: 'payment_method', headerName: 'Payment Method', class: 'text-sky-500 font-semibold' },
+            { field: 'no_rekening', headerName: 'No. Rekening', },
+            { field: 'is_active', headerName: 'Is Active', renderAsCheckbox: true, class: 'text-center' },
+        ],
+        dataSource: [],
+        height: "calc(100vh - 14.5rem)",
+        toolbar: ['Edit', 'Delete'],
+        showPaging: true,
+        showSearch: false,
+        showSort: false,
+        searchKeyword: 'payment_method',
+        searchPlaceholder: 'Find Payment Method Here',
+    };
+    GridPaymentManualSelectedData: any;
+
+    ShowDialogPaymentManual = false;
+    FormPaymentManualState: 'insert' | 'update' = 'insert';
+    FormPaymentManualProps: FormModel.IForm;
+    @ViewChild('FormPaymentManualComps') FormPaymentManualComps!: DynamicFormComponent;
 
     constructor(
         private _messageService: MessageService,
@@ -307,6 +335,48 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
             state: 'write',
             defaultValue: null,
         };
+
+        this.FormPaymentManualProps = {
+            id: 'form_payment_manual',
+            fields: [
+                {
+                    id: 'id_payment_method_manual',
+                    label: 'ID',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    readonly: true,
+                    hidden: true
+                },
+                {
+                    id: 'payment_method',
+                    label: 'Payment Method',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    placeholder: 'Contoh: BRI / MANDIRI'
+                },
+                {
+                    id: 'no_rekening',
+                    label: 'Nomor Rekening',
+                    required: false,
+                    type: 'text',
+                    value: '',
+                },
+                {
+                    id: 'is_active',
+                    label: 'Is Active',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    hidden: true
+                },
+            ],
+            style: 'not_inline',
+            class: 'grid-rows-2 grid-cols-1',
+            state: 'write',
+            defaultValue: null,
+        };
     }
 
     ngOnInit(): void {
@@ -338,6 +408,7 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     this.FormComps.FormGroup.patchValue(result.data);
                     this.FormTagihanComps.FormGroup.patchValue(result.data);
                     this.FormPaymentGatewayComps.FormGroup.patchValue(result.data);
+                    this.getPaymentMethodManual();
                 }
             });
     }
@@ -408,4 +479,100 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
             }
         });
     }
+
+    onToolbarPaymentManualClicked(args: any) {
+        if (args.type == 'delete') {
+            this._confirmationService.confirm({
+                target: (<any>event).target as EventTarget,
+                message: 'Deleted data can not be reverted',
+                header: 'Are you sure?',
+                icon: 'pi pi-info-circle',
+                acceptButtonStyleClass: "p-button-danger p-button-sm",
+                rejectButtonStyleClass: "p-button-secondary p-button-sm",
+                acceptIcon: "none",
+                acceptLabel: 'Yes, sure',
+                rejectIcon: "none",
+                rejectLabel: 'No, back',
+                accept: () => {
+                    this.deletePaymentMethodManual(args.data);
+                }
+            });
+        }
+
+        if (args.type == 'edit') {
+            this.ShowDialogPaymentManual = true;
+            this.FormPaymentManualComps.FormGroup.patchValue(args.data);
+        }
+    }
+
+    getPaymentMethodManual() {
+        const userData = this._authenticationService.getUserData();
+
+        this._settingCompanyService
+            .getAllPaymentMethodManual(userData.id_setting_company)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this.GridPaymentManualProps.dataSource = result.data;
+                }
+            })
+    }
+
+    savePaymentMethodManual(data: any) {
+        this._settingCompanyService
+            .createPaymentMethodManual(data)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this._messageService.clear();
+                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data saved succesfully' });
+                    this.FormPaymentGatewayComps.FormGroup.reset();
+                    this.ShowDialogPaymentManual = false;
+                    this.getPaymentMethodManual();
+                }
+            })
+    }
+
+    updatePaymentMethodManual(data: any) {
+        this._confirmationService.confirm({
+            target: (<any>event).target as EventTarget,
+            message: 'Data will be updated',
+            header: 'Are you sure?',
+            icon: 'pi pi-info-circle',
+            acceptButtonStyleClass: "p-button-warning p-button-sm",
+            rejectButtonStyleClass: "p-button-secondary p-button-sm",
+            acceptIcon: "none",
+            acceptLabel: 'Yes, sure',
+            rejectIcon: "none",
+            rejectLabel: 'No, back',
+            accept: () => {
+                this._settingCompanyService
+                    .update(data)
+                    .pipe(takeUntil(this.Destroy$))
+                    .subscribe((result) => {
+                        if (result.status) {
+                            this._messageService.clear();
+                            this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
+                            this.FormPaymentGatewayComps.FormGroup.reset();
+                            this.ShowDialogPaymentManual = false;
+                            this.getPaymentMethodManual();
+                        }
+                    })
+            }
+        });
+    }
+
+    private deletePaymentMethodManual(data: any) {
+        this._settingCompanyService
+            .updatePaymentMethodManual({ ...data, is_active: false })
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this._messageService.clear();
+                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
+                    this.getPaymentMethodManual();
+                }
+            })
+    }
+
 }
