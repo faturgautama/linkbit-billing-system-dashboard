@@ -22,6 +22,7 @@ import { ProductService } from 'src/app/services/setup-data/product.service';
 import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 import { TabMenuModule } from 'primeng/tabmenu';
+import { SettingPelangganProductComponent } from './setting-pelanggan-product/setting-pelanggan-product.component';
 
 @Component({
     selector: 'app-pelanggan',
@@ -35,7 +36,8 @@ import { TabMenuModule } from 'primeng/tabmenu';
         ConfirmDialogModule,
         DialogModule,
         InputTextModule,
-        TabMenuModule
+        TabMenuModule,
+        SettingPelangganProductComponent,
     ],
     templateUrl: './pelanggan.component.html',
     styleUrl: './pelanggan.component.scss'
@@ -44,13 +46,9 @@ export class PelangganComponent implements OnInit, OnDestroy {
 
     Destroy$ = new Subject();
 
-    PageState: 'list' | 'form' = 'list';
+    PageState: 'list' | 'form' | 'set_paket' = 'list';
 
-    Tab = [
-        { label: 'Aktif', icon: 'pi pi-check' },
-        { label: 'Non Aktif', icon: 'pi pi-times' },
-    ];
-    ActiveTab = this.Tab[0];
+    ActiveTab: 'active' | 'inactive' = 'active';
 
     UserData = this._authenticationService.getUserData();
 
@@ -70,6 +68,11 @@ export class PelangganComponent implements OnInit, OnDestroy {
             title: 'Import',
             icon: 'pi pi-file-import'
         },
+        {
+            id: 'set_paket',
+            title: 'Set Paket Pelanggan',
+            icon: 'pi pi-cog'
+        },
     ];
 
     GridProps: GridModel.IGrid = {
@@ -79,7 +82,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
             { field: 'full_name', headerName: 'Nama Pelanggan', },
             { field: 'product_name', headerName: 'Layanan', },
             { field: 'whatsapp', headerName: 'No. Whatsapp', },
-            { field: 'alamat', headerName: 'Alamat', },
+            { field: 'alamat', headerName: 'Alamat', width: '25%' },
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
@@ -124,6 +127,8 @@ export class PelangganComponent implements OnInit, OnDestroy {
     ShowDialogProduct = false;
 
     ShowDialogImport = false;
+
+    @ViewChild('SettingPaketComps') SettingPaketComps!: SettingPelangganProductComponent;
 
     constructor(
         private _router: Router,
@@ -415,8 +420,8 @@ export class PelangganComponent implements OnInit, OnDestroy {
         }
     }
 
-    handleChangeTab(args: any) {
-        this.ActiveTab = args;
+    handleChangeTab(state: 'active' | 'inactive') {
+        this.ActiveTab = state;
         this.getAll();
     }
 
@@ -426,13 +431,14 @@ export class PelangganComponent implements OnInit, OnDestroy {
             id_setting_company: this.UserData.id_setting_company
         }
 
-        if (this.ActiveTab.label == 'Aktif') {
+        if (this.ActiveTab == 'active') {
             query = {
                 ...query,
                 is_active: true
             };
 
             this.GridProps.isCustomSearch = true;
+            this.GridProps.showSearch = true;
 
             this._pelangganService
                 .getAll(query, true)
@@ -518,6 +524,22 @@ export class PelangganComponent implements OnInit, OnDestroy {
     }
 
     handleClickButtonNavigation(data: LayoutModel.IButtonNavigation) {
+        if (data.id == 'set_paket') {
+            this.PageState = 'set_paket';
+            this.ButtonNavigation = [
+                {
+                    id: 'back',
+                    title: 'Kembali',
+                    icon: 'pi pi-chevron-left'
+                },
+                {
+                    id: 'save_set_paket',
+                    title: 'Simpan',
+                    icon: 'pi pi-save'
+                },
+            ];
+        };
+
         if (data.id == 'add') {
             this.PageState = 'form';
             this.ButtonNavigation = [];
@@ -537,12 +559,37 @@ export class PelangganComponent implements OnInit, OnDestroy {
 
         if (data.id == 'import') {
             this.ShowDialogImport = true;
-        }
+        };
+
+        if (data.id == 'back') {
+            this.handleBackToList();
+        };
+
+        if (data.id == 'save_set_paket') {
+            const payload = {
+                pelanggan: this.SettingPaketComps.selectedItems.map(item => item.id_pelanggan),
+                ...this.SettingPaketComps.FormComps.FormGroup.value
+            };
+
+            this._pelangganService
+                .updateManyProductPelanggan(payload)
+                .pipe(takeUntil(this.Destroy$))
+                .subscribe((result) => {
+                    if (result.status) {
+                        this._messageService.clear();
+                        this._messageService.add({ severity: 'success', summary: 'Berhasil', detail: 'Setting Paket Pelanggan Berhasil Disimpan' });
+                        this.handleBackToList();
+                    }
+                })
+        };
     }
 
     handleBackToList() {
         this._router.navigateByUrl("/pelanggan");
-        this.FormComps.onResetForm();
+
+        if (this.PageState == 'form') {
+            this.FormComps.onResetForm();
+        }
 
         setTimeout(() => {
             this.PageState = 'list';
@@ -554,8 +601,8 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     icon: 'pi pi-plus'
                 },
                 {
-                    id: 'Unduh Contoh Format Import',
-                    title: 'Import',
+                    id: 'unduh',
+                    title: 'Unduh Contoh Format Import',
                     icon: 'pi pi-download'
                 },
                 {
@@ -563,9 +610,19 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     title: 'Import',
                     icon: 'pi pi-file-import'
                 },
+                {
+                    id: 'set_paket',
+                    title: 'Set Paket Pelanggan',
+                    icon: 'pi pi-cog'
+                },
             ];
 
-            this.getAll();
+            const queryParams = {
+                id_setting_company: this.UserData.id_setting_company,
+                is_active: this.ActiveTab == 'active' ? true : false
+            }
+
+            this.getAll(queryParams);
         }, 100);
     }
 
@@ -684,7 +741,12 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
-                    this.getAll();
+                    const queryParams = {
+                        id_setting_company: this.UserData.id_setting_company,
+                        is_active: this.ActiveTab == 'active' ? true : false
+                    }
+
+                    this.getAll(queryParams);
                 }
             })
     }
@@ -698,7 +760,12 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
                     this.ShowDialogProduct = false;
-                    this.getAll();
+                    const queryParams = {
+                        id_setting_company: this.UserData.id_setting_company,
+                        is_active: this.ActiveTab == 'active' ? true : false
+                    }
+
+                    this.getAll(queryParams);
                 }
             })
     }

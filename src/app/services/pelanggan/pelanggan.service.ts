@@ -42,6 +42,10 @@ export class PelangganService {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/pelanggan`, { id_setting_company: id_setting_company, is_active: false });
     }
 
+    getAllNotHaveProduct(id_setting_company: number): Observable<PelangganModel.GetAllPelanggan> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/pelanggan/not-have-product`, { id_setting_company: id_setting_company });
+    }
+
     getById(id_pelanggan: number): Observable<PelangganModel.GetAllPelanggan> {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/pelanggan/retrieve/${id_pelanggan}`);
     }
@@ -63,6 +67,10 @@ export class PelangganService {
 
     updateProductPelanggan(payload: PelangganModel.UpdateProductPelanggan): Observable<HttpBaseResponse> {
         return this._httpRequestService.putRequest(`${environment.webApiUrl}/pelanggan/update-product-pelanggan`, payload);
+    }
+
+    updateManyProductPelanggan(payload: PelangganModel.UpdateProductPelanggan): Observable<HttpBaseResponse> {
+        return this._httpRequestService.putRequest(`${environment.webApiUrl}/pelanggan/update-many-product-pelanggan`, payload);
     }
 
     getFileTemplate() {
