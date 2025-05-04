@@ -10,7 +10,7 @@ export namespace GridModel {
     export interface IGridColumn {
         field: string;
         headerName: string;
-        format?: 'date' | 'number' | 'currency' | 'image' | 'html' | 'icon_boolean' | 'monthpicker';
+        format?: 'date' | 'number' | 'currency' | 'image' | 'html' | 'icon_boolean' | 'monthpicker' | 'json';
         class?: string;
         renderAsCheckbox?: boolean;
         renderAsPills?: boolean;

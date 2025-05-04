@@ -156,7 +156,8 @@
     <!-- No Sort Mode -->
     <ng-template #noSortMode>
         <p-table [value]="props.dataSource" [columns]="props.column" styleClass="p-datatable-striped"
-            [tableStyle]="{'min-width': 'auto'}" selectionMode="single" [(selection)]="SelectedRow">
+            [tableStyle]="{'min-width': 'auto'}" selectionMode="single" [(selection)]="SelectedRow" [paginator]="true"
+            [rows]="5" [rowsPerPageOptions]="[5, 10, 25, 50, 100]">
             <ng-template pTemplate="header" let-columns>
                 <tr class="bg-gray-100">
                     <th *ngFor="let col of columns"
@@ -207,6 +208,9 @@
                             }
                             @case ('icon_boolean') {
                             <span [innerHtml]="handleRenderIconBoolean(rowData[col.field])"></span>
+                            }
+                            @case ('json') {
+                            {{ rowData[col.field] | json }}
                             }
                             @case (undefined) {
                             {{ rowData[col.field] }}

@@ -44,4 +44,17 @@ export class SettingCompanyService {
             is_active: false,
         });
     }
+
+    getAllPaymentMethodManual(id_setting_company: number): Observable<HttpBaseResponse> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/setting-company/payment-method-manual/${id_setting_company}`);
+    }
+
+    createPaymentMethodManual(payload: any): Observable<HttpBaseResponse> {
+        const { id_payment_method_manual, is_active, ...data } = payload;
+        return this._httpRequestService.postRequest(`${environment.webApiUrl}/setting-company/payment-method-manual`, data);
+    }
+
+    updatePaymentMethodManual(payload: any): Observable<HttpBaseResponse> {
+        return this._httpRequestService.putRequest(`${environment.webApiUrl}/setting-company/payment-method-manual`, payload);
+    }
 }

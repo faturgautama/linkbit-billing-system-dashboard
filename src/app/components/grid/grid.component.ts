@@ -137,6 +137,7 @@ export class GridComponent implements OnInit, AfterViewInit {
                 icon = 'pi pi-user-edit';
                 break;
             case 'Kirim Pesan Tagihan':
+            case 'Kirim Ulang':
                 icon = 'pi pi-whatsapp';
                 break;
             case 'Kirim Pesan Lunas':

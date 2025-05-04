@@ -42,4 +42,24 @@ export const managementUserRoutes: Route[] = [
             ]
         }
     },
+    {
+        path: 'log-activity',
+        loadComponent: async () => (await import('./logging/log-activity/log-activity.component')).LogActivityComponent,
+        data: {
+            title: 'Log Aktifitas User',
+            breadcrumbs: [
+                "Home", "Management User", "Log Aktifitas User"
+            ]
+        }
+    },
+    {
+        path: 'log-message',
+        loadComponent: async () => (await import('./logging/log-message-invoice/log-message-invoice.component')).LogMessageInvoiceComponent,
+        data: {
+            title: 'Log Pesan Invoice',
+            breadcrumbs: [
+                "Home", "Management User", "Log Pesan Invoice"
+            ]
+        }
+    }
 ];
