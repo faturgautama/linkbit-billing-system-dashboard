@@ -28,6 +28,7 @@ export namespace PelangganModel {
         full_name?: string;
         pelanggan_code?: string;
         phone?: string;
+        is_active?: boolean;
     }
 
     export class GetAllPelanggan {

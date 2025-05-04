@@ -80,7 +80,6 @@ export class PelangganComponent implements OnInit, OnDestroy {
             { field: 'product_name', headerName: 'Layanan', },
             { field: 'whatsapp', headerName: 'No. Whatsapp', },
             { field: 'alamat', headerName: 'Alamat', },
-            { field: 'is_active', headerName: 'Is Active', renderAsCheckbox: true, class: 'text-center' },
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
@@ -422,36 +421,40 @@ export class PelangganComponent implements OnInit, OnDestroy {
     }
 
     private getAll(query?: any) {
-        if (this.UserData.company_type != 'KANTOR PUSAT') {
-            if (query && Object.keys(query).length) {
-                query.id_setting_company = this.UserData.id_setting_company;
-            } else {
-                query = {
-                    id_setting_company: this.UserData.id_setting_company
-                }
-            }
-        };
+        query = {
+            ...query,
+            id_setting_company: this.UserData.id_setting_company
+        }
 
         if (this.ActiveTab.label == 'Aktif') {
             query = {
                 ...query,
                 is_active: true
             };
-        } else {
-            query = {
-                ...query,
-                is_active: false
-            };
-        }
 
-        this._pelangganService
-            .getAll(query)
-            .pipe(takeUntil(this.Destroy$))
-            .subscribe((result) => {
-                if (result) {
-                    this.GridProps.dataSource = result.data;
-                }
-            });
+            this.GridProps.isCustomSearch = true;
+
+            this._pelangganService
+                .getAll(query, true)
+                .pipe(takeUntil(this.Destroy$))
+                .subscribe((result) => {
+                    if (result) {
+                        this.GridProps.dataSource = result.data;
+                    }
+                });
+        } else {
+            this.GridProps.isCustomSearch = false;
+            this.GridProps.showSearch = false;
+
+            this._pelangganService
+                .getAllInactive(this.UserData.id_setting_company)
+                .pipe(takeUntil(this.Destroy$))
+                .subscribe((result) => {
+                    if (result) {
+                        this.GridProps.dataSource = result.data;
+                    }
+                });
+        }
     }
 
     private getAllInvoice(query?: any) {

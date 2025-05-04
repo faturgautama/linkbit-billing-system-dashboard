@@ -163,11 +163,15 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                     dropdownProps: {
                         options: [],
                         optionName: 'full_name',
-                        optionValue: 'id_pelanggan'
+                        optionValue: 'id_pelanggan',
+                        customField: {
+                            title: 'full_name',
+                            subtitle: 'pelanggan_code',
+                            description: 'alamat'
+                        }
                     },
                     value: '',
                     onChange: (args: any) => {
-                        console.log(args);
                         if (args) {
                             if (!args.product_id) {
                                 this._messageService.clear();

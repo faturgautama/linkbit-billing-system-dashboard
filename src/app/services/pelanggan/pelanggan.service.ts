@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { HttpBaseResponse } from 'src/app/model/http/http-request.model';
 import { PelangganModel } from 'src/app/model/pages/pelanggan/pelanggan.model';
 import { environment } from 'src/environments/environment';
@@ -10,12 +10,36 @@ import { HttpRequestService } from '../http/http-request.service';
 })
 export class PelangganService {
 
+    Pelanggan$ = new BehaviorSubject<PelangganModel.IPelanggan[]>([]);
+
     constructor(
         private _httpRequestService: HttpRequestService
     ) { }
 
-    getAll(query?: PelangganModel.IPelangganQueryParams): Observable<PelangganModel.GetAllPelanggan> {
-        return this._httpRequestService.getRequest(`${environment.webApiUrl}/pelanggan`, query);
+    getAll(query?: PelangganModel.IPelangganQueryParams, refresh_state?: boolean): Observable<PelangganModel.GetAllPelanggan> {
+        if (this.Pelanggan$.value && !refresh_state) {
+            return of({
+                status: true,
+                message: 'OK',
+                data: this.Pelanggan$.value
+            })
+        };
+
+        return this._httpRequestService
+            .getRequest(`${environment.webApiUrl}/pelanggan`, query)
+            .pipe(
+                tap((result) => {
+                    if (result.data) {
+                        if (refresh_state) {
+                            this.Pelanggan$.next(result.data);
+                        }
+                    }
+                })
+            )
+    }
+
+    getAllInactive(id_setting_company: number): Observable<PelangganModel.GetAllPelanggan> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/pelanggan`, { id_setting_company: id_setting_company, is_active: false });
     }
 
     getById(id_pelanggan: number): Observable<PelangganModel.GetAllPelanggan> {
