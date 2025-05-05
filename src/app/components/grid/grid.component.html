@@ -156,8 +156,8 @@
     <!-- No Sort Mode -->
     <ng-template #noSortMode>
         <p-table [value]="props.dataSource" [columns]="props.column" styleClass="p-datatable-striped"
-            [tableStyle]="{'min-width': 'auto'}" selectionMode="single" [(selection)]="SelectedRow" [paginator]="true"
-            [rows]="5" [rowsPerPageOptions]="[5, 10, 25, 50, 100]">
+            [tableStyle]="{'min-width': 'auto'}" selectionMode="single" [(selection)]="SelectedRow"
+            [paginator]="props.showPaging" [rows]="5" [rowsPerPageOptions]="[5, 10, 25, 50, 100]">
             <ng-template pTemplate="header" let-columns>
                 <tr class="bg-gray-100">
                     <th *ngFor="let col of columns"

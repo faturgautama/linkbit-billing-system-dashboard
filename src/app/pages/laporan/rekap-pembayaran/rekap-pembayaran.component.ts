@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
 import { Subject, takeUntil } from 'rxjs';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboard.component';
@@ -16,8 +18,10 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
     selector: 'app-rekap-pembayaran',
     standalone: true,
     imports: [
+        FormsModule,
         CommonModule,
         GridComponent,
+        InputTextModule,
         DashboardComponent,
     ],
     templateUrl: './rekap-pembayaran.component.html',
@@ -44,7 +48,7 @@ export class RekapPembayaranComponent implements OnInit, OnDestroy {
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
-        showPaging: true,
+        showPaging: false,
         showSearch: true,
         showSort: false,
         searchKeyword: 'role',
@@ -85,6 +89,13 @@ export class RekapPembayaranComponent implements OnInit, OnDestroy {
     };
     GridSelectedData: any;
 
+    Footer = {
+        grand_total: 0,
+        total_payment_gateway: 0,
+        total_cash: 0,
+        total_manual: 0
+    };
+
     constructor(
         private _laporanService: LaporanService,
         private _utilityService: UtilityService,
@@ -112,9 +123,10 @@ export class RekapPembayaranComponent implements OnInit, OnDestroy {
         this._laporanService
             .getRekapPembayaran(queries)
             .pipe(takeUntil(this.Destroy$))
-            .subscribe((result) => {
+            .subscribe((result: any) => {
                 if (result) {
                     this.GridProps.dataSource = result.data;
+                    this.Footer = result['sum'];
                 }
             });
     };
