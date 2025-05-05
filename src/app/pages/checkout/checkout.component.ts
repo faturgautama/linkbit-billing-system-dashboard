@@ -162,4 +162,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                 }
             })
     }
+
+    copyToClipboard(value: string) {
+        navigator.clipboard.writeText(value).then(() => {
+            console.log('Copied to clipboard:', value);
+            this._messageService.add({ severity: 'success', summary: 'Copied!', detail: 'Copied to clipboard' })
+        }).catch(err => {
+            console.error('Failed to copy!', err);
+        });
+    }
 }

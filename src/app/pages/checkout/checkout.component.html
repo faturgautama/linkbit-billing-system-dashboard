@@ -1,4 +1,4 @@
-<div *ngIf="InvoiceDatasource" class="flex w-full h-screen lg:h-full bg-gray-700 justify-center">
+<div *ngIf="InvoiceDatasource" class="flex w-full h-full bg-gray-700 justify-center">
     <!-- Payment Panel -->
     <div *ngIf="!IsPaymentSuccess" class="flex flex-col items-center max-w-[480px] w-full bg-gray-50 relative">
         <!-- Sandbox Mode -->
@@ -92,7 +92,7 @@
         </div>
 
         <!-- Payment Method -->
-        <div class="flex flex-col w-full gap-0 p-3 pt-[6rem]">
+        <div class="flex flex-col w-full gap-0 p-3 pt-[5rem]">
             <p class="text-base text-sky-600 font-semibold">
                 <span *ngIf="IsPaymentGenerated" class="text-gray-700" (click)="changePaymentMethod()">
                     <i class="pi pi-chevron-left" style="font-size: 12px"></i>
@@ -105,8 +105,7 @@
             </p>
 
             <!-- List Payment Method -->
-            <div *ngIf="!IsPaymentGenerated" class="flex flex-col w-full overflow-x-auto gap-3 pb-2"
-                style="height: calc(100vh - 23rem);">
+            <div *ngIf="!IsPaymentGenerated" class="flex flex-col w-full overflow-x-auto gap-3 pb-2">
                 <div *ngFor="let item of PaymentMethodDatasource"
                     class="flex flex-row items-center w-full gap-2 bg-gray-200 p-2 rounded-lg shadow"
                     (click)="createPayment(item)">
@@ -146,7 +145,7 @@
                         </p>
                     </div>
 
-                    <span class="text-sky-500">
+                    <span class="text-sky-500" (click)="copyToClipboard(DetailPayment.payment_number)">
                         <i class="pi pi-copy" style="font-size: 17px;"></i>
                     </span>
                 </div>
