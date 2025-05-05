@@ -48,12 +48,19 @@
                     </p>
                 </div>
 
-                <p-button severity="info" label="Add Invoice" styleClass="p-button-sm"
-                    (onClick)="handleGoToAddInvoice(this.GridSelectedData.id_pelanggan)">
-                </p-button>
+                <div class="flex gap-2">
+                    <p-button severity="secondary" label="Export" styleClass="p-button-sm"
+                        (onClick)="handleExportHistoryTagihan()">
+                    </p-button>
+
+                    <p-button severity="info" label="Add Invoice" styleClass="p-button-sm"
+                        (onClick)="handleGoToAddInvoice(this.GridSelectedData.id_pelanggan)">
+                    </p-button>
+                </div>
             </div>
 
-            <app-grid [props]="GridHistoryTagihanProps" (aksiClicked)="onToolbarClickedHistoryInvoice($event)">
+            <app-grid #GridHistoryTagihanComps [props]="GridHistoryTagihanProps"
+                (aksiClicked)="onToolbarClickedHistoryInvoice($event)">
             </app-grid>
         </div>
     </div>

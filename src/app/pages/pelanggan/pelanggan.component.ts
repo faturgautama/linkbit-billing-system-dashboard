@@ -75,6 +75,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
         },
     ];
 
+    @ViewChild('GridHistoryTagihanComps') GridHistoryTagihanComps!: GridComponent;
     GridProps: GridModel.IGrid = {
         id: 'GridSetupMenu',
         column: [
@@ -749,6 +750,10 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     this.getAll(queryParams);
                 }
             })
+    }
+
+    handleExportHistoryTagihan() {
+        this.GridHistoryTagihanComps.onExportExcel();
     }
 
     handleUpdateProductPelanggan(data: any) {
