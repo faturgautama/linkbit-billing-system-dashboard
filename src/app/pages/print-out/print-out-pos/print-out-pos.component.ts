@@ -26,6 +26,8 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
 
     QrCode: string = "";
 
+    BackUrl = "/pembayaran";
+
     constructor(
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
@@ -35,14 +37,21 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        window.addEventListener('afterprint', () => { this._router.navigate(['/pembayaran']); });
-
         const id_payment = this._activatedRoute.snapshot.queryParams['id_payment'];
         this.getById(id_payment);
+
+        if (this._activatedRoute.snapshot.queryParams['id_pelanggan']) {
+            this.BackUrl = `/pelanggan?id_pelanggan=${this._activatedRoute.snapshot.queryParams['id_pelanggan']}`
+        } else {
+            this.BackUrl = '/pembayaran';
+        };
+
+        window.addEventListener('afterprint', () => { this._router.navigateByUrl(this.BackUrl); });
+
     }
 
     ngOnDestroy(): void {
-        window.removeEventListener('afterprint', () => { this._router.navigate(['/pembayaran']); });
+        window.removeEventListener('afterprint', () => { this._router.navigate([this.BackUrl]); });
         this.Destroy$.next(0);
         this.Destroy$.complete();
     }

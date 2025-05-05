@@ -114,7 +114,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
-        toolbar: ['Delete', 'Detail', 'Kirim Pesan Tagihan', 'Kirim Pesan Lunas', 'Add Pembayaran Cash'],
+        toolbar: ['Print', 'Detail', 'Delete', 'Kirim Pesan Tagihan', 'Kirim Pesan Lunas', 'Add Pembayaran Cash'],
         showPaging: false,
         showSearch: false,
         showSort: false,
@@ -800,11 +800,11 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     this.deleteData(args.data);
                 }
             });
-        }
+        };
 
         if (args.type == 'detail') {
             this._router.navigateByUrl(`/tagihan?state=edit&id_invoice=${args.data.id_invoice}`);
-        }
+        };
 
         if (args.type == 'kirim pesan tagihan') {
             this._invoiceService
@@ -837,6 +837,15 @@ export class PelangganComponent implements OnInit, OnDestroy {
 
         if (args.type == 'add pembayaran cash') {
             this._router.navigateByUrl(`/pembayaran?state=cash&id_invoice=${args.data.id_invoice}&id_pelanggan=${args.data.id_pelanggan}`);
+        };
+
+        if (args.type == 'print') {
+            if (args.data.payment_status == 'PAID') {
+                this._router.navigateByUrl(`/print-out/pos?id_payment=${args.data.id_payment}&id_pelanggan=${args.data.id_pelanggan}`)
+            } else {
+                this._messageService.clear();
+                this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Invoice ini belum lunas' });
+            }
         }
     }
 
