@@ -74,6 +74,7 @@ export namespace PelangganModel {
         subscribe_start_date: Date;
         pic_name: string;
         notes: string;
+        is_active: boolean;
     }
 
     export interface UpdateProductPelanggan {

@@ -87,7 +87,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
-        toolbar: ['Delete', 'Detail', 'Produk Layanan'],
+        toolbar: ['Change Status', 'Detail', 'Produk Layanan'],
         showPaging: true,
         showSearch: true,
         showSort: false,
@@ -646,10 +646,10 @@ export class PelangganComponent implements OnInit, OnDestroy {
     }
 
     onToolbarClicked(args: any): void {
-        if (args.type == 'delete') {
+        if (args.type == 'change status') {
             this._confirmationService.confirm({
                 target: (<any>event).target as EventTarget,
-                message: 'Deleted data can not be reverted',
+                message: 'Pelanggan status will be changed',
                 header: 'Are you sure?',
                 icon: 'pi pi-info-circle',
                 acceptButtonStyleClass: "p-button-danger p-button-sm",
@@ -741,7 +741,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
             .subscribe((result) => {
                 if (result.status) {
                     this._messageService.clear();
-                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
+                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
                     const queryParams = {
                         id_setting_company: this.UserData.id_setting_company,
                         is_active: this.ActiveTab == 'active' ? true : false
@@ -787,7 +787,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
         if (args.type == 'delete') {
             this._confirmationService.confirm({
                 target: (<any>event).target as EventTarget,
-                message: 'Deleted data can not be reverted',
+                message: 'Data will deleted and can not be reverted',
                 header: 'Are you sure?',
                 icon: 'pi pi-info-circle',
                 acceptButtonStyleClass: "p-button-danger p-button-sm",
@@ -797,7 +797,16 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 rejectIcon: "none",
                 rejectLabel: 'No, back',
                 accept: () => {
-                    this.deleteData(args.data);
+                    this._invoiceService
+                        .delete(args.data.id_invoice)
+                        .pipe(takeUntil(this.Destroy$))
+                        .subscribe((result) => {
+                            if (result.status) {
+                                this._messageService.clear();
+                                this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
+                                this.getAllInvoice({ id_pelanggan: args.id_pelanggan });
+                            }
+                        })
                 }
             });
         };

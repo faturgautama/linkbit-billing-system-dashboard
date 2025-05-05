@@ -61,7 +61,7 @@ export class PelangganService {
     delete(payload: PelangganModel.UpdatePelanggan): Observable<HttpBaseResponse> {
         return this._httpRequestService.putRequest(`${environment.webApiUrl}/pelanggan`, {
             ...payload,
-            is_active: false,
+            is_active: !payload.is_active,
         });
     }
 
