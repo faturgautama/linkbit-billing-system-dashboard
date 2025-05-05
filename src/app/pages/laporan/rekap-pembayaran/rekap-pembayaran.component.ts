@@ -37,6 +37,9 @@ export class RekapPembayaranComponent implements OnInit, OnDestroy {
         id: 'Rekap-Pembayaran-Per-Periode',
         column: [
             { field: 'date', headerName: 'Tgl. Pembayaran', format: 'date', class: 'font-semibold text-sky-500' },
+            { field: 'cash', headerName: 'Cash', format: 'currency' },
+            { field: 'manual', headerName: 'Chanel Manual', format: 'currency' },
+            { field: 'xendit', headerName: 'Payment Gateway', format: 'currency' },
             { field: 'total', headerName: 'Grand Total', format: 'currency' },
         ],
         dataSource: [],
