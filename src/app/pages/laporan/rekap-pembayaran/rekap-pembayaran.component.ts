@@ -105,7 +105,6 @@ export class RekapPembayaranComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.getAll({ date: this._utilityService.onFormatDate(new Date(), 'yyyy-MM-DD') });
-        this.getAllMitra();
         this.getAllGroupPelanggan();
     }
 
@@ -131,24 +130,13 @@ export class RekapPembayaranComponent implements OnInit, OnDestroy {
             });
     };
 
-    private getAllMitra() {
-        this._settingCompanyService
-            .getAllActive({ is_active: true })
-            .pipe(takeUntil(this.Destroy$))
-            .subscribe((result) => {
-                if (result) {
-                    this.GridProps.customSearchProps![1].dropdownProps!.options = result.data;
-                }
-            });
-    }
-
     private getAllGroupPelanggan() {
         this._groupPelangganService
             .getAll()
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
-                    this.GridProps.customSearchProps![2].dropdownProps!.options = result.data;
+                    this.GridProps.customSearchProps![1].dropdownProps!.options = result.data;
                 }
             });
     }

@@ -47,7 +47,6 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
         };
 
         window.addEventListener('afterprint', () => { this._router.navigateByUrl(this.BackUrl); });
-
     }
 
     ngOnDestroy(): void {

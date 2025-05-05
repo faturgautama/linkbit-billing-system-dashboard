@@ -32,6 +32,16 @@ export const laporanRoutes: Route[] = [
         }
     },
     {
+        path: 'rekap-pembayaran-per-tahun',
+        loadComponent: async () => (await import('./rekap-pembayaran-tahunan/rekap-pembayaran-tahunan.component')).RekapPembayaranTahunanComponent,
+        data: {
+            title: 'Rekap Pembayaran Per Tahun',
+            breadcrumbs: [
+                "Home", "Laporan", "Rekap Pembayaran Per Tahun"
+            ]
+        }
+    },
+    {
         path: 'detail-pembayaran-per-periode',
         loadComponent: async () => (await import('./detail-pembayaran/detail-pembayaran.component')).DetailPembayaranComponent,
         data: {

@@ -1,0 +1,9 @@
+:host ::ng-deep {
+  tr th td {
+    font-size: 12px !important;
+  }
+
+  p-table#TableRekapPembayaranTahunan {
+    width: calc(100vw - 10rem);
+  }
+}

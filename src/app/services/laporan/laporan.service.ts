@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { LaporanModel } from 'src/app/model/pages/laporan/laporan.model';
 import { environment } from 'src/environments/environment';
 import { HttpRequestService } from '../http/http-request.service';
+import { HttpBaseResponse } from 'src/app/model/http/http-request.model';
 
 @Injectable({
     providedIn: 'root'
@@ -27,6 +28,10 @@ export class LaporanService {
 
     getDetailPembayaran(query: LaporanModel.IQueryParamLaporanPembayaran): Observable<LaporanModel.GetDetailPembayaranBulanan> {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/laporan/detail-pembayaran-bulanan`, query);
+    }
+
+    getRekapPembayaranTahunan(year: string): Observable<HttpBaseResponse> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/laporan/rekap-pembayaran-tahunan/${year}`);
     }
 
     getTagihanKsoMitra(periode: Date): Observable<LaporanModel.GetTagihanKsoMitra> {
