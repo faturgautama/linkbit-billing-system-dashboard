@@ -12,6 +12,7 @@ import { PaymentService } from 'src/app/services/payment/payment.service';
 import { environment } from 'src/environments/environment';
 import { Socket } from 'ngx-socket-io';
 import { QRCodeModule } from 'angularx-qrcode';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-checkout',
@@ -34,6 +35,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     IsSandboxMode = environment.sandbox;
 
+    Logo = this._sanitizer.bypassSecurityTrustResourceUrl('https://linkbit.net.id/assets/img/logo-linkbit.png');;
+
     InvoiceDatasource: any;
 
     PaymentMethodDatasource: any[] = [];
@@ -45,6 +48,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     constructor(
         private _socket: Socket,
+        private _sanitizer: DomSanitizer,
         private _activatedRoute: ActivatedRoute,
         private _paymentService: PaymentService,
         private _messageService: MessageService,

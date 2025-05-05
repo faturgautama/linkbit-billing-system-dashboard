@@ -9,14 +9,15 @@
         </div>
 
         <!-- Header -->
-        <div class="flex flex-row justify-center w-full gap-2 pt-5 pb-3 h-[9rem] bg-gray-700">
+        <div
+            class="flex flex-row justify-center w-full gap-2 pt-5 pb-3 {{ IsSandboxMode ? 'h-[12rem]' : 'h-[10rem]' }} bg-gray-700">
             <!-- Logo -->
-            <img src="../../../assets/image/logo.png" alt="logo" class="h-[3rem] mx-auto mb-10">
+            <img [src]="Logo" alt="logo" class="h-[3rem] mx-auto mb-10">
         </div>
 
         <!-- Order Summary -->
         <div
-            class="flex flex-col w-11/12 max-w-[450px] p-2 gap-0 bg-white rounded-lg shadow drop-shadow absolute {{ IsSandboxMode ? 'top-[15%]' : 'top-[10%]' }}">
+            class="flex flex-col w-11/12 max-w-[450px] p-2 gap-0 bg-white rounded-lg shadow drop-shadow absolute {{ IsSandboxMode ? 'top-[120px]' : 'top-[85px]' }}">
             <div class="flex w-full justify-between items-center mb-1">
                 <p class="text-gray-500 text-xs">
                     Total
@@ -32,12 +33,47 @@
             </p>
 
             <div class="flex flex-col w-full gap-0">
-                <p class="text-gray-500 text-xs">
-                    Invoice No : {{ InvoiceDatasource.invoice_number }}
-                </p>
-                <p class="text-gray-500 text-xs">
-                    {{ InvoiceDatasource.due_date | date: 'MMMM yyyy' }}
-                </p>
+                <!-- Invoice No -->
+                <div class="flex w-full">
+                    <div class="w-3/12">
+                        <p class="text-gray-500 text-xs">
+                            No. Invoice
+                        </p>
+                    </div>
+                    <div class="w-9/12">
+                        <p class="text-gray-600 text-xs font-medium">
+                            : {{ InvoiceDatasource.invoice_number }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Jatuh Tempo -->
+                <div class="flex w-full">
+                    <div class="w-3/12">
+                        <p class="text-gray-500 text-xs">
+                            Jatuh Tempo
+                        </p>
+                    </div>
+                    <div class="w-9/12">
+                        <p class="text-gray-600 text-xs font-medium">
+                            : {{ InvoiceDatasource.due_date | date: 'dd MMMM yyyy' }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Jatuh Tempo -->
+                <div class="flex w-full">
+                    <div class="w-3/12">
+                        <p class="text-gray-500 text-xs">
+                            Alamat
+                        </p>
+                    </div>
+                    <div class="w-9/12">
+                        <p class="text-gray-600 text-xs font-medium">
+                            : {{ InvoiceDatasource.alamat }}
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -55,7 +91,8 @@
             </p>
 
             <!-- List Payment Method -->
-            <div *ngIf="!IsPaymentGenerated" class="flex flex-col w-full h-[30rem] overflow-x-auto gap-3 pb-2">
+            <div *ngIf="!IsPaymentGenerated" class="flex flex-col w-full overflow-x-auto gap-3 pb-2"
+                style="height: calc(100vh - 22rem);">
                 <div *ngFor="let item of PaymentMethodDatasource"
                     class="flex flex-row items-center w-full gap-2 bg-gray-200 p-2 rounded-lg shadow"
                     (click)="createPayment(item)">
