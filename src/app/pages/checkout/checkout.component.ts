@@ -78,7 +78,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                     this.IsPaymentGenerated = result.data.is_payment_generated;
                     this.IsPaymentSuccess = result.data.invoice_status == 'PAID';
                     this.DetailPayment = result.data.payment;
-                    this.getPaymentMethod(token, this.IsPaymentGenerated);
+                    !this.IsPaymentSuccess && this.getPaymentMethod(token, this.IsPaymentGenerated);
                 }
             })
     }
@@ -94,8 +94,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                     if (setSelectedPaymentMethod) {
                         const index = this.PaymentMethodDatasource.findIndex(item => item.payment_method_code == this.DetailPayment.payment_method);
                         this.SelectedPaymentMethod = this.PaymentMethodDatasource[index];
-
-                        console.log(this.SelectedPaymentMethod);
                     }
                 }
             })
