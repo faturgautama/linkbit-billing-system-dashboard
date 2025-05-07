@@ -10,10 +10,9 @@
                 <span *ngIf="item.required" class="text-xs text-red-500">*</span>
             </p>
 
-            <div *ngIf="item.label_tag" class="flex cursor-pointer mb-1">
+            <div *ngIf="item.label_tag" class="flex">
                 <p-tag [icon]="item.label_tag.icon" [value]="item.label_tag.label" [severity]="item.label_tag.severity"
-                    (click)="handleTagClick(item.label_tag, item)">
-                </p-tag>
+                    (click)="handleTagClick(item.label_tag, item)" />
             </div>
         </div>
 

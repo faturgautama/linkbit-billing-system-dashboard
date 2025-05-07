@@ -51,7 +51,7 @@ import { TagModule } from 'primeng/tag';
         VgBufferingModule,
         MultiSelectModule,
         InputOtpModule,
-        TagModule
+        TagModule,
     ],
     templateUrl: './dynamic-form.component.html',
     styleUrls: ['./dynamic-form.component.scss'],
