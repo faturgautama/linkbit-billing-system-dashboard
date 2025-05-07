@@ -11,11 +11,11 @@
     </div>
 
     <div class="flex items-center gap-8">
-        <span class="text-gray-600 hover:text-pink-500 cursor-pointer" (click)="ShowSearch = true">
+        <span class="text-gray-600 hover:text-sky-500 cursor-pointer" (click)="ShowSearch = true">
             <i class="pi pi-search"></i>
         </span>
 
-        <span class="text-gray-600 hover:text-pink-500 cursor-pointer" (click)="onBackToBeranda()">
+        <span class="text-gray-600 hover:text-sky-500 cursor-pointer" (click)="onBackToBeranda()">
             <i class="pi pi-home"></i>
         </span>
 
@@ -35,7 +35,7 @@
 
         <div class="flex flex-col gap-2 h-[20rem] overflow-x-auto">
             <div *ngFor="let item of Menu"
-                class="flex flex-col bg-gray-100 gap-1 hover:bg-pink-100 hover:text-pink-700 p-2 rounded-md cursor-pointer"
+                class="flex flex-col bg-gray-100 gap-1 hover:bg-sky-100 hover:text-sky-500 p-2 rounded-md cursor-pointer"
                 (click)="handleNavigateToMenu(item.url)">
                 <p class="text-sm font-medium">
                     <i class="{{ item.icon }}" style="font-size: 11px; margin-right: 5px"></i>&nbsp;{{ item.caption }}

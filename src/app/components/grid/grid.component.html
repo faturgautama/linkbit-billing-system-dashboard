@@ -6,7 +6,7 @@
     </div>
 
     <div class="flex gap-3">
-        <p-button severity="secondary" label="Search" styleClass="p-button-sm bg-pink-600 text-white"
+        <p-button severity="secondary" label="Search" styleClass="p-button-sm"
             (onClick)="onSearchKeyword(KeywordSearch.value)">
         </p-button>
 
@@ -107,6 +107,9 @@
                         @case ('date') {
                         {{ rowData[col.field] | date: 'dd-MM-yyyy' }}
                         }
+                        @case ('datetime') {
+                        {{ rowData[col.field] | date: 'dd-MM-yyyy HH:mm' }}
+                        }
                         @case ('monthpicker') {
                         {{ rowData[col.field] | date: 'MM yyyy' }}
                         }
@@ -202,6 +205,9 @@
                             }
                             @case ('date') {
                             {{ rowData[col.field] | date: 'dd-MM-yyyy' }}
+                            }
+                            @case ('datetime') {
+                            {{ rowData[col.field] | date: 'dd-MM-yyyy HH:mm:ss' }}
                             }
                             @case ('number') {
                             {{ handleFormatStringToNumber(rowData[col.field]) | number: '' }}

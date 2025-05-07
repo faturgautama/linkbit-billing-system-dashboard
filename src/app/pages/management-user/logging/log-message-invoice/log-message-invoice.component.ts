@@ -24,14 +24,13 @@ export class LogMessageInvoiceComponent implements OnInit, OnDestroy {
     GridProps: GridModel.IGrid = {
         id: 'GridSetupMenu',
         column: [
-            { field: 'no_ref', headerName: 'No. Invoice', },
+            { field: 'no_ref', headerName: 'No. Invoice', width: '10%' },
             { field: 'full_name', headerName: 'Pelanggan', },
-            { field: 'alamat', headerName: 'Alamat', },
+            { field: 'alamat', headerName: 'Alamat', width: '25%' },
             { field: 'product_name', headerName: 'Produk', },
             { field: 'price', headerName: 'Total', format: 'currency' },
-            { field: 'additional_info', headerName: 'Additional Info', format: 'html' },
-            { field: 'sent_at', headerName: 'Waktu Kirim', format: 'date' },
-            { field: 'resent_at', headerName: 'Waktu Kirim Ulang', format: 'date' },
+            { field: 'sent_at', headerName: 'Waktu Kirim', format: 'datetime' },
+            { field: 'resent_at', headerName: 'Waktu Kirim Ulang', format: 'datetime' },
             { field: 'status', headerName: 'Status' },
         ],
         dataSource: [],
@@ -60,7 +59,7 @@ export class LogMessageInvoiceComponent implements OnInit, OnDestroy {
 
     private getAll() {
         this._loggingService
-            .getLogActivity()
+            .getLogMessage()
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
