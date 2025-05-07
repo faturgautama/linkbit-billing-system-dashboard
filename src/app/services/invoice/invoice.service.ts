@@ -28,6 +28,10 @@ export class InvoiceService {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/invoice/retrieve/${id_invoice}`);
     }
 
+    getInvoiceDigital(token: string): Observable<HttpBaseResponse> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/invoice/get-invoice-digital/${token}`);
+    }
+
     create(payload: InvoiceModel.CreateInvoice): Observable<HttpBaseResponse> {
         return this._httpRequestService.postRequest(`${environment.webApiUrl}/invoice`, payload);
     }

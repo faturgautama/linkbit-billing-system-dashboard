@@ -1,0 +1,10 @@
+:host ::ng-deep {
+  ul {
+    list-style-position: inside !important;
+  }
+
+  p,
+  h6 {
+    margin: 0 !important;
+  }
+}

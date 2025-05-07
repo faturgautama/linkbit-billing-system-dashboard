@@ -5,6 +5,10 @@ const routes: Routes = [
     {
         path: 'checkout',
         loadComponent: async () => (await import('./pages/checkout/checkout.component')).CheckoutComponent
+    },
+    {
+        path: 'invoice-digital',
+        loadComponent: async () => (await import('./pages/print-out/invoice-digital/invoice-digital.component')).InvoiceDigitalComponent
     }
 ];
 
