@@ -4,6 +4,7 @@ export namespace PaymentModel {
         id_invoice: number;
         invoice_number: string;
         invoice_date: Date;
+        invoice_status: string;
         total: number;
         id_pelanggan: number;
         id_setting_company: number;

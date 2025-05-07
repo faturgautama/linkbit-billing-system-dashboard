@@ -182,22 +182,40 @@
 
     <!-- Success Paid Panel -->
     <div *ngIf="IsPaymentSuccess"
-        class="flex flex-col items-center justify-center max-w-[480px] w-full h-full bg-emerald-100">
+        class="flex flex-col items-center justify-center max-w-[480px] w-full h-screen bg-emerald-100">
         <i class="pi pi-check text-emerald-500" style="font-size: 3rem"></i>
 
         <p
-            class="text-xl text-gray-700 font-semibold my-2 pb-10 border-b border-t-0 border-x-0 border-solid border-emerald-400">
-            Pembayaran Berhasil
+            class="text-xl text-gray-700 font-semibold my-3 pb-2 border-b border-t-0 border-x-0 border-solid border-emerald-400">
+            Pembayaran Diterima
         </p>
 
-        <p class="text-3xl text-gray-700 font-bold mt-5 mb-1">
+        <p class="text-sm text-gray-600 mb-1">
+            No. Invoice : <span>{{ InvoiceDatasource.invoice_number }}</span>
+        </p>
+        <p class="text-sm text-gray-600 mb-1">
+            Pembayaran Pada : <span>{{ InvoiceDatasource.payment_date | date: 'dd-MM-yyyy HH:mm' }}</span>
+        </p>
+
+        <p class="text-3xl text-gray-700 font-bold mt-5 mb-5">
             {{ InvoiceDatasource.total | currency: 'Rp. ' }}
         </p>
 
-        <p class="text-xs text-gray-500 mb-5">
-            No. Invoice : {{ InvoiceDatasource.invoice_number }}
+
+        <p class="text-sm text-gray-600 mb-1">
+            Metode Bayar : <span>{{ InvoiceDatasource.payment_method }}</span>
         </p>
 
-        <p-button severity="secondary" styleClass="p-button-sm w-full" label="Kembali Ke Halaman Utama"></p-button>
+        <p class="text-sm text-gray-600 mb-1">
+            ID Pelanggan : <span>{{ InvoiceDatasource.pelanggan_code }}</span>
+        </p>
+
+        <p class="text-sm text-gray-600 mb-5">
+            Nama Pelanggan : <span>{{ InvoiceDatasource.full_name }}</span>
+        </p>
+
+        <p-button severity="secondary" styleClass="p-button-sm w-full" label="Kembali Ke Halaman Utama"
+            (onClick)="handleBackToHome()">
+        </p-button>
     </div>
 </div>

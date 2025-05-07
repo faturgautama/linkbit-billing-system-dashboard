@@ -76,13 +76,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                 if (result.status) {
                     this.InvoiceDatasource = result.data;
                     this.IsPaymentGenerated = result.data.is_payment_generated;
-
-                    if (result.data.payment) {
-                        this.IsPaymentSuccess = result.data.payment.payment_status == 'PAID';
-                    } else {
-                        this.IsPaymentSuccess = false;
-                    }
-
+                    this.IsPaymentSuccess = result.data.invoice_status == 'PAID';
                     this.DetailPayment = result.data.payment;
                     this.getPaymentMethod(token, this.IsPaymentGenerated);
                 }
@@ -170,5 +164,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         }).catch(err => {
             console.error('Failed to copy!', err);
         });
+    }
+
+    handleBackToHome() {
+        window.location.href = "https://linkbit.net.id/";
     }
 }
