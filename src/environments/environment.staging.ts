@@ -3,5 +3,5 @@ export const environment = {
     webApiUrl: 'https://staging-core.bill.linkbit.net.id/api/v1',
     socketUrl: 'https://staging-core.bill.linkbit.net.id',
     version: 'v0.6.5-alpha',
-    sandbox: true
+    sandbox: false
 };
