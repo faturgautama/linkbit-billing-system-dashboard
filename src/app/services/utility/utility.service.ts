@@ -5,7 +5,6 @@ import html2canvas from 'html2canvas';
 import * as moment from 'moment';
 import 'moment/locale/id';
 import domtoimage from 'dom-to-image';
-import { AnyGridOptions } from 'ag-grid-community';
 
 @Injectable({
     providedIn: 'root'
@@ -95,5 +94,9 @@ export class UtilityService {
             endDate = moment(end);
 
         return endDate.diff(startDate, 'days');
+    }
+
+    onFormatPhoneNumber(phone_number: string): string {
+        return phone_number.replace(/^(\+62|0)/, '62');
     }
 }

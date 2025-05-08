@@ -1,6 +1,5 @@
 export class HttpBaseResponse {
-    responseResult!: boolean;
-    statusCode!: number;
+    status!: boolean;
     message!: string;
     data: any;
 }

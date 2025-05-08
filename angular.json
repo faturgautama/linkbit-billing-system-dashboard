@@ -32,10 +32,7 @@
                         "styles": [
                             "src/styles.scss",
                             "node_modules/primeng/resources/themes/aura-light-blue/theme.css",
-                            "node_modules/primeng/resources/primeng.min.css",
-                            "node_modules/quill/dist/quill.core.css",
-                            "node_modules/quill/dist/quill.snow.css",
-                            "node_modules/@videogular/ngx-videogular/fonts/videogular.css"
+                            "node_modules/primeng/resources/primeng.min.css"
                         ],
                         "scripts": [
                             "node_modules/apexcharts/dist/apexcharts.min.js"
@@ -43,7 +40,21 @@
                         "allowedCommonJsDependencies": [
                             "apexcharts",
                             "file-saver",
-                            "exceljs"
+                            "exceljs",
+                            "chart.js",
+                            "xlsx",
+                            "jspdf-autotable",
+                            "file-saver",
+                            "jspdf",
+                            "quill",
+                            "core-js",
+                            "raf",
+                            "rgbcolor",
+                            "quill-delta",
+                            "dom-to-image",
+                            "html2canvas",
+                            "moment",
+                            "moment/locale/id"
                         ]
                     },
                     "configurations": {
@@ -65,6 +76,27 @@
                                 {
                                     "replace": "src/environments/environment.ts",
                                     "with": "src/environments/environment.prod.ts"
+                                }
+                            ]
+                        },
+                        "staging": {
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "3mb",
+                                    "maximumError": "5mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "3mb",
+                                    "maximumError": "5mb"
+                                }
+                            ],
+                            "outputHashing": "all",
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.staging.ts"
                                 }
                             ]
                         },

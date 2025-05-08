@@ -7,6 +7,7 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { Subject, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-authentication',
@@ -27,7 +28,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
     FormProps: FormModel.IForm;
     @ViewChild('FormComps') FormComps!: DynamicFormComponent;
 
-    Version = this._utilityService.getVersion();
+    Version = environment.version;
 
     Year = new Date().getFullYear();
 
@@ -44,14 +45,14 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
                     label: 'Username',
                     required: true,
                     type: 'text',
-                    value: 'uwik',
+                    value: 'superadmin',
                 },
                 {
                     id: 'password',
                     label: 'Password',
                     required: true,
                     type: 'password',
-                    value: 'mat1234_',
+                    value: '1234',
                 },
             ],
             style: 'not_inline',
@@ -82,8 +83,7 @@ export class AuthenticationComponent implements OnInit, OnDestroy {
                 .signIn(formValue)
                 .pipe(takeUntil(this.Destroy$))
                 .subscribe((result) => {
-                    if (result.responseResult) {
-                        // this._authenticationService.getProfile();
+                    if (result.status) {
                         this._authenticationService.setUserData();
                         this._router.navigateByUrl("beranda");
                     }

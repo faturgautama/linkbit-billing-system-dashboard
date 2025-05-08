@@ -15,19 +15,21 @@ export class SetupRolesService {
     ) { }
 
     getAll(): Observable<SetupRolesModel.GetAllSetupRoles> {
-        return this._httpRequestService.getRequest(`${environment.webApiUrl}/cms/role`);
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/user-group`);
     }
 
     create(payload: SetupRolesModel.CreateSetupRoles): Observable<HttpBaseResponse> {
-        return this._httpRequestService.postRequest(`${environment.webApiUrl}/cms/role`, payload);
+        return this._httpRequestService.postRequest(`${environment.webApiUrl}/user-group`, payload);
     }
 
     update(payload: SetupRolesModel.UpdateSetupRoles): Observable<HttpBaseResponse> {
-        const { id_role, ...newObject } = payload;
-        return this._httpRequestService.putRequest(`${environment.webApiUrl}/cms/role/${payload.id_role}`, newObject);
+        return this._httpRequestService.putRequest(`${environment.webApiUrl}/user-group`, payload);
     }
 
-    delete(id_role: string): Observable<HttpBaseResponse> {
-        return this._httpRequestService.deleteRequest(`${environment.webApiUrl}/cms/role/${id_role}`);
+    delete(payload: SetupRolesModel.UpdateSetupRoles): Observable<HttpBaseResponse> {
+        return this._httpRequestService.putRequest(`${environment.webApiUrl}/user-group`, {
+            ...payload,
+            is_active: !payload.is_active
+        });
     }
 }

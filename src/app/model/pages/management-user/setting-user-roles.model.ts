@@ -10,27 +10,19 @@ export namespace SettingUserRolesModel {
     }
 
     export class GetAllSettingUserRoles implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISettingUserRoles[]
     }
 
     export class GetByIdSettingUserRoles implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISettingUserRoles
     }
 
     export interface CreateSettingUserRoles {
+        id_user_group: string
         id_menu: string
-        id_role: string
-    }
-
-    export interface UpdateSettingUserRoles {
-        id_role_menu: string
-        id_menu: string
-        id_role: string
     }
 }

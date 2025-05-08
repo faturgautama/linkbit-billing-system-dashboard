@@ -1,0 +1,5 @@
+<app-dashboard [ButtonNavigation]="ButtonNavigation" (onClickButtonNavigation)="handleClickButtonNavigation($event)">
+    <div class="grid w-full bg-white rounded-lg shadow-sm p-3">
+        <app-dynamic-form #FormComps [props]="FormProps"></app-dynamic-form>
+    </div>
+</app-dashboard>

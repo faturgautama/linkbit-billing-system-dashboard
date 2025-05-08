@@ -1,20 +1,72 @@
-<div *ngIf="props.showSearch"
+<div *ngIf="props.showSearch && !props.isCustomSearch"
     class="flex items-center justify-between w-full mb-4 pt-2 pb-3 border-b border-t-0 border-x-0 border-dashed border-gray-300">
     <div class="flex w-5/12">
         <input #KeywordSearch type="text" pInputText class="w-full p-inputtext-sm"
-            [placeholder]="props.searchPlaceholder">
+            [placeholder]="props.searchPlaceholder" (keyup.enter)="onSearchKeyword(KeywordSearch.value)">
     </div>
 
     <div class="flex gap-3">
-        <p-button severity="secondary" label="Search" styleClass="p-button-sm bg-pink-600 text-white"
+        <p-button severity="secondary" label="Search" styleClass="p-button-sm"
             (onClick)="onSearchKeyword(KeywordSearch.value)">
         </p-button>
 
         <p-button severity="info" label="Export" styleClass="p-button-sm" (onClick)="onExportExcel()"></p-button>
+
+        <p-button *ngFor="let item of props.additionalButtons" [severity]="item.severity" [label]="item.label"
+            styleClass="p-button-sm" (onClick)="onClickAdditionalButton(item)">
+        </p-button>
+    </div>
+</div>
+
+<!-- Show Search and Custom Search -->
+<div *ngIf="props.showSearch && props.isCustomSearch"
+    class="flex items-center justify-between w-full mb-4 pt-2 pb-3 border-b border-t-0 border-x-0 border-dashed border-gray-300">
+    <!-- Custom Search -->
+    <div class="grid grid-rows-1 {{ props.customSearchProps!.length > 3 ? 'grid-cols-4' : 'grid-cols-3'}} w-10/12 gap-3"
+        [formGroup]="CustomSearchForm">
+        <div *ngFor="let item of props.customSearchProps" class="grid w-full">
+            <!-- Inputtext -->
+            <input *ngIf="item.type == 'text'" type="text" pInputText class="p-inputtext-sm w-full"
+                formControlName="{{ item.id }}" placeholder="{{ item.placeholder ? item.placeholder : '' }}" />
+
+            <!-- Number -->
+            <p-inputNumber *ngIf="item.type == 'number'" inputId="integeronly" class="p-inputtext-sm w-full"
+                formControlName="{{ item.id }}">
+            </p-inputNumber>
+
+            <!-- Datepicker -->
+            <p-calendar *ngIf="item.type == 'date'" appendTo="body" styleClass="p-inputtext-sm w-full"
+                dateFormat="dd MM yy" [showClear]="true" formControlName="{{ item.id }}" [readonlyInput]="true"
+                placeholder="{{ item.placeholder ? item.placeholder : '' }}">
+            </p-calendar>
+
+            <!-- Month Picker -->
+            <p-calendar *ngIf="item.type == 'monthpicker'" appendTo="body" styleClass="p-inputtext-sm w-full"
+                view="month" dateFormat="MM yy" [showClear]="true" formControlName="{{ item.id }}"
+                [readonlyInput]="true" placeholder="{{ item.placeholder ? item.placeholder : '' }}">
+            </p-calendar>
+
+            <!-- Dropdown -->
+            <p-dropdown *ngIf="item.type == 'dropdown'" [options]="item.dropdownProps!.options"
+                [optionLabel]="item.dropdownProps!.optionName" [optionValue]="item.dropdownProps!.optionValue"
+                [autoDisplayFirst]="false" [showClear]="true" [filter]="true" styleClass="p-inputtext-sm w-full"
+                formControlName="{{ item.id }}" appendTo="body" [placeholder]="item.placeholder">
+            </p-dropdown>
+        </div>
+    </div>
+
+    <!-- Button -->
+    <div class="flex gap-3">
+        <p-button severity="info" label="Cari" styleClass="p-button-sm" (onClick)="onClickCustomSearch()">
+        </p-button>
+
+        <p-button severity="secondary" label="Export" styleClass="p-button-sm" (onClick)="onExportExcel()"></p-button>
     </div>
 </div>
 
 <div class="grid w-full">
+
+    <!-- Sort Mode -->
     <p-table *ngIf="props.showSort; else noSortMode" [value]="props.dataSource" [columns]="props.column"
         styleClass="p-datatable-striped" [tableStyle]="{'min-width': '50rem'}" selectionMode="single"
         [(selection)]="SelectedRow" sortMode="multiple">
@@ -54,6 +106,12 @@
                         }
                         @case ('date') {
                         {{ rowData[col.field] | date: 'dd-MM-yyyy' }}
+                        }
+                        @case ('datetime') {
+                        {{ rowData[col.field] | date: 'dd-MM-yyyy HH:mm' }}
+                        }
+                        @case ('monthpicker') {
+                        {{ rowData[col.field] | date: 'MM yyyy' }}
                         }
                         @case ('number') {
                         {{ handleFormatStringToNumber(rowData[col.field]) | number: '' }}
@@ -98,9 +156,11 @@
         </ng-template>
     </p-table>
 
+    <!-- No Sort Mode -->
     <ng-template #noSortMode>
         <p-table [value]="props.dataSource" [columns]="props.column" styleClass="p-datatable-striped"
-            [tableStyle]="{'min-width': 'auto'}" selectionMode="single" [(selection)]="SelectedRow">
+            [tableStyle]="{'min-width': 'auto'}" selectionMode="single" [(selection)]="SelectedRow"
+            [paginator]="props.showPaging" [rows]="5" [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [scrollable]="true">
             <ng-template pTemplate="header" let-columns>
                 <tr class="bg-gray-100">
                     <th *ngFor="let col of columns"
@@ -115,26 +175,20 @@
             <ng-template *ngIf="props.dataSource" pTemplate="body" let-rowData let-columns="columns">
                 <tr [pSelectableRow]="rowData" (dblclick)="onRowDoubleClicked(rowData)"
                     (click)="onCellClicked(rowData)">
-                    <td *ngFor="let col of columns" class="text-sm {{ col.class }}">
+                    <td *ngFor="let col of columns" class="text-sm {{ col.class }}"
+                        [width]="col.width ? col.width : 'auto'">
                         <!-- Checkbox -->
                         <span *ngIf="col.renderAsCheckbox && !col.renderAsPills">
                             <i class="pi {{ rowData[col.field] ? 'pi-check' : 'pi-times' }}"></i>
                         </span>
 
                         <!-- Piils -->
-                        <span *ngIf="!col.renderAsCheckbox && col.renderAsPills && col.field == 'status_order_name'"
+                        <span
+                            *ngIf="!col.renderAsCheckbox && col.renderAsPills && (col.field == 'status_order_name' || col.field == 'status')"
                             class="flex rounded-lg items-center justify-center font-semibold mx-auto {{ handleRenderStatusOrderManagement(rowData[col.field])[0] }}"
                             style="width: fit-content">
                             <p class="text-sm">
                                 {{ handleRenderStatusOrderManagement(rowData[col.field])[1] | titlecase }}
-                            </p>
-                        </span>
-
-                        <!-- Piils -->
-                        <span *ngIf="!col.renderAsCheckbox && col.renderAsPills && col.field != 'status_order_name'"
-                            class="{{ col.pillClass }}">
-                            <p class="text-sm">
-                                {{ rowData[col.field] }}
                             </p>
                         </span>
 
@@ -152,11 +206,17 @@
                             @case ('date') {
                             {{ rowData[col.field] | date: 'dd-MM-yyyy' }}
                             }
+                            @case ('datetime') {
+                            {{ rowData[col.field] | date: 'dd-MM-yyyy HH:mm:ss' }}
+                            }
                             @case ('number') {
                             {{ handleFormatStringToNumber(rowData[col.field]) | number: '' }}
                             }
                             @case ('icon_boolean') {
                             <span [innerHtml]="handleRenderIconBoolean(rowData[col.field])"></span>
+                            }
+                            @case ('json') {
+                            {{ rowData[col.field] | json }}
                             }
                             @case (undefined) {
                             {{ rowData[col.field] }}
@@ -171,7 +231,7 @@
                         <i class="pi pi-ellipsis-v" (click)="op.toggle($event)"></i>
 
                         <p-overlayPanel #op>
-                            <div class="flex flex-col gap-2 w-[10rem]">
+                            <div class="flex flex-col gap-2 w-auto">
                                 @for (item of gridToolbar; track $index) {
                                 <div class="flex items-center gap-2 p-2 bg-white hover:bg-gray-100 transition-all rounded-md cursor-pointer"
                                     (click)="onAksiClicked(item.id, rowData)">

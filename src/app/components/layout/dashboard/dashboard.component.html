@@ -9,18 +9,18 @@
                     class="transition-all mb-2 {{ ShowSidebar ? 'h-20 w-20' : 'h-10 w-10'}}">
 
                 <p class="{{ ShowSidebar ? 'text-gray-800' : 'text-transparent' }} text-lg transition-all font-bold">
-                    {{ user.nama | titlecase }}
+                    {{ user.full_name | titlecase }}
                 </p>
 
                 <p class="{{ ShowSidebar ? 'text-gray-600' : 'text-transparent' }}  text-sm transition-all">
-                    {{ user.role }}
+                    {{ user.user_group }}
                 </p>
             </div>
 
             <!-- Welcome -->
             <div class="{{ ShowSidebar ? 'flex' : 'hidden' }} flex-col gap-1 mb-5 transition-all">
                 <p
-                    class="{{ ShowSidebar ? 'text-pink-500' : 'text-transparent' }} text-base transition-all font-semibold">
+                    class="{{ ShowSidebar ? 'text-sky-500' : 'text-transparent' }} text-base transition-all font-semibold">
                     Welcome
                 </p>
                 <p class="{{ ShowSidebar ? 'text-gray-500' : 'text-transparent' }} text-xs transition-all">
@@ -35,7 +35,7 @@
                     (click)="item.is_parent ? item.toggle_child = !item.toggle_child : handleClickSidebarMenu(item)">
 
                     <div
-                        class="flex w-full {{ ShowSidebar ? 'items-center' : '' }} p-2 gap-2 cursor-pointer hover:bg-pink-100 text-gray-700 hover:text-pink-700 rounded-md transition-all duration-75 {{ item.sidebarChild && item.toggle_child ? 'mb-0' : 'mb-0' }}">
+                        class="flex w-full {{ ShowSidebar ? 'items-center' : '' }} p-2 gap-2 cursor-pointer hover:bg-sky-100 text-gray-700 hover:text-sky-700 rounded-md transition-all duration-75 {{ item.child.length > 0 && item.toggle_child ? 'mb-0' : 'mb-0' }}">
                         <div *ngIf="item.is_parent && ShowSidebar" class="w-1/12">
                             <i class="pi pi-chevron-{{ item.toggle_child ? 'down' : 'right' }}"
                                 style="font-size: 10px;">
@@ -44,7 +44,7 @@
 
                         <div *ngIf="ShowSidebar" class="w-11/12 flex gap-2">
                             <span class="tracking-normal" style="font-size: 15px;">
-                                <i class="{{ item.icon }} mr-2" style="font-size: 13px;"></i>&nbsp;{{ item.caption }}
+                                <i class="{{ item.icon }} mr-2" style="font-size: 13px;"></i>&nbsp;{{ item.menu }}
                             </span>
                         </div>
 
@@ -57,11 +57,11 @@
 
                     <div *ngIf="item.is_parent && item.toggle_child"
                         class="w-full flex flex-col pl-7 py-1 gap-2 cursor-pointer">
-                        <span *ngFor="let child of item.sidebarChild"
-                            class="flex text-gray-700 hover:bg-pink-100 hover:rounded-md p-2 items-center hover:text-pink-700 tracking-normal transition-all"
+                        <span *ngFor="let child of item.child"
+                            class="flex text-gray-700 hover:bg-sky-100 hover:rounded-md p-2 items-center hover:text-sky-700 tracking-normal transition-all"
                             style="font-size: 14px;" (click)="handleClickSidebarMenu(child)">
                             <p *ngIf="ShowSidebar" class="ml-2 p-0 mt-0 mb-0">
-                                <i class="{{ child.icon }} mr-2" style="font-size: 14px;"></i>&nbsp;{{ child.caption }}
+                                <i class="{{ child.icon }} mr-2" style="font-size: 14px;"></i>&nbsp;{{ child.menu }}
                             </p>
 
                             <p *ngIf="!ShowSidebar" class="ml-2 p-0 mt-0 mb-0">
@@ -83,9 +83,8 @@
                     <app-breadcrumbs></app-breadcrumbs>
 
                     <div *ngIf="ButtonNavigation" class="flex gap-3">
-                        <p-button *ngFor="let item of ButtonNavigation" severity="secondary"
-                            styleClass="p-button-sm bg-pink-600 text-white" [label]="item.title" [icon]="item.icon"
-                            (onClick)="handleClickButtonNavigation(item)">
+                        <p-button *ngFor="let item of ButtonNavigation" severity="info" styleClass="p-button-sm"
+                            [label]="item.title" [icon]="item.icon" (onClick)="handleClickButtonNavigation(item)">
                         </p-button>
                     </div>
                 </div>

@@ -43,16 +43,17 @@ export class SetupRoleComponent implements OnInit, OnDestroy {
     GridProps: GridModel.IGrid = {
         id: 'Setup_Data',
         column: [
-            { field: 'role', headerName: 'Role', }
+            { field: 'user_group', headerName: 'Group User', },
+            { field: 'is_active', headerName: 'Is Active', renderAsCheckbox: true, class: 'text-center' },
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
-        toolbar: ['Delete', 'Detail'],
+        toolbar: ['Change Status', 'Detail'],
         showPaging: true,
         showSearch: true,
         showSort: false,
-        searchKeyword: 'role',
-        searchPlaceholder: 'Find Role Name Here'
+        searchKeyword: 'user_group',
+        searchPlaceholder: 'Find Group User Here'
     };
     GridSelectedData: any;
 
@@ -69,16 +70,24 @@ export class SetupRoleComponent implements OnInit, OnDestroy {
             id: 'form_channel_group',
             fields: [
                 {
-                    id: 'id_role',
-                    label: 'Id Role',
+                    id: 'id_user_group',
+                    label: 'Id User Group',
                     required: true,
                     type: 'text',
                     value: '',
                     hidden: true
                 },
                 {
-                    id: 'role',
-                    label: 'Role',
+                    id: 'is_active',
+                    label: 'Id Active',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    hidden: true
+                },
+                {
+                    id: 'user_group',
+                    label: 'Group User',
                     required: true,
                     type: 'text',
                     value: '',
@@ -152,10 +161,10 @@ export class SetupRoleComponent implements OnInit, OnDestroy {
     }
 
     onToolbarClicked(args: any): void {
-        if (args.type == 'delete') {
+        if (args.type == 'change status') {
             this._confirmationService.confirm({
                 target: (<any>event).target as EventTarget,
-                message: 'Deleted data can not be reverted',
+                message: 'Status will be changed',
                 header: 'Are you sure?',
                 icon: 'pi pi-info-circle',
                 acceptButtonStyleClass: "p-button-danger p-button-sm",
@@ -165,7 +174,7 @@ export class SetupRoleComponent implements OnInit, OnDestroy {
                 rejectIcon: "none",
                 rejectLabel: 'No, back',
                 accept: () => {
-                    this.deleteData(args.data.id_role);
+                    this.deleteData(args.data);
                 }
             });
         }
@@ -176,13 +185,14 @@ export class SetupRoleComponent implements OnInit, OnDestroy {
     }
 
     saveData(data: any) {
-        delete data.id_role;
+        delete data.id_user_group;
+        delete data.is_active;
 
         this._setupRoleService
             .create(data)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
-                if (result.responseResult) {
+                if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data saved succesfully' });
                     this.handleBackToList();
@@ -195,7 +205,7 @@ export class SetupRoleComponent implements OnInit, OnDestroy {
             .update(data)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
-                if (result.responseResult) {
+                if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
                     this.handleBackToList();
@@ -203,14 +213,14 @@ export class SetupRoleComponent implements OnInit, OnDestroy {
             })
     }
 
-    private deleteData(id: string) {
+    private deleteData(data: any) {
         this._setupRoleService
-            .delete(id)
+            .delete(data)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
-                if (result.responseResult) {
+                if (result.status) {
                     this._messageService.clear();
-                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
+                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Status updated succesfully' });
                     this.getAll();
                 }
             })

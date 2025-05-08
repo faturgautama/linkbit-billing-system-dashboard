@@ -1,0 +1,31 @@
+<app-dashboard [ButtonNavigation]="ButtonNavigation" (onClickButtonNavigation)="handleClickButtonNavigation($event)">
+    <!-- Grid -->
+    <div *ngIf="PageState == 'list'" class="grid w-full bg-white rounded-lg shadow-sm p-2">
+        <app-grid [props]="GridProps" (cellClicked)="onCellClicked($event)"
+            (rowDoubleClicked)="onRowDoubleClicked($event)" (aksiClicked)="onToolbarClicked($event)"
+            (customSearchClicked)="onSearchGrid($event)">
+        </app-grid>
+    </div>
+
+    <!-- Form -->
+    <div *ngIf="PageState == 'form'" class="flex flex-col w-6/12 p-3 bg-white rounded-lg shadow-sm">
+        <div class="grid w-full">
+            <app-dynamic-form #FormComps [props]="FormProps"></app-dynamic-form>
+        </div>
+
+        <div class="flex w-full justify-end mt-4 gap-4">
+            <p-button severity="secondary" label="Back" styleClass="p-button-sm" (onClick)="handleBackToList()">
+            </p-button>
+
+            <p-button *ngIf="FormState == 'insert'" severity="info" label="Save" styleClass="p-button-sm text-white"
+                (onClick)="saveData(FormComps.FormGroup.value)">
+            </p-button>
+
+            <p-button *ngIf="FormState == 'update'" severity="warning" label="Update" styleClass="p-button-sm"
+                (onClick)="updateData(FormComps.FormGroup.value)">
+            </p-button>
+        </div>
+    </div>
+
+    <p-confirmDialog />
+</app-dashboard>

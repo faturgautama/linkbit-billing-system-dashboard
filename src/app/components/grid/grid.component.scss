@@ -1,0 +1,6 @@
+:host ::ng-deep {
+  .p-paginator.p-component {
+    display: flex !important;
+    justify-content: end !important;
+  }
+}

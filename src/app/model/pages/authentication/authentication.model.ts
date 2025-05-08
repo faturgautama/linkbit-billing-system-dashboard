@@ -2,27 +2,33 @@ import { HttpBaseResponse } from "../../http/http-request.model"
 
 export namespace AuthenticationModel {
     export interface IAuthentication {
-        nama: string
-        username: string
-        nama_hotel: string
-        role: string
-        token: string
-        is_admin: boolean;
+        id_user: number;
+        id_setting_company: number;
+        company_name: string;
+        id_user_group: number;
+        user_group: string;
+        username: string;
+        full_name: string;
+        email: string;
+        phone: string;
+        whatsapp: string;
+        notes: string;
+        token: string;
     }
 
-    export interface ISidebarMenu {
-        id_menu: string
-        urut?: number
-        caption: string
-        icon: string
-        toggle_child: boolean
-        url?: any
-        is_parent?: boolean
-        id_parent?: any
-        is_active?: boolean
-        is_admin?: boolean
-        is_client?: boolean
-        sidebarChild?: ISidebarMenu[]
+    export interface IUserGroupMenu {
+        id_user_group_menu: number;
+        id_user_group: number;
+        user_group: string;
+        id_menu: number;
+        id_menu_parent: number | null;
+        menu: string;
+        icon: string;
+        url: string;
+        is_assigned: boolean;
+        is_parent: boolean;
+        toggle_child: boolean;
+        child: IUserGroupMenu[];
     }
 
     export interface ISignIn {
@@ -31,8 +37,7 @@ export namespace AuthenticationModel {
     }
 
     export class SignIn implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: IAuthentication
     }

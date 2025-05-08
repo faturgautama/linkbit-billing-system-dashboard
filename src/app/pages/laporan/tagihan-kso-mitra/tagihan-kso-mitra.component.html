@@ -1,0 +1,179 @@
+<app-dashboard>
+    <div class="grid w-full bg-white rounded-lg shadow-sm p-2">
+        <app-grid [props]="GridProps" (customSearchClicked)="onSearchGrid($event)"
+            (aksiClicked)="onToolbarClicked($event)">
+        </app-grid>
+    </div>
+
+    <p-dialog header="Tagihan KSO Mitra" [modal]="true" [(visible)]="ShowDetail" [style]="{ width: '35rem' }"
+        [draggable]="false" [resizable]="false">
+
+        <div class="flex w-full gap-2 p-2 flex-col bg-gray-100 mt-1 mb-5 rounded-lg shadow-sm">
+            <!-- Periode -->
+            <p
+                class="text-base text-gray-800 font-medium text-center pb-2 mb-2 border-b border-dashed border-t-0 border-x-0 border-gray-400">
+                {{ GridSelectedData?.periode | uppercase }}
+            </p>
+
+            <!-- Print Date -->
+            <div
+                class="flex w-full items-center gap-2 pb-2 border-b border-solid border-t-0 border-x-0 border-gray-300">
+                <div class="w-4/12">
+                    <p class="text-sm text-gray-700 font-medium">
+                        Print Date
+                    </p>
+                </div>
+                <div class="w-8/12 ">
+                    <p class="text-sm text-gray-700">
+                        : {{ GridSelectedData?.no_tagihan_kso }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Nama Usaha -->
+            <div
+                class="flex w-full items-center gap-2 pb-2 border-b border-solid border-t-0 border-x-0 border-gray-300">
+                <div class="w-4/12">
+                    <p class="text-sm text-gray-700 font-medium">
+                        Nama Usaha
+                    </p>
+                </div>
+                <div class="w-8/12 ">
+                    <p class="text-sm text-gray-700">
+                        : {{ GridSelectedData?.company_name }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Alamat Usaha -->
+            <div
+                class="flex w-full items-center gap-2 pb-2 border-b border-solid border-t-0 border-x-0 border-gray-300">
+                <div class="w-4/12">
+                    <p class="text-sm text-gray-700 font-medium">
+                        Alamat Usaha
+                    </p>
+                </div>
+                <div class="w-8/12 ">
+                    <p class="text-sm text-gray-700">
+                        : {{ GridSelectedData?.company_address }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Jumlah Pelanggan -->
+            <div
+                class="flex w-full items-center gap-2 pb-2 border-b border-solid border-t-0 border-x-0 border-gray-300">
+                <div class="w-4/12">
+                    <p class="text-sm text-gray-700 font-medium">
+                        Jumlah Pelanggan
+                    </p>
+                </div>
+                <div class="w-8/12 ">
+                    <p class="text-sm text-gray-700">
+                        : {{ GridSelectedData?.jumlah_pelanggan }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Jumlah Pemasukan -->
+            <div
+                class="flex w-full items-center gap-2 pb-2 border-b border-solid border-t-0 border-x-0 border-gray-300">
+                <div class="w-4/12">
+                    <p class="text-sm text-gray-700 font-medium">
+                        Jumlah Pemasukan
+                    </p>
+                </div>
+                <div class="w-8/12 ">
+                    <p class="text-sm text-gray-700">
+                        : {{ GridSelectedData?.jumlah_pemasukan | currency: 'Rp. ' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- BHP & USO 1.75% -->
+            <div
+                class="flex w-full items-center gap-2 pb-2 border-b border-solid border-t-0 border-x-0 border-gray-300">
+                <div class="w-4/12">
+                    <p class="text-sm text-gray-700 font-medium">
+                        BHP & USO 1.75%
+                    </p>
+                </div>
+                <div class="w-8/12 ">
+                    <p class="text-sm text-gray-700">
+                        : {{ GridSelectedData?.total_bhp_uso | currency: 'Rp. ' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- PPH FINAL 0.5% -->
+            <div
+                class="flex w-full items-center gap-2 pb-2 border-b border-solid border-t-0 border-x-0 border-gray-300">
+                <div class="w-4/12">
+                    <p class="text-sm text-gray-700 font-medium">
+                        PPH FINAL 0.5%
+                    </p>
+                </div>
+                <div class="w-8/12 ">
+                    <p class="text-sm text-gray-700">
+                        : {{ GridSelectedData?.total_pph_final | currency: 'Rp. ' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- KSO 5% -->
+            <div
+                class="flex w-full items-center gap-2 pb-2 border-b border-solid border-t-0 border-x-0 border-gray-300">
+                <div class="w-4/12">
+                    <p class="text-sm text-gray-700 font-medium">
+                        KSO 5%
+                    </p>
+                </div>
+                <div class="w-8/12 ">
+                    <p class="text-sm text-gray-700">
+                        : {{ GridSelectedData?.total_kso | currency: 'Rp. ' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Total Tagihan -->
+            <div
+                class="flex w-full items-center gap-2 pb-2 border-b border-solid border-t-0 border-x-0 border-gray-300">
+                <div class="w-4/12">
+                    <p class="text-sm text-gray-700 font-medium">
+                        Total Tagihan
+                    </p>
+                </div>
+                <div class="w-8/12 ">
+                    <p class="text-sm text-gray-700">
+                        : {{ GridSelectedData?.total_tagihan | currency: 'Rp. ' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Status Bayar -->
+            <div class="flex w-full items-center gap-2">
+                <div class="w-4/12">
+                    <p class="text-sm text-gray-700 font-medium">
+                        Status Bayar
+                    </p>
+                </div>
+                <div class="w-8/12 ">
+                    <p class="text-sm text-gray-700">
+                        : {{ GridSelectedData?.status_bayar }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="flex w-full justify-end gap-2">
+            <p-button label="Close" styleClass="p-button-sm" severity="secondary" (onClick)="ShowDetail = false" />
+
+            <p-button *ngIf="GridSelectedData?.status_bayar == 'PENDING'" label="Ubah Status Menjadi Terbayar"
+                styleClass="p-button-sm" severity="warning" (onClick)="handleChangeStatus(GridSelectedData)" />
+
+            <p-button *ngIf="GridSelectedData?.status_bayar == 'PAID'" label="Ubah Status Menjadi Pending"
+                styleClass="p-button-sm" severity="warning" (onClick)="handleChangeStatus(GridSelectedData)" />
+        </div>
+    </p-dialog>
+</app-dashboard>

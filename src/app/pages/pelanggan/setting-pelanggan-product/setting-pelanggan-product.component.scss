@@ -1,0 +1,9 @@
+:host ::ng-deep {
+  #listCustomerNotHaveProduct {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    touch-action: manipulation !important;
+  }
+}

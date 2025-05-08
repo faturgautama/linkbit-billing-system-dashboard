@@ -33,7 +33,7 @@ export class HttpRequestService {
             map((result) => {
                 this._utilityService.ShowLoading$.next(false);
 
-                if (!result.responseResult) {
+                if (!result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
                 }
@@ -48,6 +48,30 @@ export class HttpRequestService {
     }
 
     /**
+     * @description Get File Request Method
+     * @param url 
+     * @param queryString 
+     * @returns Observable<HttpBaseResponse>
+    */
+    getFileRequest(url: string) {
+        this._utilityService.ShowLoading$.next(true);
+
+        this._httpClient
+            .get(url, { responseType: 'blob' })
+            .subscribe((blob) => {
+                this._utilityService.ShowLoading$.next(false);
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'pelanggan_import_template.xlsx'; // <- file name
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            })
+    }
+
+    /**
      * @description Get Request Method
      * @param url 
      * @param queryString 
@@ -58,7 +82,7 @@ export class HttpRequestService {
             params: queryString
         }).pipe(
             map((result) => {
-                if (!result.responseResult) {
+                if (!result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
                 }
@@ -79,14 +103,16 @@ export class HttpRequestService {
      * @param showSuccessNotif -> (Optional) jika ingin menampilkan notification success
      * @returns Observable<HttpBaseResponse>
     */
-    postRequest(url: string, data: any, showSuccessNotif?: boolean): Observable<HttpBaseResponse> {
+    postRequest(url: string, data: any, showSuccessNotif?: boolean, isFormData?: boolean): Observable<HttpBaseResponse> {
         this._utilityService.ShowLoading$.next(true);
 
-        for (const item in data) {
-            if (item.includes('tanggal') || item.includes('tgl') || item.includes('tangal')) {
-                data[item] = this._utilityService.onFormatDate(data[item], 'yyyy-MM-DD HH:mm:ss')
-            }
-        };
+        if (!isFormData) {
+            for (const item in data) {
+                if (item.includes('tanggal') || item.includes('tgl') || item.includes('tangal')) {
+                    data[item] = this._utilityService.onFormatDate(data[item], 'yyyy-MM-DD HH:mm:ss')
+                }
+            };
+        }
 
         return this._httpClient.post<HttpBaseResponse>(url, data)
             .pipe(
@@ -95,17 +121,15 @@ export class HttpRequestService {
                     this._utilityService.ShowLoading$.next(false);
 
                     // ** Show success notification
-                    if (result.responseResult && showSuccessNotif) {
+                    if (result.status && showSuccessNotif) {
                         this._messageService.clear();
                         this._messageService.add({ severity: 'success', summary: 'Success', detail: this._titleCasePipe.transform(result.message) });
                     }
 
-                    // ** Jika responseResult = false
-                    if (!result.responseResult) {
+                    // ** Jika status = false
+                    if (!result.status) {
                         this._messageService.clear();
-                        (<any>result.message).forEach((item: string) => {
-                            this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(item) })
-                        })
+                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
                     }
 
                     return result;
@@ -134,12 +158,10 @@ export class HttpRequestService {
         return this._httpClient.post<HttpBaseResponse>(url, data)
             .pipe(
                 map((result) => {
-                    // ** Jika responseResult = false
-                    if (!result.responseResult) {
+                    // ** Jika status = false
+                    if (!result.status) {
                         this._messageService.clear();
-                        (<any>result.message).forEach((item: string) => {
-                            this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(item) })
-                        })
+                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
                     }
 
                     return result;
@@ -173,8 +195,8 @@ export class HttpRequestService {
                         this._messageService.add({ severity: 'success', summary: 'Success', detail: this._titleCasePipe.transform(result.message) });
                     }
 
-                    // ** Jika responseResult = false
-                    if (!result) {
+                    // ** Jika status = false
+                    if (!result.status) {
                         this._messageService.clear();
                         this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
                     }
@@ -207,24 +229,21 @@ export class HttpRequestService {
 
         return this._httpClient.put<HttpBaseResponse>(url, data)
             .pipe(
-                map((result) => {
+                map((result: any) => {
                     // ** Change state show loading
                     this._utilityService.ShowLoading$.next(false);
 
                     // ** Show success notification
-                    if (result.responseResult && showSuccessNotif) {
+                    if (result.status && showSuccessNotif) {
                         this._messageService.clear();
                         this._messageService.add({ severity: 'success', summary: 'Success', detail: this._titleCasePipe.transform(result.message) });
                     }
 
-                    // ** Jika responseResult = false
-                    if (!result.responseResult) {
+                    // ** Jika status = false
+                    if (!result.status) {
                         this._messageService.clear();
-                        (<any>result.message).forEach((item: string) => {
-                            this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(item) })
-                        })
+                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
                     }
-
 
                     return result;
                 }),
@@ -252,17 +271,15 @@ export class HttpRequestService {
                     this._utilityService.ShowLoading$.next(false);
 
                     // ** Show success notification
-                    if (result.responseResult && showSuccessNotif) {
+                    if (result.status && showSuccessNotif) {
                         this._messageService.clear();
                         this._messageService.add({ severity: 'success', summary: 'Success', detail: this._titleCasePipe.transform(result.message) });
                     }
 
-                    // ** Jika responseResult = false
-                    if (!result.responseResult) {
+                    // ** Jika status = false
+                    if (!result.status) {
                         this._messageService.clear();
-                        (<any>result.message).forEach((item: string) => {
-                            this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(item) })
-                        })
+                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
                     }
 
                     return result;
@@ -277,6 +294,6 @@ export class HttpRequestService {
     private handlingError(error: HttpErrorResponse): void {
         this._utilityService.ShowLoading$.next(false);
         this._messageService.clear();
-        this._messageService.add({ severity: 'error', summary: error.statusText, detail: error.error.message.message })
+        this._messageService.add({ severity: 'error', summary: error.statusText, detail: error.error.message })
     }
 }

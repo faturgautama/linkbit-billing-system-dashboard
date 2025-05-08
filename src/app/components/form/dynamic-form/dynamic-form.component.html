@@ -3,11 +3,17 @@
         class="flex {{ props.style == 'inline' ? 'flex-row' : 'flex-col' }} {{ item.type == 'textarea' ? 'items-start' : 'items-center' }} gap-1"
         [class.hidden]="item.hidden">
         <!-- Label -->
-        <div *ngIf="!item.hideLabel" class="{{ props.style == 'inline' ? 'w-4/12' : 'w-full'  }}">
+        <div *ngIf="!item.hideLabel"
+            class="{{ props.style == 'inline' ? 'w-4/12' : 'flex justify-between items-center w-full'  }}">
             <p class="text-sm text-gray-600 font-medium {{ item.type == 'textarea' ? 'pt-3' : '' }}">
                 {{ item.label }}
                 <span *ngIf="item.required" class="text-xs text-red-500">*</span>
             </p>
+
+            <div *ngIf="item.label_tag" class="flex">
+                <p-tag [icon]="item.label_tag.icon" [value]="item.label_tag.label" [severity]="item.label_tag.severity"
+                    (click)="handleTagClick(item.label_tag, item)" />
+            </div>
         </div>
 
         <div class="{{ props.style == 'inline' ? 'w-8/12' : 'w-full'  }}">
@@ -23,7 +29,8 @@
                 class="p-inputtext-sm w-full {{ props.state == 'read' || item.readonly ? 'readonlyState' : '' }}"
                 formControlName="{{ item.id }}" [readonly]="props.state == 'read' || item.readonly "
                 (change)="handleChangeInputText($event, item)" [value]="item.value"
-                placeholder="{{ item.placeholder ? item.placeholder : '' }}" [mask]="item.mask"
+                placeholder="{{ item.placeholder ? item.placeholder : '' }}"
+                [prefix]="item.maskPrefix ? item.maskPrefix: ''" [mask]="item.mask"
                 [dropSpecialCharacters]="item.dropSpecialCharacters ? item.dropSpecialCharacters : false" />
 
             <!-- Textarea -->
@@ -33,15 +40,8 @@
             </textarea>
 
             <!-- Editor -->
-            <p-editor *ngIf="item.type == 'editor'" id="'editor_{{ item.id }}" formControlName="{{ item.id }}"
+            <p-editor *ngIf="item.type == 'editor'" formControlName="{{ item.id }}" id="'editor_{{ item.id }}"
                 [style]="{ height: '250px' }">
-                <ng-template pTemplate="header">
-                    <span class="ql-formats">
-                        <button type="button" class="ql-bold" aria-label="Bold"></button>
-                        <button type="button" class="ql-italic" aria-label="Italic"></button>
-                        <button type="button" class="ql-underline" aria-label="Underline"></button>
-                    </span>
-                </ng-template>
             </p-editor>
 
             <!-- Number -->
@@ -54,6 +54,12 @@
             <p-calendar *ngIf="item.type == 'date'" appendTo="body" styleClass="p-inputtext-sm w-full"
                 dateFormat="dd MM yy" [showClear]="true" formControlName="{{ item.id }}" [readonlyInput]="true"
                 (onSelect)="handleChangeCalendar($event, item)">
+            </p-calendar>
+
+            <!-- Month Picker -->
+            <p-calendar *ngIf="item.type == 'monthpicker'" appendTo="body" styleClass="p-inputtext-sm w-full"
+                dateFormat="MM yy" view="month" [showClear]="true" formControlName="{{ item.id }}"
+                [readonlyInput]="true" (onSelect)="handleChangeCalendar($event, item)">
             </p-calendar>
 
             <!-- Daterange -->

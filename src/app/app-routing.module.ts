@@ -20,18 +20,50 @@ const routes: Routes = [
         }
     },
     {
-        path: 'entertainment',
+        path: 'setup-data',
         canActivate: [AuthGuard],
-        loadComponent: async () => (await import('./pages/entertainment/entertainment.component')).EntertainmentComponent,
+        loadChildren: async () => (await import('./pages/setup-data/setup-data.routes')).setupDataRoutes
+    },
+    {
+        path: 'pelanggan',
+        canActivate: [AuthGuard],
+        loadComponent: async () => (await import('./pages/pelanggan/pelanggan.component')).PelangganComponent,
         data: {
-            title: 'Entertainment',
-            breadcrumbs: ['Home', 'Entertainment']
+            title: 'Pelanggan',
+            breadcrumbs: ['Home', 'Pelanggan']
+        }
+    },
+    {
+        path: 'tagihan',
+        canActivate: [AuthGuard],
+        loadComponent: async () => (await import('./pages/invoice/invoice.component')).InvoiceComponent,
+        data: {
+            title: 'Tagihan',
+            breadcrumbs: ['Home', 'Tagihan']
+        }
+    },
+    {
+        path: 'pembayaran',
+        canActivate: [AuthGuard],
+        loadComponent: async () => (await import('./pages/payment/payment.component')).PaymentComponent,
+        data: {
+            title: 'Pembayaran',
+            breadcrumbs: ['Home', 'Pembayaran']
         }
     },
     {
         path: 'user-management',
         canActivate: [AuthGuard],
         loadChildren: async () => (await import('./pages/management-user/management-user.routes')).managementUserRoutes
+    },
+    {
+        path: 'laporan',
+        canActivate: [AuthGuard],
+        loadChildren: async () => (await import('./pages/laporan/laporan.routes')).laporanRoutes
+    },
+    {
+        path: 'print-out',
+        loadChildren: async () => (await import('./pages/print-out/print-out.routes')).printOurRoutes
     },
     {
         path: '**',
@@ -43,7 +75,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
+    imports: [RouterModule.forRoot(routes, { useHash: true })],
     exports: [RouterModule]
 })
 export class AppRoutingModule { }

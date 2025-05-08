@@ -32,7 +32,8 @@ const config: SocketIoConfig = {
         ToastModule,
         LoadingDialogComponent,
         StateModule,
-        SocketIoModule.forRoot(config)
+        SocketIoModule.forRoot(config),
+
     ],
     providers: [
         MessageService,

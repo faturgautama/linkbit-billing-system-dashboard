@@ -3,12 +3,22 @@ import { Route } from '@angular/router';
 
 export const managementUserRoutes: Route[] = [
     {
-        path: 'setup-role',
+        path: 'setup-menu',
+        loadComponent: async () => (await import('./setup-menu/setup-menu.component')).SetupMenuComponent,
+        data: {
+            title: 'Setup Menu',
+            breadcrumbs: [
+                "Home", "Management User", "Setup Menu"
+            ]
+        }
+    },
+    {
+        path: 'setup-group-user',
         loadComponent: async () => (await import('./setup-role/setup-role.component')).SetupRoleComponent,
         data: {
-            title: 'Setup Role',
+            title: 'Setup Group User',
             breadcrumbs: [
-                "Home", "Management User", "Setup Role"
+                "Home", "Management User", "Setup Group User"
             ]
         }
     },
@@ -23,33 +33,33 @@ export const managementUserRoutes: Route[] = [
         }
     },
     {
-        path: 'setup-user-hotel',
-        loadComponent: async () => (await import('./setup-user-hotel/setup-user-hotel.component')).SetupUserHotelComponent,
-        data: {
-            title: 'Setup User Hotel',
-            breadcrumbs: [
-                "Home", "Management User", "Setup User Hotel"
-            ]
-        }
-    },
-    {
-        path: 'setup-user-device',
-        loadComponent: async () => (await import('./setup-user-device/setup-user-device.component')).SetupUserDeviceComponent,
-        data: {
-            title: 'Setup User Device',
-            breadcrumbs: [
-                "Home", "Management User", "Setup User Device"
-            ]
-        }
-    },
-    {
-        path: 'setting-role-menu',
+        path: 'setting-menu-akses',
         loadComponent: async () => (await import('./setting-menu-role/setting-menu-role.component')).SettingMenuRoleComponent,
         data: {
-            title: 'Setting Role Menu',
+            title: 'Setting Menu Akses',
             breadcrumbs: [
-                "Home", "Management User", "Setting Role Menu"
+                "Home", "Management User", "Setting Menu Akses"
             ]
         }
     },
+    {
+        path: 'log-activity',
+        loadComponent: async () => (await import('./logging/log-activity/log-activity.component')).LogActivityComponent,
+        data: {
+            title: 'Log Aktifitas User',
+            breadcrumbs: [
+                "Home", "Management User", "Log Aktifitas User"
+            ]
+        }
+    },
+    {
+        path: 'log-message',
+        loadComponent: async () => (await import('./logging/log-message-invoice/log-message-invoice.component')).LogMessageInvoiceComponent,
+        data: {
+            title: 'Log Pesan Invoice',
+            breadcrumbs: [
+                "Home", "Management User", "Log Pesan Invoice"
+            ]
+        }
+    }
 ];

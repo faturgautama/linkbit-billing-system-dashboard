@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-navbar',
@@ -33,8 +34,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     Menu: any[] = this.getMenu();
 
+    Logo = this._sanitizer.bypassSecurityTrustResourceUrl('https://linkbit.net.id/assets/img/logo-linkbit.png');
+
     constructor(
         private _router: Router,
+        private _sanitizer: DomSanitizer,
         private _messageService: MessageService,
         private _utilityService: UtilityService,
         private _authenticationService: AuthenticationService,

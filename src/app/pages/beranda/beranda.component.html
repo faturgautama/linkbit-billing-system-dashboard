@@ -1,29 +1,48 @@
 <app-dashboard>
     <!-- User -->
     <div *ngIf="UserData$ | async as user"
-        class="flex w-full gap-3 items-center p-5 rounded-lg shadow-sm bg-white mb-5 ">
+        class="flex w-full gap-3 items-center px-5 py-3 rounded-lg shadow-sm bg-white mb-2">
         <div class="flex">
-            <img src="../../../assets/icon/user.png" alt="user" class="h-14 w-14">
+            <img src="../../../assets/icon/user.png" alt="user" class="h-10 w-10">
         </div>
 
         <div class="flex flex-col gap-0">
-            <p class="text-slate-700 text-3xl font-semibold">
-                Welcome, {{ user.nama | titlecase }}
+            <p class="text-slate-700 text-xl font-semibold">
+                Welcome, {{ user.full_name | titlecase }}
             </p>
 
-            <p class="text-slate-600 text-sm">
+            <p class="text-slate-600 text-xs">
                 <i class="pi pi-home" style="font-size: 12px; margin-right: 3px"></i>
-                Your Hotel : {{ user.nama_hotel }}
+                {{ user.company_name }}
             </p>
         </div>
     </div>
 
     <!-- Counter -->
-    <div class="flex flex-row items-start w-full mt-5 gap-5">
+    <div class="flex flex-row items-start w-full mt-3 gap-4">
         <!-- List Channel TV -->
-        <div class="flex flex-col w-8/12 bg-white rounded-lg shadow-sm p-3 gap-4 overflow-hidden"
-            style="height: calc(100vh - 14.5rem);">
-            <!-- <app-list-channel-tv #ListChannelTvComps></app-list-channel-tv> -->
+        <div class="grid w-8/12 bg-white rounded-lg shadow-sm p-3 gap-0" style="height: calc(100vh - 12rem);">
+
+            <div class="flex flex-row justify-between w-full gap-1 mb-1">
+                <div class="flex flex-col">
+                    <p class="text-base text-gray-700 font-medium">
+                        Total Pembayaran Setahun
+                    </p>
+                    <p class="text-xs text-gray-600">
+                        Total pembayaran pelanggan dalam satu tahun
+                    </p>
+                </div>
+
+                <div class="flex w-3/12">
+                    <p-calendar [(ngModel)]="SelectedYear" view="year" dateFormat="yy"
+                        (onSelect)="handleChangeYear($event)" styleClass="p-inputtext-sm w-full" appendTo="body">
+                    </p-calendar>
+                </div>
+            </div>
+
+            <div class="grid w-full h-full">
+                <p-chart type="bar" [data]="PaymentYearly" [options]="basicOptions" />
+            </div>
         </div>
 
         <!-- Counting -->
@@ -32,8 +51,8 @@
                 <!-- Pasien Terlayani -->
                 <div class="flex flex-col w-full rounded-lg shadow-sm bg-white p-3">
                     <div class="flex w-full items-start mb-3">
-                        <p class="text-pink-500 font-medium text-5xl text-center">
-                            {{ GreetingCards }}
+                        <p class="text-sky-500 font-medium text-4xl text-center">
+                            {{ Count?.pelanggan }}
                         </p>
 
                         <span class="ml-auto cursor-pointer">
@@ -42,15 +61,15 @@
                     </div>
 
                     <p class="text-gray-700 text-sm">
-                        Greeting Cards
+                        Pelanggan
                     </p>
                 </div>
 
                 <!-- Total -->
                 <div class="flex flex-col w-full rounded-lg shadow-sm bg-white p-3 justify-center">
                     <div class="flex w-full items-start mb-3">
-                        <p class="text-pink-500 font-medium text-5xl text-center">
-                            {{ Facilities }}
+                        <p class="text-sky-500 font-medium text-4xl text-center">
+                            {{ Count?.mitra }}
                         </p>
 
                         <span class="ml-auto cursor-pointer">
@@ -59,15 +78,15 @@
                     </div>
 
                     <p class="text-gray-700 text-sm">
-                        Facilities
+                        Mitra
                     </p>
                 </div>
 
                 <!-- Dokter Praktek Hari Ini -->
                 <div class="flex flex-col w-full rounded-lg shadow-sm bg-white p-3 justify-center">
                     <div class="flex w-full items-start mb-3">
-                        <p class="text-pink-500 font-medium text-5xl text-center">
-                            {{ EventPromo }}
+                        <p class="text-sky-500 font-medium text-4xl text-center">
+                            {{ Count?.payment }}
                         </p>
 
                         <span class="ml-auto cursor-pointer">
@@ -76,15 +95,15 @@
                     </div>
 
                     <p class="text-gray-700 text-sm">
-                        Event Promo
+                        Invoice Terbayar
                     </p>
                 </div>
 
                 <!-- Tindakan Medis Hari Ini -->
                 <div class="flex flex-col w-full rounded-lg shadow-sm bg-white p-3 justify-center">
                     <div class="flex w-full items-start mb-3">
-                        <p class="text-pink-500 font-medium text-5xl text-center">
-                            {{ EntertainmentApp }}
+                        <p class="text-sky-500 font-medium text-4xl text-center">
+                            {{ Count?.invoice }}
                         </p>
 
                         <span class="ml-auto cursor-pointer">
@@ -93,19 +112,41 @@
                     </div>
 
                     <p class="text-gray-700 text-sm">
-                        Entertainment App
+                        Invoice Pending
                     </p>
                 </div>
             </div>
 
-            <div class="flex flex-col w-full gap-2">
-                <p-button severity="secondary" label="Create New Greeting Card"
-                    styleClass="bg-pink-600 text-white p-button-sm w-full"
-                    (onClick)="handleNavigateToGreetingCard()"></p-button>
+            <div class="flex flex-col w-full gap-2 p-2 bg-white rounded-lg shadow"
+                style="max-height: calc(100vh - 26.4rem); overflow-x: auto;">
+                <p class="text-gray-800 text-base font-semibold mb-2">
+                    Pembayaran Terbaru
+                </p>
 
-                <p-button severity="secondary" label="Need Help? Contact Admin Now" styleClass="p-button-sm w-full"
-                    (onClick)="handleCallAdmin()">
-                </p-button>
+                <div *ngFor="let item of LatestPayment"
+                    class="flex flex-row justify-between items-center gap-2 pb-2 mb-2 border-b border-t-0 border-x-0 border-dashed border-gray-200">
+                    <div class="flex flex-col gap-1">
+                        <p class="text-sm text-gray-700 font-medium">
+                            {{ item.invoice_number }}
+                        </p>
+
+                        <p class="text-xs text-gray-600">
+                            {{ item.full_name }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col items-end gap-1">
+                        <p class="text-sm text-sky-500">
+                            {{ item.total | currency: 'Rp. ' }}
+                        </p>
+
+                        <p class="text-xs text-gray-600 italic">
+                            {{ item.create_at | date: 'dd-MM-yyyy HH:mm' }}
+                        </p>
+                    </div>
+
+
+                </div>
             </div>
         </div>
     </div>

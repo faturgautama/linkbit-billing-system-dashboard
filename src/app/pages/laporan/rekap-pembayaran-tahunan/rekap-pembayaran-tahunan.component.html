@@ -1,0 +1,146 @@
+<app-dashboard>
+    <div class="flex flex-col w-full bg-white rounded-lg shadow-sm p-2">
+        <!-- <app-grid [props]="GridProps" (customSearchClicked)="onSearchGrid($event)">
+        </app-grid> -->
+
+        <div class="flex w-full justify-between items-center mb-3">
+            <div class="grid w-3/12">
+                <p-calendar styleClass="p-inputtext-sm w-full" appendTo="body" [(ngModel)]="Year" view="year"
+                    dateFormat="yy" placeholder="Pilih tahun disini">
+                </p-calendar>
+            </div>
+
+            <div class="flex gap-3">
+                <p-button severity="secondary" label="Search" styleClass="p-button-sm" (onClick)="onSearchGrid(Year)">
+                </p-button>
+
+                <p-button severity="info" label="Export" styleClass="p-button-sm"
+                    (onClick)="onExportExcel()"></p-button>
+            </div>
+        </div>
+
+        <p-table id="TableRekapPembayaranTahunan" [value]="GridProps.dataSource" [scrollable]="true"
+            scrollHeight="calc(100vh - 15rem)">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [style.min-width]="'50px'" style="font-size: 12px">
+                        No.
+                    </th>
+                    <th [style.min-width]="'100px'" style="font-size: 12px">
+                        ID Pelanggan
+                    </th>
+                    <th [style.min-width]="'200px'" style="font-size: 12px">
+                        Nama Lengkap
+                    </th>
+                    <th [style.min-width]="'350px'" style="font-size: 12px">
+                        Alamat
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Jan
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Jan
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Feb
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Feb
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Mar
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Mar
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Apr
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Apr
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Mei
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Mei
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Jun
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Jun
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Jul
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Jul
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Ags
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Ags
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Sep
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Sep
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Okt
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Okt
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Nov
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Nov
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar Des
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jml. Bayar Des
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-customer>
+                <tr>
+                    <td style="font-size: 12px">{{ customer.no }}</td>
+                    <td style="font-size: 12px">{{ customer.kode_pelanggan }}</td>
+                    <td style="font-size: 12px">{{ customer.nama_pelanggan }}</td>
+                    <td style="font-size: 12px">{{ customer.alamat }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_1 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_1 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_2 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_2 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_3 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_3 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_4 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_4 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_5 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_5 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_6 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_6 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_7 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_7 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_8 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_8 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_9 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_9 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_10 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_10 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_11 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_11 | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.tgl_bayar_12 | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ customer.jumlah_bayar_12 | currency: 'Rp. ' }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</app-dashboard>

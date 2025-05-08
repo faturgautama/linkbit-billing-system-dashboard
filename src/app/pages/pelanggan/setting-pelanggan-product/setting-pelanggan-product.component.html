@@ -1,0 +1,29 @@
+<div class="flex w-full gap-3">
+    <!-- List Container -->
+    <div id="listCustomerNotHaveProduct"
+        class="w-4/12 p-2 flex flex-col rounded-lg gap-2 border border-gray-300 shadow max-h-[22rem] overflow-x-auto"
+        (mouseup)="onHoldCancel()" (mouseleave)="onHoldCancel()" (touchend)="onHoldCancel()">
+
+        <!-- Item -->
+        <div *ngFor="let item of Pelanggan"
+            class="flex flex-col gap-0 bg-gray-100 p-2 rounded-md cursor-pointer select-none touch-manipulation"
+            (mousedown)="onHoldStart($event)" (touchstart)="onHoldStart($event)" (mouseenter)="onItemHover(item)"
+            (touchmove)="onTouchMove($event)" (click)="onItemClick(item)"
+            [class.bg-sky-200]="selectedItems.includes(item)">
+
+            <p class="text-sm font-medium text-gray-700">{{ item.full_name }}</p>
+            <p class="text-xs text-gray-600">{{ item.pelanggan_code }}</p>
+        </div>
+
+        <!-- Loading Info -->
+        <span *ngIf="Pelanggan.length < 1" class="text-center text-sm text-gray-700">
+            Sedang Memuat Data Pelanggan...
+        </span>
+    </div>
+
+
+    <!-- Form -->
+    <div class="w-8/12 p-2 grid">
+        <app-dynamic-form #FormComps [props]="FormProps"></app-dynamic-form>
+    </div>
+</div>

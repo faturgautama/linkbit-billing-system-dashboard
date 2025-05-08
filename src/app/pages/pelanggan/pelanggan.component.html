@@ -1,0 +1,123 @@
+<app-dashboard [ButtonNavigation]="ButtonNavigation" (onClickButtonNavigation)="handleClickButtonNavigation($event)">
+    <!-- Grid -->
+    <div *ngIf="PageState == 'list'" class="grid w-full bg-white rounded-lg shadow-sm p-2">
+        <div class="flex w-full mb-3 gap-3">
+            <p-button [severity]="ActiveTab == 'active' ? 'info' : 'secondary'" label="Aktif" icon="pi pi-check"
+                styleClass="p-button-sm" (onClick)="handleChangeTab('active')">
+            </p-button>
+
+            <p-button [severity]="ActiveTab == 'active' ? 'secondary' : 'info'" severity="secondary" label="Non Aktif"
+                icon="pi pi-times" styleClass="p-button-sm" (onClick)="handleChangeTab('inactive')">
+            </p-button>
+        </div>
+
+        <app-grid [props]="GridProps" (cellClicked)="onCellClicked($event)"
+            (rowDoubleClicked)="onRowDoubleClicked($event)" (aksiClicked)="onToolbarClicked($event)"
+            (customSearchClicked)="onSearchGrid($event)">
+        </app-grid>
+    </div>
+
+    <!-- Form -->
+    <div *ngIf="PageState == 'form'" class="flex flex-col w-10/12 gap-3">
+        <div class="grid w-full p-3 bg-white rounded-lg shadow-sm">
+            <app-dynamic-form #FormComps [props]="FormProps"></app-dynamic-form>
+
+            <div class="flex w-full justify-end mt-4 gap-4">
+                <p-button severity="secondary" label="Back" styleClass="p-button-sm" (onClick)="handleBackToList()">
+                </p-button>
+
+                <p-button *ngIf="FormState == 'insert'" severity="info" label="Save" styleClass="p-button-sm text-white"
+                    (onClick)="saveData(FormComps.FormGroup.value)">
+                </p-button>
+
+                <p-button *ngIf="FormState == 'update'" severity="warning" label="Update" styleClass="p-button-sm"
+                    (onClick)="updateData(FormComps.FormGroup.value)">
+                </p-button>
+            </div>
+        </div>
+
+        <div *ngIf="FormState == 'update'" class="grid w-full bg-white rounded-lg shadow-sm p-3">
+            <div
+                class="flex flex-row justify-between items-center mb-3 pb-3 border-b border-t-0 border-x-0 border-dashed border-gray-300">
+                <div class="flex flex-col">
+                    <p class="text-base font-medium text-gray-700">
+                        History Tagihan
+                    </p>
+                    <p class="text-xs text-gray-600 ">
+                        Riwayat tagihan pelanggan
+                    </p>
+                </div>
+
+                <div class="flex gap-2">
+                    <p-button severity="secondary" label="Export" styleClass="p-button-sm"
+                        (onClick)="handleExportHistoryTagihan()">
+                    </p-button>
+
+                    <p-button severity="info" label="Add Invoice" styleClass="p-button-sm"
+                        (onClick)="handleGoToAddInvoice(this.GridSelectedData.id_pelanggan)">
+                    </p-button>
+                </div>
+            </div>
+
+            <app-grid #GridHistoryTagihanComps [props]="GridHistoryTagihanProps"
+                (aksiClicked)="onToolbarClickedHistoryInvoice($event)">
+            </app-grid>
+        </div>
+    </div>
+
+    <!-- Set Paket -->
+    <div *ngIf="PageState == 'set_paket'" class="grid w-full bg-white rounded-lg shadow-sm p-2">
+        <div class="flex flex-col mb-3 pb-3 border-b border-t-0 border-x-0 border-dashed border-gray-300">
+            <p class="text-base font-medium text-gray-700">
+                Setting Paket Pelanggan Masal
+            </p>
+            <p class="text-xs text-gray-600 ">
+                Setting paket pelanggan dengan banyak data
+            </p>
+        </div>
+
+        <app-setting-pelanggan-product #SettingPaketComps></app-setting-pelanggan-product>
+    </div>
+
+    <!-- Product -->
+    <p-dialog header="Edit Produk Layanan" [(visible)]="ShowDialogProduct" [modal]="true" [style]="{ width: '35rem' }"
+        [draggable]="false" [resizable]="false">
+
+        <div class="grid w-full my-2">
+            <app-dynamic-form #FormProductPelangganComps [props]="FormProductPelangganProps"></app-dynamic-form>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <p-button label="Cancel" severity="secondary" styleClass="p-button-sm"
+                (onClick)="ShowDialogProduct = false" />
+
+            <p-button label="Update" severity="warning" styleClass="p-button-sm"
+                (onClick)="handleUpdateProductPelanggan(FormProductPelangganComps.FormGroup.value)" />
+        </ng-template>
+    </p-dialog>
+
+    <!-- Import -->
+    <p-dialog header="Import Pelanggan" [(visible)]="ShowDialogImport" [modal]="true" [style]="{ width: '35rem' }"
+        [draggable]="false" [resizable]="false">
+
+        <div class="grid w-full my-2">
+            <p class="text-sm text-gray-700 font-medium mb-1">
+                Pilih File Excel
+                <span class="italic text-xs text-red-600">
+                    (Mohon sesuaikan dengan format contoh file)
+                </span>
+            </p>
+            <input id="fileInput" type="file" pInputText placeholder="Pilih file template import disini"
+                class="p-inputtext-sm w-full">
+        </div>
+
+        <ng-template pTemplate="footer">
+            <p-button label="Cancel" severity="secondary" styleClass="p-button-sm"
+                (onClick)="ShowDialogImport = false" />
+
+            <p-button label="Import" severity="warning" styleClass="p-button-sm" (onClick)="importData()" />
+        </ng-template>
+    </p-dialog>
+
+    <p-confirmDialog />
+</app-dashboard>

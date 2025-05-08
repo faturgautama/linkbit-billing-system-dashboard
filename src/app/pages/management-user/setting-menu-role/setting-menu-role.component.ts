@@ -40,7 +40,7 @@ export class SettingMenuRoleComponent implements OnInit, OnDestroy {
             })
         );
 
-    SelectedRole!: string;
+    SelectedRole: any;
 
     MenuRole: any[] = [];
 
@@ -59,11 +59,11 @@ export class SettingMenuRoleComponent implements OnInit, OnDestroy {
         this.Destroy$.complete();
     }
 
-    getMenuByIdRole(id_role: string) {
-        this.SelectedRole = id_role;
+    getMenuByIdRole(data: any) {
+        this.SelectedRole = data;
 
         this._settingMenuRolesService
-            .getAll(id_role)
+            .getAll(data.id_user_group)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
@@ -73,27 +73,27 @@ export class SettingMenuRoleComponent implements OnInit, OnDestroy {
     }
 
     handleChangeStatusAssign(menu: any) {
-        if (menu.is_assign) {
+        if (menu.is_assigned) {
             this._settingMenuRolesService
-                .delete(menu.id_role_menu)
+                .delete(menu.id_user_group_menu)
                 .pipe(takeUntil(this.Destroy$))
                 .subscribe((result) => {
                     if (result) {
                         this._messageService.clear();
-                        this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
+                        this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Menu akses deleted succesfully' });
                         this.getMenuByIdRole(this.SelectedRole);
                     }
                 });
         };
 
-        if (!menu.is_assign) {
+        if (!menu.is_assigned) {
             this._settingMenuRolesService
-                .create({ id_menu: menu.id_menu, id_role: this.SelectedRole })
+                .create({ id_menu: menu.id_menu, id_user_group: this.SelectedRole.id_user_group })
                 .pipe(takeUntil(this.Destroy$))
                 .subscribe((result) => {
                     if (result) {
                         this._messageService.clear();
-                        this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data saved succesfully' });
+                        this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Menu akses saved succesfully' });
                         this.getMenuByIdRole(this.SelectedRole);
                     }
                 });

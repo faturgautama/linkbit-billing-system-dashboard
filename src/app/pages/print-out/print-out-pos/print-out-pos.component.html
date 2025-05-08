@@ -1,0 +1,101 @@
+<div class="flex flex-col w-full items-center justify-center p-10">
+    <!-- <p [innerHTML]="Editor" class="text-center"></p> -->
+    <div class="w-full grid items-center justify-center">
+        <div clas="flex flex-col gap-2 items-center justify-center" style="align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem">
+            <img class="logo mx-auto" src="https://linkbit.net.id/assets/img/struk-pos.png" alt="logo" width="250px" />
+
+            <h6 class="text-center" style="font-size: 11px; margin-bottom: 2px">
+                <b>PT LINKBIT INOVASI TEKNOLOGI</b><br />
+                <b>JL RAYA KARANGRAYU NG - GODONG KM7</b><br />
+                <b>MOJOAGUNG, KARANGRAYUNG</b><br />
+                <b>KAB. GROBOGAN, JAWA TENGAH, 58163</b><br />
+                <b>WWW.LINKBIT.NET.ID | BILLING&#64;LINKBIT.NET.ID</b><br />
+                <b>Billing 0811-2704-733 - CS 0813-9212-0473</b>
+            </h6>
+        </div>
+
+        <hr style="border-bottom: 1px solid #000000; height: 1px;" />
+
+        <div clas="grid w-full px-10" style="margin-bottom: 3rem; padding-left: 5rem;">
+            <table style="font-size: 11px;">
+                <tbody>
+                    <tr>
+                        <td width="30%">No Invoice</td>
+                        <td width="0%">:</td>
+                        <td>{{ PaymentDatasource.invoice_number }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tanggal Cetak</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.create_at }}</td>
+                    </tr>
+                    <tr>
+                        <td>Nama</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.full_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>ID Pelanggan</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.pelanggan_code }}</td>
+                    </tr>
+                    <tr>
+                        <td>Alamat</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.alamat }}</td>
+                    </tr>
+                    <tr>
+                        <td>Produk</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.product_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Periode</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.invoice_date }}</td>
+                    </tr>
+                    <tr>
+                        <td>Jatuh Tempo</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.due_date }}</td>
+                    </tr>
+                    <tr>
+                        <td>Harga Produk</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.price }}</td>
+                    </tr>
+                    <tr>
+                        <td>Total</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.total }}</td>
+                    </tr>
+                    <tr>
+                        <td>Transaksi</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.invoice_number }}</td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>:</td>
+                        <td>{{ PaymentDatasource.invoice_status }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <p style="text-align: center; font-size: 11px;">
+            SIMPAN BUKTI BAYAR INI SEBAGAI BUKTI PEMBAYARAN YANG SAH<br />
+            VALIDASI KEASLIAN SCAN KODE QR DIBAWAH
+        </p>
+
+
+        <div class="grid items-center justify-center">
+            <qrcode *ngIf="QrCode" [qrdata]="QrCode" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+        </div>
+    </div>
+</div>

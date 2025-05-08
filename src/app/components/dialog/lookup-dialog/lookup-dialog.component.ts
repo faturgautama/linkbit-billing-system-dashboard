@@ -9,7 +9,6 @@ import { LookupModel } from 'src/app/model/components/lookup.model';
 import { Subject, takeUntil } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
-import { AgGridModule } from 'ag-grid-angular';
 import { RadioButtonModule } from 'primeng/radiobutton';
 
 @Component({

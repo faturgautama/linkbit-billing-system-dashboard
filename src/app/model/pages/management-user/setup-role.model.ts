@@ -2,30 +2,34 @@ import { HttpBaseResponse } from "../../http/http-request.model"
 
 export namespace SetupRolesModel {
     export interface ISetupRoles {
-        id_role: string
-        role: string
+        id_user_group: number;
+        user_group: string;
+        is_active: boolean;
+        create_at: Date;
+        create_by: number;
+        update_at: Date;
+        update_by: number;
     }
 
     export class GetAllSetupRoles implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupRoles[]
     }
 
     export class GetByIdSetupRoles implements HttpBaseResponse {
-        responseResult!: boolean
-        statusCode!: number
+        status!: boolean
         message!: string
         data!: ISetupRoles
     }
 
     export interface CreateSetupRoles {
-        role: string
+        user_group: string
     }
 
     export interface UpdateSetupRoles {
-        id_role: string
-        role: string
+        id_user_group: string
+        user_group: string
+        is_active: boolean;
     }
 }

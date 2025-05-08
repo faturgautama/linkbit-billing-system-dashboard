@@ -50,13 +50,21 @@ export namespace FormModel {
         onChange?: (args: any) => any;
     }
 
+    export interface LabelAdditionalTag {
+        id: string;
+        label: string;
+        severity: any;
+        icon: string;
+    }
+
     export interface IFormFields {
         id: string;
-        type: 'text' | 'date' | 'daterange' | 'number' | 'select' | 'multiselect' | 'checkbox' | 'radio' | 'textarea' | 'password' | 'lookup' | 'text_split' | 'switch' | 'time' | 'number_split' | 'fileinput' | 'editor' | 'otp';
+        type: 'text' | 'date' | 'daterange' | 'monthpicker' | 'number' | 'select' | 'multiselect' | 'checkbox' | 'radio' | 'textarea' | 'password' | 'lookup' | 'text_split' | 'switch' | 'time' | 'number_split' | 'fileinput' | 'editor' | 'otp';
         label: string;
         required: boolean;
         value: any;
         mask?: string;
+        maskPrefix?: string;
         dropSpecialCharacters?: boolean;
         dropdownProps?: DropdownProps | any;
         radioButtonProps?: RadioButtonProps[] | any;
@@ -70,7 +78,9 @@ export namespace FormModel {
         hideLabel?: boolean;
         placeholder?: string;
         file_accept?: string;
+        label_tag?: LabelAdditionalTag;
         onChange?: (args: any) => any;
         onFilter?: (args: any) => any;
+        onTagClick?: (args: any) => any;
     }
 }
