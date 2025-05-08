@@ -97,7 +97,7 @@
             </p>
         </div>
 
-        <div class="grid w-full">
+        <div *ngIf="GridProps.dataSource" class="grid w-full">
             <app-grid [props]="GridProps"></app-grid>
         </div>
     </div>

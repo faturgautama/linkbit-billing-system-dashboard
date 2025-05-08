@@ -91,7 +91,7 @@ export class InvoiceDigitalComponent implements OnInit, OnDestroy {
                         invoice_status: result.data.invoice_status,
                     };
 
-                    this.GridProps.dataSource = [
+                    this.GridProps.dataSource = result.data.payment ? [
                         {
                             payment_date: result.data.payment.payment_date,
                             payment_amount: result.data.payment.payment_amount,
@@ -99,7 +99,7 @@ export class InvoiceDigitalComponent implements OnInit, OnDestroy {
                             notes: result.data.payment.invoice.notes,
                             user_entry: result.data.payment.user_entry,
                         }
-                    ]
+                    ] : []
                 }
             })
     }
