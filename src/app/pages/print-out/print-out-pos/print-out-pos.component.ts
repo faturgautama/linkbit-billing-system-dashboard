@@ -78,7 +78,9 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
 
                     this.QrCode = `${environment.checkoutUrl}/invoice-digital?token=${result.data.token}`;
 
-
+                    setTimeout(() => {
+                        window.print();
+                    }, 1000);
                 }
             });
     }
