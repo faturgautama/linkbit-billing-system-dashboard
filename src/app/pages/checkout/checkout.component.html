@@ -29,7 +29,7 @@
             </div>
 
             <p class="text-gray-800 text-3xl font-bold mb-2">
-                {{ InvoiceDatasource.total | currency: 'Rp. ' }}
+                {{ (!IsPaymentGenerated ? InvoiceDatasource.total : TotalIncludeFee) | currency: 'Rp. ' }}
             </p>
 
             <div class="flex flex-col w-full gap-0">
@@ -109,15 +109,21 @@
                 <div *ngFor="let item of PaymentMethodDatasource"
                     class="flex flex-row items-center w-full gap-2 bg-gray-200 p-2 rounded-lg shadow"
                     (click)="createPayment(item)">
-                    <img [src]="item.image" alt="logo_payment_method" class="w-[40px] h-[auto]">
+                    <img [src]="item.image" alt="logo_payment_method" class="w-[70px] h-[auto]">
 
                     <div class="flex flex-col w-full">
-                        <p class="text-sm text-gray-700 font-semibold">
+                        <p class="text-sm text-gray-700 font-semibold mb-0">
                             {{ item.payment_method_name }}
                         </p>
-                        <p class="text-xs text-gray-500">
-                            {{ item.payment_method_type == 'QRIS' ? '' : 'Virtual Account Bank' }}
+                        <p class="text-xs text-gray-500 mb-0">
+                            {{ item.payment_method_type == 'QRIS' ? 'Pembayaran Melalui QRIS' : 'Virtual Account Bank'
+                            }}
                             {{ item.payment_method_code }}
+                        </p>
+                        <p class="text-xs text-sky-500 italic">
+                            Biaya Admin :
+                            {{ handleCountAdminFee(InvoiceDatasource.total, item.payment_method_type,
+                            item.payment_method_fee) | currency: 'Rp. ' }}
                         </p>
                     </div>
 

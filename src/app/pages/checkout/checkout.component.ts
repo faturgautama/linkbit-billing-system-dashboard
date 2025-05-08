@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import { Socket } from 'ngx-socket-io';
 import { QRCodeModule } from 'angularx-qrcode';
 import { DomSanitizer } from '@angular/platform-browser';
+import { isNgTemplate } from '@angular/compiler';
 
 @Component({
     selector: 'app-checkout',
@@ -46,6 +47,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     IsPaymentGenerated: boolean = false;
     IsPaymentSuccess: boolean = false;
 
+    TotalIncludeFee = 0;
+
     constructor(
         private _socket: Socket,
         private _sanitizer: DomSanitizer,
@@ -78,12 +81,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                     this.IsPaymentGenerated = result.data.is_payment_generated;
                     this.IsPaymentSuccess = result.data.invoice_status == 'PAID';
                     this.DetailPayment = result.data.payment;
-                    !this.IsPaymentSuccess && this.getPaymentMethod(token, this.IsPaymentGenerated);
+                    this.getPaymentMethod(token, result.data.total, this.IsPaymentGenerated);
                 }
             })
     }
 
-    private getPaymentMethod(token: string, setSelectedPaymentMethod: boolean) {
+    private getPaymentMethod(token: string, total: number, setSelectedPaymentMethod: boolean) {
         this._paymentService
             .getAllPaymentMethod(token)
             .pipe(takeUntil(this.Destroy$))
@@ -94,6 +97,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                     if (setSelectedPaymentMethod) {
                         const index = this.PaymentMethodDatasource.findIndex(item => item.payment_method_code == this.DetailPayment.payment_method);
                         this.SelectedPaymentMethod = this.PaymentMethodDatasource[index];
+                        this.TotalIncludeFee = this.SelectedPaymentMethod.payment_method_code == 'QRIS'
+                            ? Math.ceil(total + (parseFloat(total as any) * (parseFloat(this.SelectedPaymentMethod.payment_method_fee) / 100)))
+                            : total + this.SelectedPaymentMethod.payment_method_fee;
+                    } else {
+                        this.TotalIncludeFee = total;
                     }
                 }
             })
@@ -166,5 +174,15 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     handleBackToHome() {
         window.location.href = "https://linkbit.net.id/";
+    }
+
+    handleCountAdminFee(total: any, payment_method_type: string, admin_fee: any) {
+        const fee = payment_method_type == 'QRIS'
+            ? Math.ceil((parseFloat(total) * (parseFloat(admin_fee) / 100)))
+            : parseInt(admin_fee);
+
+        this.TotalIncludeFee = total + fee;
+
+        return fee;
     }
 }
