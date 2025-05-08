@@ -1,95 +1,104 @@
-<!-- <div class="w-full grid">
-    <div class="flex flex-col w-full justify-center items-center text-center">
-        <img class="logo" src="https://linkbit.net.id/assets/img/struk-pos.png" alt="logo" width="250px" />
+<div class="flex flex-col w-full items-center justify-center p-10">
+    <div class="w-full grid">
+        <div clas="flex flex-col gap-2 items-center justify-center" style="align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem">
+            <img class="logo mx-auto mb-2" src="https://linkbit.net.id/assets/img/logo-linkbit.png" alt="logo"
+                height="80px" style="margin-bottom: 1rem" />
 
-        <h6 style="font-size: 11px;">
-            <b>PT LINKBIT INOVASI TEKNOLOGI</b><br />
-            <b>JL RAYA KARANGRAYU NG - GODONG KM7</b><br />
-            <b>MOJOAGUNG, KARANGRAYUNG</b><br />
-            <b>KAB. GROBOGAN, JAWA TENGAH, 58163</b><br />
-            <b>WWW.LINKBIT.NET.ID | BILLING&#64;LINKBIT.NET.ID</b><br />
-            <b>Billing 0811-2704-733 - CS 0813-9212-0473</b>
-        </h6>
+            <h6 class="text-center" style="font-size: 13px; margin-bottom: 2px">
+                <b>PT LINKBIT INOVASI TEKNOLOGI</b><br />
+                <b>JL RAYA KARANGRAYU NG - GODONG KM7</b><br />
+                <b>MOJOAGUNG, KARANGRAYUNG</b><br />
+                <b>KAB. GROBOGAN, JAWA TENGAH, 58163</b><br />
+                <b>WWW.LINKBIT.NET.ID | BILLING&#64;LINKBIT.NET.ID</b><br />
+                <b>Billing 0811-2704-733 - CS 0813-9212-0473</b>
+            </h6>
+        </div>
+
+
+        <div clas="grid w-full px-10 pt-2 border-t-2 border-b-0 border-x-0 border border-gray-700 border-solid"
+            style="margin-bottom: 2rem; padding-left: 5rem;">
+            <table style="font-size: 13px;
+            width: 35rem;
+            padding-left: calc(100vh - 35rem);
+            margin-left: auto;
+            margin-right: auto;">
+                <tbody>
+                    <tr>
+                        <td width="30%">No Invoice</td>
+                        <td width="0%">:</td>
+                        <td>{{ InvoiceDigital.invoice_number }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tanggal Cetak</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.create_at }}</td>
+                    </tr>
+                    <tr>
+                        <td>Nama</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.full_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>ID Pelanggan</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.pelanggan_code }}</td>
+                    </tr>
+                    <tr>
+                        <td>Alamat</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.alamat }}</td>
+                    </tr>
+                    <tr>
+                        <td>Produk</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.product_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Periode</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.invoice_date }}</td>
+                    </tr>
+                    <tr>
+                        <td>Jatuh Tempo</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.due_date }}</td>
+                    </tr>
+                    <tr>
+                        <td>Harga Produk</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.price }}</td>
+                    </tr>
+                    <tr>
+                        <td>Total</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.total }}</td>
+                    </tr>
+                    <tr>
+                        <td>Transaksi</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.invoice_number }}</td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>:</td>
+                        <td>{{ InvoiceDigital.invoice_status }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid w-full py-5 mb-5 justify-center text-center bg-emerald-500 rounded">
+            <p style="text-align: center; font-size: 13px; color: white">
+                Terdaftar disistem Billing PT Linkbit Inovasi Teknologi ✅
+            </p>
+        </div>
+
+        <div class="grid w-full">
+            <app-grid [props]="GridProps"></app-grid>
+        </div>
     </div>
-
-    <hr style="border-bottom: 1px solid #000000; height: 0px;" />
-
-    <div class="flex flex-col w-full justify-center items-center text-center">
-        <table style="font-size: 11px;">
-            <tbody>
-                <tr>
-                    <td width="30%">No Invoice</td>
-                    <td width="0%">:</td>
-                    <td>{{ InvoiceDatasource?.invoice_number}}</td>
-                </tr>
-                <tr>
-                    <td>Tanggal Cetak</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.created_at}}</td>
-                </tr>
-                <tr>
-                    <td>Nama</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.full_name}}</td>
-                </tr>
-                <tr>
-                    <td>ID Pelanggan</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.pelanggan_code}}</td>
-                </tr>
-                <tr>
-                    <td>Alamat</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.alamat}}</td>
-                </tr>
-                <tr>
-                    <td>Produk</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.product_name}}</td>
-                </tr>
-                <tr>
-                    <td>Periode</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.invoice_date}}</td>
-                </tr>
-                <tr>
-                    <td>Jatuh Tempo</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.due_date}}</td>
-                </tr>
-                <tr>
-                    <td>Harga Produk</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.price}}</td>
-                </tr>
-                <tr>
-                    <td>Total</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.total}}</td>
-                </tr>
-                <tr>
-                    <td>Transaksi</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.invoice_number}}</td>
-                </tr>
-                <tr>
-                    <td>Status</td>
-                    <td>:</td>
-                    <td>{{ InvoiceDatasource?.invoice_status}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <p style="text-align: center; font-size: 11px;">
-        SIMPAN BUKTI BAYAR INI SEBAGAI BUKTI PEMBAYARAN YANG SAH<br />
-        VALIDASI KEASLIAN SCAN KODE QR DIBAWAH
-    </p>
-
-    <div class="flex flex-col w-full justify-center items-center text-center">
-        <div style="font-size: 11px;">qrcodeimage</div>
-    </div>
-</div> -->
-
-<div class="grid w-full justify-center items-center text-center p-10 text-sm" [innerHTML]="InvoiceDigital">
 </div>
