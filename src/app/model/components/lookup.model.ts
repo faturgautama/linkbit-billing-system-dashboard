@@ -1,4 +1,3 @@
-import { ColDef } from "ag-grid-community";
 import { FilterModel } from "./filter.model";
 import { GridModel } from "./grid.model";
 

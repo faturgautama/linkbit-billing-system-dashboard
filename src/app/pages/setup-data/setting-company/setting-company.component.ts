@@ -241,6 +241,21 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                         this.syncTemplate(args.id, 'tagihan_pesan_invoice');
                     }
                 },
+
+                {
+                    id: 'tagihan_jatuh_tempo',
+                    label: 'Tgl. Jatuh Tempo',
+                    required: true,
+                    type: 'number',
+                    value: '',
+                },
+                {
+                    id: 'tagihan_biaya_admin',
+                    label: 'Biaya Admin',
+                    required: true,
+                    type: 'number',
+                    value: '',
+                },
                 {
                     id: 'tagihan_pesan_lunas',
                     label: 'Pesan Whatsapp Lunas',
@@ -258,25 +273,12 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     }
                 },
                 {
-                    id: 'tagihan_jatuh_tempo',
-                    label: 'Tgl. Jatuh Tempo',
-                    required: true,
-                    type: 'number',
-                    value: '',
-                },
-                {
-                    id: 'tagihan_biaya_admin',
-                    label: 'Biaya Admin',
-                    required: true,
-                    type: 'number',
-                    value: '',
-                },
-                {
                     id: 'tagihan_editor_invoice',
                     label: 'Editor Tagihan Invoice',
                     required: true,
                     type: 'editor',
                     value: '',
+                    hidden: true,
                     label_tag: {
                         id: 'template_editor_invoice',
                         label: 'Ambil Dari Template',
@@ -293,6 +295,7 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     required: true,
                     type: 'editor',
                     value: '',
+                    hidden: true,
                     label_tag: {
                         id: 'template_editor_pos',
                         label: 'Ambil Dari Template',
@@ -305,7 +308,7 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                 },
             ],
             style: 'not_inline',
-            class: 'grid-rows-4 grid-cols-2',
+            class: 'grid-rows-3 grid-cols-2',
             state: 'write',
             defaultValue: null,
         };

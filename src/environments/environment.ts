@@ -6,8 +6,8 @@ export const environment = {
     production: false,
     webApiUrl: 'http://localhost:5000/api/v1',
     socketUrl: 'http://localhost:5000',
+    checkoutUrl: 'https://checkout.linkbit.net.id',
     version: 'v0.2.3-alpha',
-    urlPrintOutTagihan: 'http://localhost:5100/print-out/tagihan',
 };
 
 /*

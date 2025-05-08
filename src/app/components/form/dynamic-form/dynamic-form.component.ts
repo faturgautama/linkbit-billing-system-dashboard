@@ -16,10 +16,6 @@ import { LookupDialogComponent } from '../../dialog/lookup-dialog/lookup-dialog.
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { EditorModule } from 'primeng/editor';
-import { VgCoreModule } from '@videogular/ngx-videogular/core';
-import { VgControlsModule } from '@videogular/ngx-videogular/controls';
-import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
-import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { InputOtpModule } from 'primeng/inputotp';
 import { TagModule } from 'primeng/tag';
@@ -45,10 +41,6 @@ import { TagModule } from 'primeng/tag';
         NgxMaskDirective,
         NgxMaskPipe,
         EditorModule,
-        VgCoreModule,
-        VgControlsModule,
-        VgOverlayPlayModule,
-        VgBufferingModule,
         MultiSelectModule,
         InputOtpModule,
         TagModule,

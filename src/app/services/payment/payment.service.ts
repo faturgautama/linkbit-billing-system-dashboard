@@ -24,7 +24,7 @@ export class PaymentService {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/payment`, query);
     }
 
-    getById(id_payment: number): Observable<PaymentModel.GetAllPayment> {
+    getById(id_payment: number): Observable<HttpBaseResponse> {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/payment/retrieve/${id_payment}`);
     }
 

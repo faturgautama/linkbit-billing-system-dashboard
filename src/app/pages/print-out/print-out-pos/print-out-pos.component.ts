@@ -22,7 +22,7 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
 
     Destroy$ = new Subject();
 
-    Editor: string = "<p class='text-sm text-gray-700'>Sedang memuat</p>";
+    PaymentDatasource: any;
 
     QrCode: string = "";
 
@@ -61,34 +61,25 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
-                    this.syncEditorVariable(result.data);
+                    this.PaymentDatasource = {
+                        invoice_number: result.data.invoice_number,
+                        create_at: this._utilityService.onFormatDate(new Date(result.data.create_at), 'DD MMM yyyy HH:mm'),
+                        full_name: result.data.full_name,
+                        pelanggan_code: result.data.pelanggan_code,
+                        alamat: result.data.alamat,
+                        product_name: result.data.product_name,
+                        invoice_date: this._utilityService.onFormatDate(new Date(result.data.invoice_date), 'MMM yyyy'),
+                        due_date: this._utilityService.onFormatDate(new Date(result.data.due_date), 'DD MMM yyyy'),
+                        price: formatCurrency(result.data.price, 'EN', 'Rp. '),
+                        admin_fee: formatCurrency(result.data.admin_fee, 'EN', 'Rp. '),
+                        total: formatCurrency(result.data.total, 'EN', 'Rp. '),
+                        invoice_status: result.data.invoice_status,
+                    };
+
+                    this.QrCode = `${environment.checkoutUrl}/invoice-digital?token=${result.data.token}`;
+
+
                 }
             });
-    }
-
-    private syncEditorVariable(data: any) {
-        const messageVariable: any = {
-            invoice_number: data.invoice_number,
-            created_at: this._utilityService.onFormatDate(new Date(data.create_at), 'DD MMM yyyy HH:mm'),
-            full_name: data.full_name,
-            pelanggan_code: data.pelanggan_code,
-            alamat: data.alamat,
-            product_name: data.product_name,
-            invoice_date: this._utilityService.onFormatDate(new Date(data.invoice_date), 'MMM yyyy'),
-            due_date: this._utilityService.onFormatDate(new Date(data.due_date), 'DD MMM yyyy'),
-            price: formatCurrency(data.price, 'EN', 'Rp. '),
-            admin_fee: formatCurrency(data.admin_fee, 'EN', 'Rp. '),
-            total: formatCurrency(data.total, 'EN', 'Rp. '),
-            invoice_status: data.invoice_status,
-        };
-
-        const template: any = data.tagihan_editor_pos;
-
-        this.Editor = template.replace(/\${(.*?)}/g, (_: any, key: any) => messageVariable[key.trim()] || "");
-        this.QrCode = `${environment.urlPrintOutTagihan}?payment=${data.id_payment}`;
-
-        setTimeout(() => {
-            window.print();
-        }, 1000);
     }
 }

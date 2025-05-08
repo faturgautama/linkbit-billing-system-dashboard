@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
 import { GridModel } from 'src/app/model/components/grid.model';
-import { ColDef, GridApi, ColumnApi } from 'ag-grid-community';
 import { TableModule } from 'primeng/table'
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { InputTextModule } from 'primeng/inputtext';
@@ -49,15 +48,15 @@ export class GridComponent implements OnInit, AfterViewInit {
 
     @Output('customSearchClicked') customSearchClicked = new EventEmitter<any>();
 
-    defaultColDef: ColDef = {
+    defaultColDef: any = {
         sortable: true,
         filter: true,
         resizable: true
     };
 
-    gridApi!: GridApi;
+    gridApi!: any;
 
-    gridColumnApi!: ColumnApi;
+    gridColumnApi!: any;
 
     gridToolbar: GridModel.IGridToolbar[] = [];
 

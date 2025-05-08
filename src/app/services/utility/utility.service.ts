@@ -5,7 +5,6 @@ import html2canvas from 'html2canvas';
 import * as moment from 'moment';
 import 'moment/locale/id';
 import domtoimage from 'dom-to-image';
-import { AnyGridOptions } from 'ag-grid-community';
 
 @Injectable({
     providedIn: 'root'
