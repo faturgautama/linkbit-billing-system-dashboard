@@ -196,3 +196,11 @@ textarea {
 .readonlyState {
   background-color: rgb(229 231 235) !important;
 }
+
+.p-toast-message {
+  position: fixed !important;
+  opacity: 1 !important;
+  transform: translate(-50%, 15%) !important;
+  width: 22rem !important;
+  left: 50% !important;
+}
