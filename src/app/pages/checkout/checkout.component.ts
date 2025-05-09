@@ -35,7 +35,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     Destroy$ = new Subject();
 
-    IsSandboxMode = true;
+    IsSandboxMode = environment.sandbox;
 
     Logo = this._sanitizer.bypassSecurityTrustResourceUrl('https://linkbit.net.id/assets/img/logo-linkbit.png');;
 
