@@ -4,16 +4,17 @@ on:
   push:
     branches:
       - checkout # Run only when checkout is updated
+      - checkout-staging # Run only when checkout-staging is updated
 
 jobs:
-  deploy:
+  deploy-production:
     runs-on: ubuntu-latest
-
+    if: github.ref == 'refs/heads/checkout'
     steps:
       - name: 🔄 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: 🚀 Deploy Checkout Page
+      - name: 🚀 Deploy Checkout Page Production
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -21,3 +22,19 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: /home/billing-system-fg-linkbit/deployer/checkout-deployer.sh
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/checkout-staging'
+    steps:
+      - name: 🔄 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🚀 Deploy Checkout Page Staging
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: /home/billing-system-fg-linkbit/deployer/checkout-staging-deployer.sh
