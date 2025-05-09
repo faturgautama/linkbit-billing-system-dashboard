@@ -1,4 +1,4 @@
-<div *ngIf="InvoiceDatasource" class="flex w-full h-full bg-gray-700 justify-center">
+<div *ngIf="InvoiceDatasource" class="flex w-full h-screen bg-gray-700 justify-center">
     <!-- Payment Panel -->
     <div *ngIf="!IsPaymentSuccess" class="flex flex-col items-center max-w-[480px] w-full bg-gray-50 relative">
         <!-- Sandbox Mode -->
@@ -10,7 +10,7 @@
 
         <!-- Header -->
         <div
-            class="flex flex-row justify-center w-full gap-2 pt-5 pb-3 {{ IsSandboxMode ? 'h-[12rem]' : 'h-[10rem]' }} bg-gray-700">
+            class="flex flex-row justify-center w-full gap-2 pt-5 pb-3 {{ IsSandboxMode ? 'h-[11.4rem]' : 'h-[11.2rem]' }} bg-gray-700">
             <!-- Logo -->
             <img [src]="Logo" alt="logo" class="h-[3rem] mx-auto mb-10">
         </div>
@@ -18,81 +18,63 @@
         <!-- Order Summary -->
         <div
             class="flex flex-col w-11/12 max-w-[450px] p-2 gap-0 bg-white rounded-lg shadow drop-shadow absolute {{ IsSandboxMode ? 'top-[120px]' : 'top-[85px]' }}">
-            <div class="flex w-full justify-between items-center mb-1">
+            <div class="flex w-full justify-between items-end mb-1">
                 <p class="text-gray-500 text-xs">
                     Total
                 </p>
 
-                <p class="text-sky-600 text-sm font-semibold">
-                    {{ InvoiceDatasource.full_name }}
-                </p>
+                <div class="flex flex-col gap-0 justify-end items-end">
+                    <p class="text-sky-600 text-sm font-semibold">
+                        {{ InvoiceDatasource.full_name }}
+                    </p>
+                    <p class="text-gray-600 text-xs">
+                        ID PEL : {{ InvoiceDatasource.pelanggan_code }}
+                    </p>
+                </div>
             </div>
 
-            <p class="text-gray-800 text-3xl font-bold mb-2">
+            <p class="text-gray-800 text-3xl font-bold mb-0">
                 {{ (!IsPaymentGenerated ? InvoiceDatasource.total : TotalIncludeFee) | currency: 'Rp. ' }}
             </p>
 
-            <div class="flex flex-col w-full gap-0">
-                <!-- Invoice No -->
-                <div class="flex w-full">
-                    <div class="w-3/12">
+            <div
+                class="flex flex-col w-full gap-1 mt-2 pt-2 border-t border-b-0 border-x-0 border-dashed border-gray-300">
+                <div class="flex flex-row justify-between">
+                    <!-- Invoice No -->
+                    <div class="flex flex-col">
                         <p class="text-gray-500 text-xs">
-                            ID Pelanggan
+                            No. Invoice :
                         </p>
-                    </div>
-                    <div class="w-9/12">
                         <p class="text-gray-600 text-xs font-medium">
-                            : {{ InvoiceDatasource.pelanggan_code }}
+                            {{ InvoiceDatasource.invoice_number }}
                         </p>
                     </div>
-                </div>
 
-                <!-- Invoice No -->
-                <div class="flex w-full">
-                    <div class="w-3/12">
+                    <!-- Jatuh Tempo -->
+                    <div class="flex flex-col">
                         <p class="text-gray-500 text-xs">
-                            No. Invoice
+                            Jatuh Tempo :
                         </p>
-                    </div>
-                    <div class="w-9/12">
                         <p class="text-gray-600 text-xs font-medium">
-                            : {{ InvoiceDatasource.invoice_number }}
+                            {{ InvoiceDatasource.due_date | date: 'dd MMMM yyyy' }}
                         </p>
                     </div>
                 </div>
 
                 <!-- Jatuh Tempo -->
-                <div class="flex w-full">
-                    <div class="w-3/12">
-                        <p class="text-gray-500 text-xs">
-                            Jatuh Tempo
-                        </p>
-                    </div>
-                    <div class="w-9/12">
-                        <p class="text-gray-600 text-xs font-medium">
-                            : {{ InvoiceDatasource.due_date | date: 'dd MMMM yyyy' }}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Jatuh Tempo -->
-                <div class="flex w-full">
-                    <div class="w-3/12">
-                        <p class="text-gray-500 text-xs">
-                            Alamat
-                        </p>
-                    </div>
-                    <div class="w-9/12">
-                        <p class="text-gray-600 text-xs font-medium">
-                            : {{ InvoiceDatasource.alamat }}
-                        </p>
-                    </div>
+                <div class="flex flex-col w-full">
+                    <p class="text-gray-500 text-xs">
+                        Alamat :
+                    </p>
+                    <p class="text-gray-600 text-xs font-medium">
+                        {{ InvoiceDatasource.alamat }}
+                    </p>
                 </div>
             </div>
         </div>
 
         <!-- Payment Method -->
-        <div class="flex flex-col w-full gap-0 p-3 pt-[6rem]">
+        <div class="flex flex-col w-full gap-0 p-3 absolute {{ IsSandboxMode ? 'top-[320px]' : 'top-[280px]' }} ">
             <p class="text-base text-sky-600 font-semibold">
                 <span *ngIf="IsPaymentGenerated" class="text-gray-700" (click)="changePaymentMethod()">
                     <i class="pi pi-chevron-left" style="font-size: 12px"></i>
@@ -106,31 +88,68 @@
 
             <!-- List Payment Method -->
             <div *ngIf="!IsPaymentGenerated" class="flex flex-col w-full overflow-x-auto gap-3 pb-2">
-                <div *ngFor="let item of PaymentMethodDatasource"
-                    class="flex flex-row items-center w-full gap-2 bg-gray-200 p-2 rounded-lg shadow"
-                    (click)="createPayment(item)">
-                    <img [src]="item.image" alt="logo_payment_method" class="w-[70px] h-[auto]">
+                <p-accordion>
+                    <p-accordionTab *ngFor="let item of PaymentMethodAccordion">
+                        <ng-template pTemplate="header">
+                            <span class="flex items-center justify-between gap-2 w-full">
+                                <!-- Title -->
+                                <div class="flex flex-row gap-2">
+                                    <i [class]="item.icon"></i>
+                                    <p class="text-sm text-gray-700 font-medium">
+                                        {{ item.category }}
+                                    </p>
+                                </div>
 
-                    <div class="flex flex-col w-full">
-                        <p class="text-sm text-gray-700 font-semibold mb-0">
-                            {{ item.payment_method_name }}
-                        </p>
-                        <p class="text-xs text-gray-500 mb-0">
-                            {{ item.payment_method_type == 'QRIS' ? 'Pembayaran Melalui QRIS' : 'Virtual Account Bank'
-                            }}
-                            {{ item.payment_method_code }}
-                        </p>
-                        <p class="text-xs text-sky-500 italic">
-                            Biaya Admin :
-                            {{ handleCountAdminFee(InvoiceDatasource.total, item.payment_method_type,
-                            item.payment_method_fee) | currency: 'Rp. ' }}
-                        </p>
-                    </div>
+                                <!-- Thumbnail Image -->
+                                <div class="flex gap-3">
+                                    @if(item.category != 'QRIS') {
+                                    <img *ngFor="let image of item.thumbnail" [src]="image" alt="logo_payment_method"
+                                        class="w-[30px] h-[auto]">
+                                    } @else {
+                                    <img [src]="item.thumbnail[0]" alt="logo_payment_method" class="w-[30px] h-[auto]">
+                                    }
 
-                    <span class="text-sm text-gray-700 cursor-pointer">
-                        <i class="pi pi-chevron-right" style="font-size: 12px"></i>
-                    </span>
-                </div>
+                                    <div *ngIf="item.detail.length > 2"
+                                        class="flex items-center justify-center p-1 w-[2.5rem] border-gray-100 rounded-md border-solid border">
+                                        <p class="text-sm text-gray-600">
+                                            +{{ item.detail.length - 2 }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </span>
+                        </ng-template>
+                        <div class="flex flex-col gap-2 w-full">
+                            <div *ngFor="let method of item.detail"
+                                class="flex flex-row items-center w-full gap-3 bg-gray-200 p-2 rounded-lg shadow"
+                                (click)="createPayment(method)">
+                                <img [src]="method.image" alt="logo_payment_method" class="w-[70px] h-[auto]">
+
+                                <div class="flex flex-col w-full">
+                                    <p class="text-sm text-gray-700 font-semibold mb-0">
+                                        {{ method.payment_method_name }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 mb-0">
+                                        {{ method.payment_method_type == 'QRIS' ? 'Pembayaran Melalui QRIS' : 'Virtual
+                                        Account
+                                        Bank'
+                                        }}
+                                        {{ method.payment_method_code }}
+                                    </p>
+                                    <p class="text-xs text-sky-500 italic">
+                                        Biaya Admin :
+                                        {{ handleCountAdminFee(InvoiceDatasource.total, method.payment_method_type,
+                                        method.payment_method_fee) | currency: 'Rp. ' }}
+                                    </p>
+                                </div>
+
+                                <span class="text-sm text-gray-700 cursor-pointer">
+                                    <i class="pi pi-chevron-right" style="font-size: 12px"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                    </p-accordionTab>
+                </p-accordion>
             </div>
 
             <!-- Payment VA and Instructions -->

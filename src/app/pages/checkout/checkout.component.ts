@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Subject, takeUntil } from 'rxjs';
@@ -13,7 +14,6 @@ import { environment } from 'src/environments/environment';
 import { Socket } from 'ngx-socket-io';
 import { QRCodeModule } from 'angularx-qrcode';
 import { DomSanitizer } from '@angular/platform-browser';
-import { isNgTemplate } from '@angular/compiler';
 
 @Component({
     selector: 'app-checkout',
@@ -23,6 +23,7 @@ import { isNgTemplate } from '@angular/compiler';
         ButtonModule,
         CommonModule,
         QRCodeModule,
+        AccordionModule,
         DashboardComponent,
         ConfirmDialogModule,
         DynamicFormComponent,
@@ -34,12 +35,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     Destroy$ = new Subject();
 
-    IsSandboxMode = environment.sandbox;
+    IsSandboxMode = true;
 
     Logo = this._sanitizer.bypassSecurityTrustResourceUrl('https://linkbit.net.id/assets/img/logo-linkbit.png');;
 
     InvoiceDatasource: any;
 
+    PaymentMethodAccordion: any[] = [];
     PaymentMethodDatasource: any[] = [];
     SelectedPaymentMethod: any;
 
@@ -90,8 +92,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         this._paymentService
             .getAllPaymentMethod(token)
             .pipe(takeUntil(this.Destroy$))
-            .subscribe((result) => {
-                if (result.status) {
+            .subscribe((result: any) => {
+                if (result) {
+                    this.PaymentMethodAccordion = result.accordion;
                     this.PaymentMethodDatasource = result.data;
 
                     if (setSelectedPaymentMethod) {
