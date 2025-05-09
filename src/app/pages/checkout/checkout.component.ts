@@ -66,8 +66,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
             this.getDetailInvoice(token);
             this.listenSocket();
         }
-
-        this._messageService.add({ severity: 'success', summary: 'Test', detail: 'Test', life: 10000000000 })
     }
 
     ngOnDestroy(): void {
