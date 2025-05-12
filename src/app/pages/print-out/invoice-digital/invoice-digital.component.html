@@ -1,4 +1,4 @@
-<div class="flex flex-col w-full items-center justify-center p-10">
+<!-- <div class="flex flex-col w-full items-center justify-center p-10">
     <div class="w-full grid">
         <div clas="flex flex-col gap-2 items-center justify-center" style="align-items: center;
         justify-content: center;
@@ -100,5 +100,233 @@
         <div *ngIf="GridProps.dataSource" class="grid w-full">
             <app-grid [props]="GridProps"></app-grid>
         </div>
+    </div>
+</div> -->
+
+<div class="flex flex-col w-full max-w-screen items-center justify-center p-5">
+    <!-- Heading -->
+    <div
+        class="flex flex-col w-full justify-center items-center  mb-3 pb-3 border-b border-t-0 border-x-0 border-solid border-gray-600">
+        <img class="logo mb-3" src="https://linkbit.net.id/assets/img/logo-linkbit.png" alt="logo" height="80px" />
+
+        <p class="text-center text-xs font-medium text-gray-700">
+            <b>PT LINKBIT INOVASI TEKNOLOGI</b><br />
+            <b>JL RAYA KARANGRAYU NG - GODONG KM7</b><br />
+            <b>MOJOAGUNG, KARANGRAYUNG</b><br />
+            <b>KAB. GROBOGAN, JAWA TENGAH, 58163</b><br />
+            <b>WWW.LINKBIT.NET.ID | BILLING&#64;LINKBIT.NET.ID</b><br />
+            <b>Billing 0811-2704-733 - CS 0813-9212-0473</b>
+        </p>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="InvoiceDigital as invoice" class="flex flex-col w-full gap-2">
+        <!-- No Invoice -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    No. Invoice
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.invoice_number }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Tanggal Cetak -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    Tanggal Cetak
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.create_at }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Nama -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    Nama
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.full_name }}
+                </p>
+            </div>
+        </div>
+
+        <!-- ID Pelanggan -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    ID Pelanggan
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.pelanggan_code }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Alamat -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    Alamat
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.alamat }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Produk -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    Produk
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.product_name }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Periode -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    Periode
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.invoice_date }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Jatuh Tempo -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    Jatuh Tempo
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.due_date }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Harga Produk -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    Harga Produk
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.price }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Total -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    Total
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.total }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Transaksi -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    Transaksi
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.invoice_number }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="flex flex-row items-center">
+            <div class="w-5/12">
+                <p class="text-sm text-gray-600">
+                    Status
+                </p>
+            </div>
+            <div class="w-7/12">
+                <p class="text-sm text-gray-700 font-medium">
+                    : {{ invoice.invoice_status }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid w-full py-5 my-5 justify-center text-center bg-emerald-500 rounded">
+        <p style="text-align: center; font-size: 13px; color: white">
+            Terdaftar disistem Billing PT Linkbit Inovasi Teknologi ✅
+        </p>
+    </div>
+
+    <div *ngIf="GridProps.dataSource" class="grid w-full">
+        <p-table id="TableInvoiceDigitalPayment" [value]="GridProps.dataSource" [scrollable]="true"
+            scrollHeight="calc(100vh - 15rem)">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th [style.min-width]="'100px'" style="font-size: 12px">
+                        Tanggal
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Jumlah
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Metode Bayar
+                    </th>
+                    <th [style.min-width]="'300px'" style="font-size: 12px">
+                        Layanan
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Diterima Oleh
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-data>
+                <tr>
+                    <td style="font-size: 12px">{{ data.payment_date | date: 'dd-MM-yyyy' }}</td>
+                    <td style="font-size: 12px">{{ data.payment_amount | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ data.payment_method }}</td>
+                    <td style="font-size: 12px">{{ data.notes }}</td>
+                    <td style="font-size: 12px">{{ data.user_entry }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
     </div>
 </div>

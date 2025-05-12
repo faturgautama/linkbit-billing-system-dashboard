@@ -34,7 +34,8 @@
             </div>
 
             <p class="text-gray-800 text-3xl font-bold mb-0">
-                {{ (!IsPaymentGenerated ? InvoiceDatasource.total : TotalIncludeFee) | currency: 'Rp. ' }}
+                {{ (!IsPaymentGenerated ? InvoiceDatasource.total : ( InvoiceDatasource.is_use_pg_admin_fee ?
+                TotalIncludeFee :InvoiceDatasource.total )) | currency: 'Rp. ' }}
             </p>
 
             <div
@@ -135,7 +136,8 @@
                                         }}
                                         {{ method.payment_method_code }}
                                     </p>
-                                    <p class="text-xs text-sky-500 italic">
+                                    <p *ngIf="InvoiceDatasource.is_use_pg_admin_fee"
+                                        class="text-xs text-sky-500 italic">
                                         Biaya Admin :
                                         {{ handleCountAdminFee(InvoiceDatasource.total, method.payment_method_type,
                                         method.payment_method_fee) | currency: 'Rp. ' }}
