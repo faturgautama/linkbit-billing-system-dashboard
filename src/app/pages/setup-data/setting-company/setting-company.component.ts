@@ -331,10 +331,21 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     type: 'text',
                     value: '',
                 },
+                {
+                    id: 'is_use_pg_admin_fee',
+                    label: 'Aktifkan Payment Gateway Admin Fee?',
+                    required: true,
+                    type: 'radio',
+                    value: '',
+                    radioButtonProps: [
+                        { name: 'is_use_pg_admin_fee', label: 'Iya', value: true },
+                        { name: 'is_use_pg_admin_fee', label: 'Tidak', value: false },
+                    ]
+                },
 
             ],
             style: 'not_inline',
-            class: 'grid-rows-1 grid-cols-2',
+            class: 'grid-rows-2 grid-cols-2',
             state: 'write',
             defaultValue: null,
         };
