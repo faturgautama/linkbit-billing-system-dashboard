@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 import { MessageService } from 'primeng/api';
+import { TableModule } from 'primeng/table';
 import { Subject, takeUntil } from 'rxjs';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { GridModel } from 'src/app/model/components/grid.model';
@@ -15,6 +16,7 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
     selector: 'app-invoice-digital',
     standalone: true,
     imports: [
+        TableModule,
         CommonModule,
         GridComponent,
     ],
@@ -96,7 +98,7 @@ export class InvoiceDigitalComponent implements OnInit, OnDestroy {
                             payment_date: result.data.payment.payment_date,
                             payment_amount: result.data.payment.payment_amount,
                             payment_method: result.data.payment.payment_method,
-                            notes: result.data.payment.invoice.notes,
+                            notes: result.data.notes,
                             user_entry: result.data.payment.user_entry,
                         }
                     ] : []

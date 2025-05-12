@@ -1,10 +1,9 @@
 :host ::ng-deep {
-  ul {
-    list-style-position: inside !important;
+  tr th td {
+    font-size: 12px !important;
   }
 
-  p,
-  h6 {
-    margin: 0 !important;
+  p-table#TableInvoiceDigitalPayment {
+    width: calc(100vw - 3rem);
   }
 }
