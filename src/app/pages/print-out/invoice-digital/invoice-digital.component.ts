@@ -50,12 +50,8 @@ export class InvoiceDigitalComponent implements OnInit, OnDestroy {
     };
 
     constructor(
-        private _socket: Socket,
-        private _sanitizer: DomSanitizer,
         private _activatedRoute: ActivatedRoute,
-        private _invoiceService: InvoiceService,
         private _paymentService: PaymentService,
-        private _messageService: MessageService,
         private _utilityService: UtilityService,
     ) { }
 
@@ -93,15 +89,17 @@ export class InvoiceDigitalComponent implements OnInit, OnDestroy {
                         invoice_status: result.data.invoice_status,
                     };
 
-                    this.GridProps.dataSource = result.data.payment ? [
-                        {
-                            payment_date: result.data.payment.payment_date,
-                            payment_amount: result.data.payment.payment_amount,
-                            payment_method: result.data.payment.payment_method,
-                            notes: result.data.notes,
-                            user_entry: result.data.payment.user_entry,
-                        }
-                    ] : []
+                    if (result.data.payment) {
+                        this.GridProps.dataSource = result.data.payment.payment_status == 'PAID' ? [
+                            {
+                                payment_date: result.data.payment.payment_date,
+                                payment_amount: result.data.payment.payment_amount,
+                                payment_method: result.data.payment.payment_method,
+                                notes: result.data.notes,
+                                user_entry: result.data.payment.user_entry,
+                            }
+                        ] : []
+                    }
                 }
             })
     }
