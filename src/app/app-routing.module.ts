@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './middleware/auth.guard';
+import { MenuPermissionGuard } from './middleware/menu-permission.guard';
 
 const routes: Routes = [
     {
@@ -26,7 +27,7 @@ const routes: Routes = [
     },
     {
         path: 'pelanggan',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, MenuPermissionGuard],
         loadComponent: async () => (await import('./pages/pelanggan/pelanggan.component')).PelangganComponent,
         data: {
             title: 'Pelanggan',
@@ -35,7 +36,7 @@ const routes: Routes = [
     },
     {
         path: 'tagihan',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, MenuPermissionGuard],
         loadComponent: async () => (await import('./pages/invoice/invoice.component')).InvoiceComponent,
         data: {
             title: 'Tagihan',
@@ -44,7 +45,7 @@ const routes: Routes = [
     },
     {
         path: 'pembayaran',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, MenuPermissionGuard],
         loadComponent: async () => (await import('./pages/payment/payment.component')).PaymentComponent,
         data: {
             title: 'Pembayaran',

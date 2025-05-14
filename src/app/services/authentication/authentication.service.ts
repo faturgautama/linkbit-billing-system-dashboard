@@ -52,6 +52,7 @@ export class AuthenticationService {
                 };
 
                 localStorage.setItem("_LBS_UD_", JSON.stringify(newRes));
+                this.setMenu(result.data.id_user_group)
             })
     }
 
