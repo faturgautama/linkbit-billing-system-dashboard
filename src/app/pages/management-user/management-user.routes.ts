@@ -1,9 +1,11 @@
 import { Route } from '@angular/router';
+import { MenuPermissionGuard } from 'src/app/middleware/menu-permission.guard';
 
 
 export const managementUserRoutes: Route[] = [
     {
         path: 'setup-menu',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./setup-menu/setup-menu.component')).SetupMenuComponent,
         data: {
             title: 'Setup Menu',
@@ -14,6 +16,7 @@ export const managementUserRoutes: Route[] = [
     },
     {
         path: 'setup-group-user',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./setup-role/setup-role.component')).SetupRoleComponent,
         data: {
             title: 'Setup Group User',
@@ -24,6 +27,7 @@ export const managementUserRoutes: Route[] = [
     },
     {
         path: 'setup-user',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./setup-user/setup-user.component')).SetupUserComponent,
         data: {
             title: 'Setup User',
@@ -34,6 +38,7 @@ export const managementUserRoutes: Route[] = [
     },
     {
         path: 'setting-menu-akses',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./setting-menu-role/setting-menu-role.component')).SettingMenuRoleComponent,
         data: {
             title: 'Setting Menu Akses',
@@ -44,6 +49,7 @@ export const managementUserRoutes: Route[] = [
     },
     {
         path: 'log-activity',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./logging/log-activity/log-activity.component')).LogActivityComponent,
         data: {
             title: 'Log Aktifitas User',
@@ -54,6 +60,7 @@ export const managementUserRoutes: Route[] = [
     },
     {
         path: 'log-message',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./logging/log-message-invoice/log-message-invoice.component')).LogMessageInvoiceComponent,
         data: {
             title: 'Log Pesan Invoice',

@@ -2,7 +2,8 @@
     <div class="flex w-full h-full">
         <!-- Sidebar -->
         <div id="sidebar" class="w-[5rem] bg-white transition-all flex flex-col p-5 shadow"
-            (mouseenter)="handleShowSidebarWhenMouseOver()" (mouseleave)="handleHideSidebarWhenMouseLeave()">
+            (click)="handleToggleSidebar()">
+            <!--  (mouseenter)="handleShowSidebarWhenMouseOver()" (mouseleave)="handleHideSidebarWhenMouseLeave()" -->
             <!-- User -->
             <div *ngIf="UserData$ | async as user" class="flex flex-col justify-center w-full items-center gap-0 mb-10">
                 <img src="../../../../assets/icon/user.png" alt="user"
@@ -32,7 +33,7 @@
             <div *ngIf="SidebarMenu$ | async as sidebar_menu" class="flex-col gap-2 overflow-x-auto"
                 style="height: calc(100vh - 10rem);">
                 <div *ngFor="let item of sidebar_menu" class="flex flex-col w-full pr-3"
-                    (click)="item.is_parent ? item.toggle_child = !item.toggle_child : handleClickSidebarMenu(item)">
+                    (click)="ShowSidebar ? ( item.is_parent ? item.toggle_child = !item.toggle_child : handleClickSidebarMenu(item)) : handleToggleSidebar()">
 
                     <div
                         class="flex w-full {{ ShowSidebar ? 'items-center' : '' }} p-2 gap-2 cursor-pointer hover:bg-sky-100 text-gray-700 hover:text-sky-700 rounded-md transition-all duration-75 {{ item.child.length > 0 && item.toggle_child ? 'mb-0' : 'mb-0' }}">
@@ -59,7 +60,8 @@
                         class="w-full flex flex-col pl-7 py-1 gap-2 cursor-pointer">
                         <span *ngFor="let child of item.child"
                             class="flex text-gray-700 hover:bg-sky-100 hover:rounded-md p-2 items-center hover:text-sky-700 tracking-normal transition-all"
-                            style="font-size: 14px;" (click)="handleClickSidebarMenu(child)">
+                            style="font-size: 14px;"
+                            (click)="ShowSidebar ? handleClickSidebarMenu(child) : handleToggleSidebar()">
                             <p *ngIf="ShowSidebar" class="ml-2 p-0 mt-0 mb-0">
                                 <i class="{{ child.icon }} mr-2" style="font-size: 14px;"></i>&nbsp;{{ child.menu }}
                             </p>

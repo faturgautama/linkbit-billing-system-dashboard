@@ -1,8 +1,10 @@
 import { Route } from "@angular/router";
+import { MenuPermissionGuard } from "src/app/middleware/menu-permission.guard";
 
 export const setupDataRoutes: Route[] = [
     {
         path: 'setting-company',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./setting-company/setting-company.component')).SettingCompanyComponent,
         data: {
             title: 'Setting Company',
@@ -13,6 +15,7 @@ export const setupDataRoutes: Route[] = [
     },
     {
         path: 'branch-office',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./branch-office/branch-office.component')).BranchOfficeComponent,
         data: {
             title: 'Kantor Cabang',
@@ -23,6 +26,7 @@ export const setupDataRoutes: Route[] = [
     },
     {
         path: 'mitra',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./branch-office/branch-office.component')).BranchOfficeComponent,
         data: {
             title: 'Mitra',
@@ -33,6 +37,7 @@ export const setupDataRoutes: Route[] = [
     },
     {
         path: 'group-pelanggan',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./group-pelanggan/group-pelanggan.component')).GroupPelangganComponent,
         data: {
             title: 'Group Pelanggan',
@@ -43,6 +48,7 @@ export const setupDataRoutes: Route[] = [
     },
     {
         path: 'produk',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./product/product.component')).ProductComponent,
         data: {
             title: 'Produk Layanan',
@@ -53,6 +59,7 @@ export const setupDataRoutes: Route[] = [
     },
     {
         path: 'template-editor',
+        canActivate: [MenuPermissionGuard],
         loadComponent: async () => (await import('./template-editor/template-editor.component')).TemplateEditorComponent,
         data: {
             title: 'Template Editor',

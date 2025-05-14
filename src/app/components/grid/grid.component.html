@@ -51,6 +51,19 @@
                 [optionLabel]="item.dropdownProps!.optionName" [optionValue]="item.dropdownProps!.optionValue"
                 [autoDisplayFirst]="false" [showClear]="true" [filter]="true" styleClass="p-inputtext-sm w-full"
                 formControlName="{{ item.id }}" appendTo="body" [placeholder]="item.placeholder">
+                <ng-template *ngIf="item.dropdownProps?.customField as customField" let-data pTemplate="item">
+                    <div class="flex flex-col gap-2">
+                        <p class="text-blue-500 text-sm font-semibold">
+                            {{ customField ? data[customField.title] : '-' }}
+                        </p>
+                        <p class="text-gray-800 text-xs">
+                            {{ customField ? data[customField.subtitle] : '-' }}
+                        </p>
+                        <p *ngIf="customField.description" class="text-gray-600 text-xs">
+                            {{ customField ? data[customField.description] : '-' }}
+                        </p>
+                    </div>
+                </ng-template>
             </p-dropdown>
         </div>
     </div>
@@ -158,9 +171,10 @@
 
     <!-- No Sort Mode -->
     <ng-template #noSortMode>
-        <p-table [value]="props.dataSource" [columns]="props.column" styleClass="p-datatable-striped"
-            [tableStyle]="{'min-width': 'auto'}" selectionMode="single" [(selection)]="SelectedRow"
-            [paginator]="props.showPaging" [rows]="5" [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [scrollable]="true">
+        <p-table id="GridComponents" [value]="props.dataSource" [columns]="props.column"
+            styleClass="p-datatable-striped" [tableStyle]="{'min-width': 'auto'}" selectionMode="single"
+            [(selection)]="SelectedRow" [paginator]="props.showPaging" [rows]="5"
+            [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [scrollable]="true">
             <ng-template pTemplate="header" let-columns>
                 <tr class="bg-gray-100">
                     <th *ngFor="let col of columns"
@@ -176,7 +190,7 @@
                 <tr [pSelectableRow]="rowData" (dblclick)="onRowDoubleClicked(rowData)"
                     (click)="onCellClicked(rowData)">
                     <td *ngFor="let col of columns" class="text-sm {{ col.class }}"
-                        [width]="col.width ? col.width : 'auto'">
+                        [style.min-width]="col.width ? col.width : 'auto'">
                         <!-- Checkbox -->
                         <span *ngIf="col.renderAsCheckbox && !col.renderAsPills">
                             <i class="pi {{ rowData[col.field] ? 'pi-check' : 'pi-times' }}"></i>

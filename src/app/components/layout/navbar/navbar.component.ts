@@ -54,13 +54,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
         let flatArray: any[] = [];
 
         function flatten(item: any) {
-            const { sidebarChild, url, ...rest } = item;
+            const { child, url, ...rest } = item;
             // Only push items that have a URL
             if (url) {
                 flatArray.push({ ...rest, url });
             }
-            if (sidebarChild) {
-                sidebarChild.forEach(flatten);
+            if (child) {
+                child.forEach(flatten);
             }
         }
 
@@ -82,7 +82,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.Menu = this.OriginalMenu;
 
         if (keyword) {
-            this.Menu = this.Menu.filter(item => item.caption.toLowerCase().includes(keyword.toLowerCase()));
+            this.Menu = this.Menu.filter(item => item.menu.toLowerCase().includes(keyword.toLowerCase()));
         } else {
             this.Menu = this.OriginalMenu;
         }

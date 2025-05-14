@@ -64,6 +64,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
         },
     ];
 
+    @ViewChild('GridComps') GridComps!: GridComponent
     GridProps: GridModel.IGrid = {
         id: 'GridSetupMenu',
         column: [
@@ -87,32 +88,33 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
         customSearchProps: [
             {
                 id: 'invoice_date',
-                placeholder: 'Cari Tgl. Tagihan Disini',
+                placeholder: 'Cari Periode Tagihan Disini',
                 type: 'monthpicker',
+            },
+            {
+                id: 'id_pelanggan',
+                placeholder: 'Cari Pelanggan Disini',
+                type: 'dropdown',
+                dropdownProps: {
+                    options: [],
+                    optionName: 'full_name',
+                    optionValue: 'id_pelanggan',
+                    customField: {
+                        title: 'full_name',
+                        subtitle: 'pelanggan_code',
+                        description: 'alamat'
+                    }
+                }
             },
             {
                 id: 'invoice_number',
                 placeholder: 'Cari No. Tagihan Disini',
                 type: 'text'
             },
-            {
-                id: 'invoice_status',
-                placeholder: 'Cari Status Tagihan Disini',
-                type: 'dropdown',
-                dropdownProps: {
-                    options: [
-                        { name: 'PENDING', value: 'PENDING' },
-                        { name: 'EXPIRED', value: 'EXPIRED' },
-                        { name: 'CANCEL', value: 'CANCEL' },
-                        { name: 'PAID', value: 'PAID' },
-                    ],
-                    optionName: 'name',
-                    optionValue: 'value'
-                }
-            },
         ],
     };
     GridSelectedData: any;
+    GridQueryParams: any;
 
     FormState: 'insert' | 'update' = 'insert';
     FormProps: FormModel.IForm;
@@ -321,7 +323,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
             ],
             style: 'not_inline',
-            class: 'grid-rows-12 grid-cols-1',
+            class: 'grid-rows-6 grid-cols-2',
             state: 'write',
             defaultValue: null,
         };
@@ -371,11 +373,21 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private getAll(query?: any) {
+        this.GridQueryParams = query;
+
         this._invoiceService
             .getAll(query)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
+                    let formQuery = { ...query };
+
+                    if (formQuery.invoice_date) {
+                        formQuery.invoice_date = new Date(formQuery.invoice_date)
+                    };
+
+                    this.GridComps.CustomSearchForm.patchValue(formQuery);
+
                     this.GridProps.dataSource = result.data.map((item: any) => {
                         return {
                             ...item,
@@ -394,6 +406,9 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (result) {
                     const index = this.FormProps.fields.findIndex(item => item.id == 'id_pelanggan')
                     this.FormProps.fields[index].dropdownProps.options = result.data;
+
+                    const indexSearch = this.GridProps.customSearchProps!.findIndex(item => item.id == 'id_pelanggan');
+                    this.GridProps.customSearchProps![indexSearch].dropdownProps!.options = result.data;
 
                     this._activatedRoute
                         .queryParams
@@ -424,17 +439,17 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
         const queryDate = new Date(invoice_date);
         const day = this.SettingCompany.tagihan_jatuh_tempo;
         const year = queryDate.getFullYear();
-        const month = queryDate.getMonth() + 2; // Adding 2 months
+        const month = queryDate.getMonth();
 
         // Handling December case properly
-        const dueDate = new Date(year, month - 1, day, 0, 0, 0);
+        const dueDate = new Date(year, month, day, 0, 0, 0);
 
         this.FormComps.FormGroup.get('due_date')?.setValue(
             this._utilityService.onFormatDate(dueDate, 'yyyy-MM-DD HH:mm:ss')
         );
 
         this.FormComps.FormGroup.get('notes')?.setValue(
-            `${this.FormComps.FormGroup.get('product_name')?.value}-${this._utilityService.onFormatDate(dueDate, 'yyyy-MM-DD')}`
+            `${this.FormComps.FormGroup.get('product_name')?.value} - ${this._utilityService.onFormatDate(dueDate, 'yyyy-MM-DD')}`
         );
     }
 
@@ -510,7 +525,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                     },
                 ];
 
-                this.getAll();
+                this.getAll(this.GridQueryParams);
             }, 100);
         }
 
@@ -526,12 +541,12 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
         this.ButtonNavigation = [];
         // ** Set value ke Dynamic form components
         setTimeout(() => {
-            setTimeout(() => {
-                args.invoice_date = new Date(args.invoice_date);
-                this.FormComps.FormGroup.patchValue(args);
-                this.getTanggalJatuhTempo(args.invoice_date)
-            }, 500);
-        }, 100);
+            console.log("args =>", args);
+
+            args.invoice_date = new Date(args.invoice_date);
+            this.FormComps.FormGroup.patchValue(args);
+            this.getTanggalJatuhTempo(args.invoice_date)
+        }, 500);
     }
 
     onToolbarClicked(args: any): void {
@@ -590,8 +605,8 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
     saveData(data: any) {
         delete data.id_invoice;
         delete data.product_name;
-        data.invoice_date = new Date(this._utilityService.onFormatDate(new Date(data.invoice_date), 'yyyy-MM-DD'));
-        data.due_date = new Date(data.due_date).toISOString();
+        data.invoice_date = new Date(this._utilityService.onFormatDate(new Date(data.invoice_date), 'yyyy-MM-DD')).toISOString();
+        data.due_date = new Date(this._utilityService.onFormatDate(new Date(data.due_date), 'yyyy-MM-DD')).toISOString();
         data.diskon_percentage = parseFloat(data.diskon_percentage);
 
         this._invoiceService
@@ -608,8 +623,8 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
 
     updateData(data: any) {
         delete data.product_name;
-        data.invoice_date = new Date(this._utilityService.onFormatDate(new Date(data.invoice_date), 'yyyy-MM-DD'));
-        data.due_date = new Date(data.due_date).toISOString();
+        data.invoice_date = new Date(this._utilityService.onFormatDate(new Date(data.invoice_date), 'yyyy-MM-DD')).toISOString();
+        data.due_date = new Date(this._utilityService.onFormatDate(new Date(data.due_date), 'yyyy-MM-DD')).toISOString();
         data.diskon_percentage = parseFloat(data.diskon_percentage);
 
         this._invoiceService
@@ -632,7 +647,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
-                    this.getAll();
+                    this.getAll(this.GridQueryParams);
                 }
             })
     }

@@ -1,4 +1,8 @@
 :host ::ng-deep {
+  p-table#GridComponents {
+    width: calc(100vw - 10rem);
+  }
+
   .p-paginator.p-component {
     display: flex !important;
     justify-content: end !important;
