@@ -1,14 +1,14 @@
 <app-dashboard [ButtonNavigation]="ButtonNavigation" (onClickButtonNavigation)="handleClickButtonNavigation($event)">
     <!-- Grid -->
     <div *ngIf="PageState == 'list'" class="grid w-full bg-white rounded-lg shadow-sm p-2">
-        <app-grid [props]="GridProps" (cellClicked)="onCellClicked($event)"
+        <app-grid #GridComps [props]="GridProps" (cellClicked)="onCellClicked($event)"
             (rowDoubleClicked)="onRowDoubleClicked($event)" (aksiClicked)="onToolbarClicked($event)"
             (customSearchClicked)="onSearchGrid($event)">
         </app-grid>
     </div>
 
     <!-- Form -->
-    <div *ngIf="PageState == 'form'" class="flex flex-col w-6/12 p-3 bg-white rounded-lg shadow-sm">
+    <div *ngIf="PageState == 'form'" class="flex flex-col w-10/12 p-3 bg-white rounded-lg shadow-sm">
         <div class="grid w-full">
             <app-dynamic-form #FormComps [props]="FormProps"></app-dynamic-form>
         </div>
