@@ -171,9 +171,10 @@
 
     <!-- No Sort Mode -->
     <ng-template #noSortMode>
-        <p-table [value]="props.dataSource" [columns]="props.column" styleClass="p-datatable-striped"
-            [tableStyle]="{'min-width': 'auto'}" selectionMode="single" [(selection)]="SelectedRow"
-            [paginator]="props.showPaging" [rows]="5" [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [scrollable]="true">
+        <p-table id="GridComponents" [value]="props.dataSource" [columns]="props.column"
+            styleClass="p-datatable-striped" [tableStyle]="{'min-width': 'auto'}" selectionMode="single"
+            [(selection)]="SelectedRow" [paginator]="props.showPaging" [rows]="5"
+            [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [scrollable]="true">
             <ng-template pTemplate="header" let-columns>
                 <tr class="bg-gray-100">
                     <th *ngFor="let col of columns"
@@ -189,7 +190,7 @@
                 <tr [pSelectableRow]="rowData" (dblclick)="onRowDoubleClicked(rowData)"
                     (click)="onCellClicked(rowData)">
                     <td *ngFor="let col of columns" class="text-sm {{ col.class }}"
-                        [width]="col.width ? col.width : 'auto'">
+                        [style.min-width]="col.width ? col.width : 'auto'">
                         <!-- Checkbox -->
                         <span *ngIf="col.renderAsCheckbox && !col.renderAsPills">
                             <i class="pi {{ rowData[col.field] ? 'pi-check' : 'pi-times' }}"></i>

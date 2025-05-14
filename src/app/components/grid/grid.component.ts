@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { TableModule } from 'primeng/table'
@@ -12,7 +12,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { PaginatorModule } from 'primeng/paginator';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { UtilityService } from 'src/app/services/utility/utility.service';
 
 @Component({
     selector: 'app-grid',
@@ -34,7 +35,9 @@ import { BehaviorSubject } from 'rxjs';
     templateUrl: './grid.component.html',
     styleUrls: ['./grid.component.scss']
 })
-export class GridComponent implements OnInit, AfterViewInit {
+export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
+
+    Destroy$ = new Subject()
 
     @Input('props') props!: GridModel.IGrid;
 
@@ -70,8 +73,22 @@ export class GridComponent implements OnInit, AfterViewInit {
 
     constructor(
         private _formBuilder: FormBuilder,
+        private _utilityService: UtilityService,
     ) {
         this.CustomSearchForm = this._formBuilder.group({});
+
+        this._utilityService
+            .ShowSidebar$
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                const el = document.getElementById("GridComponents");
+
+                if (el) {
+                    el.style.width = result
+                        ? "calc(100vw - 24rem)"
+                        : "calc(100vw - 10rem)";
+                }
+            })
     };
 
     ngOnInit(): void {
@@ -84,6 +101,11 @@ export class GridComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.onGridReady();
+    }
+
+    ngOnDestroy(): void {
+        this.Destroy$.next(0);
+        this.Destroy$.complete();
     }
 
     onGridReady(): void {

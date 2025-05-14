@@ -8,7 +8,6 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboard.component';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
-import { LaporanModel } from 'src/app/model/pages/laporan/laporan.model';
 import { SettingCompanyModel } from 'src/app/model/pages/setup-data/setting-company.model';
 import { LaporanService } from 'src/app/services/laporan/laporan.service';
 import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
