@@ -1,5 +1,4 @@
-<div class="flex flex-col w-full items-center justify-center p-10">
-    <!-- <p [innerHTML]="Editor" class="text-center"></p> -->
+<!-- <div class="flex flex-col w-full items-center justify-center p-10">
     <div class="w-full grid items-center justify-center">
         <div clas="flex flex-col gap-2 items-center justify-center" style="align-items: center;
         justify-content: center;
@@ -98,4 +97,202 @@
             <qrcode *ngIf="QrCode" [qrdata]="QrCode" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
         </div>
     </div>
+</div> -->
+
+<div class="flex flex-col w-full max-w-screen items-center justify-center p-5">
+    <!-- Heading -->
+    <div
+        class="grid w-full gap-2 items-center justify-center mb-3 pb-3 border-b border-t-0 border-x-0 border-dashed border-gray-800">
+        <img src="https://linkbit.net.id/assets/img/struk-pos.png" alt="logo" width="150px" class="mb-3 mx-auto" />
+
+        <h6 class="text-center text-gray-800 font-medium" style="font-size: 10px">
+            <b>PT LINKBIT INOVASI TEKNOLOGI</b><br />
+            <b>JL RAYA KARANGRAYU NG - GODONG KM7</b><br />
+            <b>MOJOAGUNG, KARANGRAYUNG</b><br />
+            <b>KAB. GROBOGAN, JAWA TENGAH, 58163</b><br />
+            <b>WWW.LINKBIT.NET.ID | BILLING&#64;LINKBIT.NET.ID</b><br />
+            <b>Billing 0811-2704-733 - CS 0813-9212-0473</b>
+        </h6>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="PaymentDatasource as invoice" class="flex flex-col w-full gap-2 mb-6">
+        <!-- No Invoice -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    No. Invoice
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.invoice_number }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Tanggal Cetak -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    Tanggal Cetak
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.create_at }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Nama -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    Nama
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.full_name }}
+                </p>
+            </div>
+        </div>
+
+        <!-- ID Pelanggan -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    ID Pelanggan
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.pelanggan_code }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Alamat -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    Alamat
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.alamat }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Produk -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    Produk
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.product_name }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Periode -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    Periode
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.invoice_date }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Jatuh Tempo -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    Jatuh Tempo
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.due_date }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Harga Produk -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    Harga Produk
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.price }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Total -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    Total
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.total }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Transaksi -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    Transaksi
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.invoice_number }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="flex flex-row items-center">
+            <div class="w-4/12">
+                <p class=" text-gray-800" style="font-size: 10px">
+                    Status
+                </p>
+            </div>
+            <div class="w-8/12">
+                <p class=" text-gray-800 font-medium" style="font-size: 10px">
+                    : {{ invoice.invoice_status }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-center text-gray-800 font-semibold mb-4" style="font-size: 10px">
+        SIMPAN BUKTI BAYAR INI SEBAGAI BUKTI PEMBAYARAN YANG SAH<br />
+        VALIDASI KEASLIAN SCAN KODE QR DIBAWAH
+    </p>
+
+    <div class="grid items-center justify-center">
+        <qrcode *ngIf="QrCode" [qrdata]="QrCode" [width]="120" [errorCorrectionLevel]="'M'"></qrcode>
+    </div>
+
 </div>

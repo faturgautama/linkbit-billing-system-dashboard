@@ -61,9 +61,11 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
+                    console.log("result =>", result);
+
                     this.PaymentDatasource = {
                         invoice_number: result.data.invoice_number,
-                        create_at: this._utilityService.onFormatDate(new Date(result.data.create_at), 'DD MMM yyyy HH:mm'),
+                        create_at: `${result.data.user_create}-${result.data.payment_method}/${this._utilityService.onFormatDate(new Date(), 'HH:mm:ss DD/MM/yyyy')}`,
                         full_name: result.data.full_name,
                         pelanggan_code: result.data.pelanggan_code,
                         alamat: result.data.alamat,
@@ -78,9 +80,9 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
 
                     this.QrCode = `${environment.checkoutUrl}/invoice-digital?token=${result.data.token}`;
 
-                    setTimeout(() => {
-                        window.print();
-                    }, 1000);
+                    // setTimeout(() => {
+                    //     window.print();
+                    // }, 1000);
                 }
             });
     }
