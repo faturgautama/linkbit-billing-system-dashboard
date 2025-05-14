@@ -66,6 +66,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     this._utilityService.ShowSidebar$.next(false);
                 }
             });
+
+        // ** Sidebar Toggle
+        this._utilityService
+            .ShowSidebar$
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result) {
+                    this.ShowSidebar = true;
+                    const sidebarEl = document.getElementById('sidebar') as HTMLElement;
+                    sidebarEl.classList.replace("w-[5rem]", "w-[24rem]");
+                } else {
+                    this.ShowSidebar = false;
+
+                    const sidebarEl = document.getElementById('sidebar') as HTMLElement;
+                    sidebarEl.classList.replace("w-[24rem]", "w-[5rem]");
+
+                    let sidebarMenu = this._authenticationService.SidebarMenu$.value.map((item) => {
+                        return {
+                            ...item,
+                            toggle_child: false
+                        }
+                    });
+
+                    this._authenticationService.SidebarMenu$.next([]);
+                    this._authenticationService.SidebarMenu$.next(sidebarMenu);
+                }
+            })
     }
 
     ngOnInit(): void {

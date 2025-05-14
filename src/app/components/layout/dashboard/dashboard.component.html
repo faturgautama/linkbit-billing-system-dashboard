@@ -1,8 +1,8 @@
 <section id="dashboard" class="h-screen overflow-hidden bg-gray-100">
     <div class="flex w-full h-full">
         <!-- Sidebar -->
-        <div id="sidebar" class="w-[5rem] bg-white transition-all flex flex-col p-5 shadow"
-            (mouseenter)="handleShowSidebarWhenMouseOver()" (mouseleave)="handleHideSidebarWhenMouseLeave()">
+        <div id="sidebar" class="w-[5rem] bg-white transition-all flex flex-col p-5 shadow">
+            <!--  (mouseenter)="handleShowSidebarWhenMouseOver()" (mouseleave)="handleHideSidebarWhenMouseLeave()" -->
             <!-- User -->
             <div *ngIf="UserData$ | async as user" class="flex flex-col justify-center w-full items-center gap-0 mb-10">
                 <img src="../../../../assets/icon/user.png" alt="user"
