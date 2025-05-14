@@ -2,13 +2,13 @@ name: Deploy Dashboard
 
 on:
   push:
-    branches:
-      - staging # Run only when staging is updated
-      - main
+    tags:
+      - "v*-alpha"
+      - "v*-prod"
 
 jobs:
   deploy-staging:
-    if: github.ref == 'refs/heads/staging'
+    if: endsWith(github.ref, '-alpha')
     runs-on: ubuntu-latest
     steps:
       - name: 🔄 Checkout Repository
@@ -24,7 +24,7 @@ jobs:
           script: /home/billing-system-fg-linkbit/deployer/dashboard-staging-deployer.sh
 
   deploy-production:
-    if: github.ref == 'refs/heads/main'
+    if: endsWith(github.ref, '-prod')
     runs-on: ubuntu-latest
     steps:
       - name: 🔄 Checkout Repository
