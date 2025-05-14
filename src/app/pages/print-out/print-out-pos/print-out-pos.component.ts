@@ -22,6 +22,8 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
 
     Destroy$ = new Subject();
 
+    SettingCompany: any;
+
     PaymentDatasource: any;
 
     QrCode: string = "";
@@ -39,6 +41,7 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         const id_payment = this._activatedRoute.snapshot.queryParams['id_payment'];
         this.getById(id_payment);
+        this.getSettingCompany();
 
         if (this._activatedRoute.snapshot.queryParams['id_pelanggan']) {
             this.BackUrl = `/pelanggan?id_pelanggan=${this._activatedRoute.snapshot.queryParams['id_pelanggan']}`
@@ -61,8 +64,6 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
-                    console.log("result =>", result);
-
                     this.PaymentDatasource = {
                         invoice_number: result.data.invoice_number,
                         create_at: `${result.data.user_create}-${result.data.payment_method}/${this._utilityService.onFormatDate(new Date(), 'HH:mm:ss DD/MM/yyyy')}`,
@@ -80,10 +81,23 @@ export class PrintOutPosComponent implements OnInit, OnDestroy {
 
                     this.QrCode = `${environment.checkoutUrl}/invoice-digital?token=${result.data.token}`;
 
-                    // setTimeout(() => {
-                    //     window.print();
-                    // }, 1000);
+                    setTimeout(() => {
+                        window.print();
+                    }, 1000);
                 }
             });
+    }
+
+    private getSettingCompany() {
+        const userData = JSON.parse(localStorage.getItem("_LBS_UD_") as any);
+
+        this._settingCompanyService
+            .getById(userData.id_setting_company)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this.SettingCompany = result.data;
+                }
+            })
     }
 }
