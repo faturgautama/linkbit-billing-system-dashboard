@@ -73,24 +73,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
-                    this.ShowSidebar = true;
-                    const sidebarEl = document.getElementById('sidebar') as HTMLElement;
-                    sidebarEl.classList.replace("w-[5rem]", "w-[24rem]");
+                    this.onShowSidebar();
                 } else {
-                    this.ShowSidebar = false;
-
-                    const sidebarEl = document.getElementById('sidebar') as HTMLElement;
-                    sidebarEl.classList.replace("w-[24rem]", "w-[5rem]");
-
-                    let sidebarMenu = this._authenticationService.SidebarMenu$.value.map((item) => {
-                        return {
-                            ...item,
-                            toggle_child: false
-                        }
-                    });
-
-                    this._authenticationService.SidebarMenu$.next([]);
-                    this._authenticationService.SidebarMenu$.next(sidebarMenu);
+                    this.onHideSidebar();
                 }
             })
     }
@@ -103,28 +88,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.Destroy$.complete();
     }
 
-    handleShowSidebarWhenMouseOver() {
+    handleToggleSidebar() {
         this._utilityService.ShowSidebar$.next(true);
-        this.ShowSidebar = true;
+        this.onShowSidebar();
+    }
 
+    onShowSidebar() {
+        this.ShowSidebar = true;
         const sidebarEl = document.getElementById('sidebar') as HTMLElement;
         sidebarEl.classList.replace("w-[5rem]", "w-[24rem]");
     }
 
-    handleHideSidebarWhenMouseLeave() {
-        this._utilityService.ShowSidebar$.next(false);
+    private onHideSidebar() {
         this.ShowSidebar = false;
-
         const sidebarEl = document.getElementById('sidebar') as HTMLElement;
         sidebarEl.classList.replace("w-[24rem]", "w-[5rem]");
-
         let sidebarMenu = this._authenticationService.SidebarMenu$.value.map((item) => {
             return {
                 ...item,
                 toggle_child: false
             }
         });
-
         this._authenticationService.SidebarMenu$.next([]);
         this._authenticationService.SidebarMenu$.next(sidebarMenu);
     }
@@ -134,7 +118,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     handleClickSidebarMenu(item: any) {
-        this.handleHideSidebarWhenMouseLeave();
-        this._router.navigateByUrl(item.url);
+        this._utilityService.ShowSidebar$.next(false);
+        this.onHideSidebar();
+        setTimeout(() => {
+            this._router.navigateByUrl(item.url);
+        }, 100);
     }
 }
