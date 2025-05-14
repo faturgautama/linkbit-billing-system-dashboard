@@ -51,26 +51,17 @@
                 [optionLabel]="item.dropdownProps!.optionName" [optionValue]="item.dropdownProps!.optionValue"
                 [autoDisplayFirst]="false" [showClear]="true" [filter]="true" styleClass="p-inputtext-sm w-full"
                 formControlName="{{ item.id }}" appendTo="body" [placeholder]="item.placeholder">
-                <ng-template *ngIf="item.dropdownProps!.customField!" let-data pTemplate="item">
+                <ng-template *ngIf="item.dropdownProps?.customField as customField" let-data pTemplate="item">
                     <div class="flex flex-col gap-2">
                         <p class="text-blue-500 text-sm font-semibold">
-                            {{ data[item.dropdownProps!.customField.title] }}
+                            {{ customField ? data[customField.title] : '-' }}
                         </p>
                         <p class="text-gray-800 text-xs">
-                            {{ data[item.dropdownProps!.customField.subtitle] }}
+                            {{ customField ? data[customField.subtitle] : '-' }}
                         </p>
-                        <p *ngIf="item.dropdownProps!.customField!.description" class="text-gray-600 text-xs">
-                            {{ data[item.dropdownProps!.customField!.description] ?
-                            data[item.dropdownProps!.customField!.description] : '-' }}
+                        <p *ngIf="customField.description" class="text-gray-600 text-xs">
+                            {{ customField ? data[customField.description] : '-' }}
                         </p>
-                    </div>
-                </ng-template>
-                <ng-template *ngIf="item.dropdownProps!.customField!.footer" let-data pTemplate="footer">
-                    <div class="grid grid-cols-1 w-full p-2 bg-gray-100">
-                        <p-button styleClass="p-button-info p-button-sm w-full"
-                            [label]="item.dropdownProps!.customField!.footer.label" icon="pi pi-plus"
-                            (onClick)="item.dropdownProps!.customField!.footer.method()">
-                        </p-button>
                     </div>
                 </ng-template>
             </p-dropdown>
