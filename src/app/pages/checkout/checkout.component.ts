@@ -51,6 +51,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     TotalIncludeFee = 0;
 
+    ExpirationTimeCountdown: string = "--:--";
+
     constructor(
         private _socket: Socket,
         private _sanitizer: DomSanitizer,
@@ -84,6 +86,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
                     this.IsPaymentSuccess = result.data.invoice_status == 'PAID';
                     this.DetailPayment = result.data.payment;
                     this.getPaymentMethod(token, result.data.total, this.IsPaymentGenerated);
+
+                    if (result.data.is_payment_generated) {
+                        this.startPaymentCountdown(result.data.payment.create_at, result.data.payment.expired_at);
+                    }
                 }
             })
     }
@@ -156,8 +162,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
             .fromEvent('get_payment_status_now')
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result: any) => {
-                console.log("socket body =>", result);
-
                 if (result.token == token) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', detail: 'Payment Success', summary: 'You have completed the payment, thank you!' });
@@ -168,7 +172,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     copyToClipboard(value: string) {
         navigator.clipboard.writeText(value).then(() => {
-            console.log('Copied to clipboard:', value);
             this._messageService.add({ severity: 'success', summary: 'Copied!', detail: 'Copied to clipboard' })
         }).catch(err => {
             console.error('Failed to copy!', err);
@@ -187,5 +190,36 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         this.TotalIncludeFee = total + fee;
 
         return fee;
+    }
+
+    private startPaymentCountdown(createAt: string, expiredAt: string) {
+        const created = new Date(createAt).getTime();
+        const expires = new Date(expiredAt).getTime();
+        const validDuration = expires - created;
+
+        const interval = setInterval(() => {
+            const now = Date.now();
+            const timeElapsed = now - created;
+            const timeLeft = validDuration - timeElapsed;
+
+            if (timeLeft <= 0) {
+                this.ExpirationTimeCountdown = '00:00';
+                this.changePaymentMethod();
+                clearInterval(interval);
+            } else {
+                this.ExpirationTimeCountdown = this.formatTime(timeLeft);
+            }
+        }, 1000);
+    }
+
+    private formatTime(ms: number): string {
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${this.pad(minutes)}:${this.pad(seconds)}`;
+    }
+
+    private pad(n: number): string {
+        return n < 10 ? '0' + n : n.toString();
     }
 }

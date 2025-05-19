@@ -53,23 +53,36 @@
 
                     <!-- Jatuh Tempo -->
                     <div class="flex flex-col">
-                        <p class="text-gray-500 text-xs">
+                        <p class="text-gray-500 text-xs text-end">
                             Jatuh Tempo :
                         </p>
-                        <p class="text-gray-600 text-xs font-medium">
+                        <p class="text-gray-600 text-xs font-medium text-end">
                             {{ InvoiceDatasource.due_date | date: 'dd MMMM yyyy' }}
                         </p>
                     </div>
                 </div>
 
-                <!-- Jatuh Tempo -->
-                <div class="flex flex-col w-full">
-                    <p class="text-gray-500 text-xs">
-                        Alamat :
-                    </p>
-                    <p class="text-gray-600 text-xs font-medium">
-                        {{ InvoiceDatasource.alamat }}
-                    </p>
+                <div class="flex flex-row justify-between">
+                    <!-- Jatuh Tempo -->
+                    <div class="flex flex-col w-full">
+                        <p class="text-gray-500 text-xs">
+                            Alamat :
+                        </p>
+                        <p class="text-gray-600 text-xs font-medium">
+                            {{ InvoiceDatasource.alamat }}
+                        </p>
+                    </div>
+
+                    <!-- Batas Waktu Pembayaran -->
+                    <div *ngIf="IsPaymentGenerated" class="flex flex-col w-full">
+                        <p class="text-gray-500 text-xs text-end">
+                            Batas Waktu Pembayaran :
+                        </p>
+                        <p class="text-sky-600 text-xs font-medium text-end">
+                            {{ ExpirationTimeCountdown }}
+                        </p>
+                    </div>
+
                 </div>
             </div>
         </div>
