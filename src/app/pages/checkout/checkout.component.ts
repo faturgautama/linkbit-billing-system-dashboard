@@ -53,6 +53,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     ExpirationTimeCountdown: string = "--:--";
 
+    intervalId: any = null;
+
     constructor(
         private _socket: Socket,
         private _sanitizer: DomSanitizer,
@@ -193,11 +195,16 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
 
     private startPaymentCountdown(createAt: string, expiredAt: string) {
+        if (this.intervalId) {
+            this.ExpirationTimeCountdown = '--:--';
+            clearInterval(this.intervalId);
+        }
+
         const created = new Date(createAt).getTime();
         const expires = new Date(expiredAt).getTime();
         const validDuration = expires - created;
 
-        const interval = setInterval(() => {
+        this.intervalId = setInterval(() => {
             const now = Date.now();
             const timeElapsed = now - created;
             const timeLeft = validDuration - timeElapsed;
@@ -205,7 +212,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
             if (timeLeft <= 0) {
                 this.ExpirationTimeCountdown = '00:00';
                 this.changePaymentMethod();
-                clearInterval(interval);
+                clearInterval(this.intervalId);
             } else {
                 this.ExpirationTimeCountdown = this.formatTime(timeLeft);
             }
