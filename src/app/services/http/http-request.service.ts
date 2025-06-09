@@ -129,7 +129,7 @@ export class HttpRequestService {
                     // ** Jika status = false
                     if (!result.status) {
                         this._messageService.clear();
-                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: result.message, data: result.data })
+                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: result.message })
                     }
 
                     return result;
