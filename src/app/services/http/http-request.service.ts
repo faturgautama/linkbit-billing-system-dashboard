@@ -123,13 +123,13 @@ export class HttpRequestService {
                     // ** Show success notification
                     if (result.status && showSuccessNotif) {
                         this._messageService.clear();
-                        this._messageService.add({ severity: 'success', summary: 'Success', detail: this._titleCasePipe.transform(result.message) });
+                        this._messageService.add({ severity: 'success', summary: 'Success', detail: result.message });
                     }
 
                     // ** Jika status = false
                     if (!result.status) {
                         this._messageService.clear();
-                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
+                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: result.message, data: result.data })
                     }
 
                     return result;
