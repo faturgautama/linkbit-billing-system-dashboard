@@ -148,6 +148,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
             case 'Cancel':
                 icon = 'pi pi-times';
                 break;
+            case 'Ubah Menjadi Default':
             case 'Change Status':
                 icon = 'pi pi-sync';
                 break;

@@ -57,4 +57,17 @@ export class SettingCompanyService {
     updatePaymentMethodManual(payload: any): Observable<HttpBaseResponse> {
         return this._httpRequestService.putRequest(`${environment.webApiUrl}/setting-company/payment-method-manual`, payload);
     }
+
+    getAllChannelWhatsapp(id_setting_company: number): Observable<HttpBaseResponse> {
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/setting-company/channel-whatsapp/${id_setting_company}`);
+    }
+
+    createChannelWhatsapp(payload: any): Observable<HttpBaseResponse> {
+        const { id_setting_channel_whatsapp, is_active, ...data } = payload;
+        return this._httpRequestService.postRequest(`${environment.webApiUrl}/setting-company/channel-whatsapp`, data);
+    }
+
+    updateChannelWhatsapp(payload: any): Observable<HttpBaseResponse> {
+        return this._httpRequestService.putRequest(`${environment.webApiUrl}/setting-company/channel-whatsapp`, payload);
+    }
 }

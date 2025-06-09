@@ -18,7 +18,7 @@
     </div>
 
     <!-- Form -->
-    <div *ngIf="PageState == 'form'" class="flex flex-col w-10/12 gap-3">
+    <div *ngIf="PageState == 'form'" class="flex flex-col w-full gap-3">
         <div class="grid w-full p-3 bg-white rounded-lg shadow-sm">
             <app-dynamic-form #FormComps [props]="FormProps"></app-dynamic-form>
 
@@ -107,8 +107,8 @@
                     (Mohon sesuaikan dengan format contoh file)
                 </span>
             </p>
-            <input id="fileInput" type="file" pInputText placeholder="Pilih file template import disini"
-                class="p-inputtext-sm w-full">
+            <input id="fileInput" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                pInputText placeholder="Pilih file template import disini" class="p-inputtext-sm w-full">
         </div>
 
         <ng-template pTemplate="footer">

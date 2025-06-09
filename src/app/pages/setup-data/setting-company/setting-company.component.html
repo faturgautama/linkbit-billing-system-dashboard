@@ -48,6 +48,29 @@
             </div>
         </div>
 
+        <!-- Form Channel Whatsapp -->
+        <div class="flex flex-col w-full bg-white rounded-lg shadow-sm p-3">
+            <div
+                class="flex flex-row justify-between items-center w-full pb-2 mb-3 border-b border-dashed border-gray-300 border-t-0 border-x-0">
+                <div class="flex flex-col">
+                    <p class="text-lg text-gray-700 font-semibold">
+                        Setting Chanel Whatsapp
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        Setting chanel whatsapp perusahaan
+                    </p>
+                </div>
+
+                <p-button label="Add" severity="info" styleClass="p-button-sm"
+                    (onClick)="FormChannelWaState = 'insert'; ShowDialogChannelWa = true;">
+                </p-button>
+            </div>
+
+            <div class="grid w-full">
+                <app-grid [props]="GridChannelWaProps" (aksiClicked)="onToolbarChannelWhatsappClicked($event)">
+                </app-grid>
+            </div>
+        </div>
         <!-- Form Payment Gateway -->
         <div class="flex flex-col w-full bg-white rounded-lg shadow-sm p-3">
             <div
@@ -91,6 +114,47 @@
 
             <p-button *ngIf="FormPaymentManualState == 'update'" label="Update" severity="warning"
                 styleClass="p-button-sm" (onClick)="updatePaymentMethodManual(FormPaymentManualComps.FormGroup.value)">
+            </p-button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [header]="FormChannelWaState == 'insert' ? 'Add Chanel' : 'Edit Chanel'" [(visible)]="ShowDialogChannelWa"
+        [modal]="true" [style]="{ width: '35rem' }" [draggable]="false" [resizable]="false">
+
+        <div [formGroup]="FormChannelWaProps" class="grid w-full my-2">
+            <!-- Channel Whatsapp -->
+            <div class="flex flex-col gap-1 mb-2">
+                <p class="text-sm text-gray-700 font-medium">
+                    Pilih Channel Whatsapp
+                </p>
+                <p-dropdown formControlName="id_channel_whatsapp" [options]="ChannelWhatsappDatasource"
+                    optionLabel="channel_whatsapp" optionValue="id_channel_whatsapp" [filter]="true" appendTo="body"
+                    styleClass="p-inputtext-sm w-full" (onChange)="handleChangeDropdownChannelWhatsapp($event)">
+                </p-dropdown>
+            </div>
+
+            <!-- Required Credential -->
+            <div *ngFor="let item of SelectedChannelWhatsapp?.required_credential" class="flex flex-col gap-1 mb-2"
+                [formGroup]="credentialFormGroup">
+                <p class="text-sm text-gray-700 font-medium">
+                    {{ handleChannelWhatsappKey(item.key) | titlecase }}
+                </p>
+                <input type="text" pInputText class="p-inputtext-sm w-full" formControlName="{{ item.key }}">
+            </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <p-button label="Cancel" severity="secondary" styleClass="p-button-sm"
+                (onClick)="ShowDialogPaymentManual = false" />
+
+            <p-button *ngIf="FormPaymentManualState == 'insert'"
+                [disabled]="FormChannelWaProps.invalid && credentialFormGroup.invalid" label="Save" severity="info"
+                styleClass="p-button-sm" (onClick)="saveChannelWhatsapp(FormChannelWaProps.value)">
+            </p-button>
+
+            <p-button *ngIf="FormPaymentManualState == 'update'"
+                [disabled]="FormChannelWaProps.invalid && credentialFormGroup.invalid" label="Update" severity="warning"
+                styleClass="p-button-sm" (onClick)="updateChannelWhatsapp(FormChannelWaProps.value)">
             </p-button>
         </ng-template>
     </p-dialog>

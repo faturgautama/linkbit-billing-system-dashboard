@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextModule } from 'primeng/inputtext';
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { Subject, takeUntil } from 'rxjs';
 import { DynamicFormComponent } from 'src/app/components/form/dynamic-form/dynamic-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -14,6 +17,7 @@ import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
 import { TemplateEditorModel } from 'src/app/model/pages/setup-data/template-editor.model';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
+import { ChannelWhatsappService } from 'src/app/services/setup-data/channel-whatsapp.service';
 import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
 import { TemplateEditorService } from 'src/app/services/setup-data/template-editor.service';
 
@@ -26,7 +30,11 @@ import { TemplateEditorService } from 'src/app/services/setup-data/template-edit
         CommonModule,
         DialogModule,
         GridComponent,
+        DropdownModule,
+        InputTextModule,
+        RadioButtonModule,
         DashboardComponent,
+        ReactiveFormsModule,
         ConfirmDialogModule,
         DynamicFormComponent,
     ],
@@ -84,12 +92,39 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
     FormPaymentManualProps: FormModel.IForm;
     @ViewChild('FormPaymentManualComps') FormPaymentManualComps!: DynamicFormComponent;
 
+    ChannelWhatsappDatasource: any[] = [];
+    SelectedChannelWhatsapp: any;
+
+    GridChannelWaProps: GridModel.IGrid = {
+        id: 'GridChannelWa',
+        column: [
+            { field: 'channel_whatsapp', headerName: 'Channel Whatsapp', class: 'text-sky-500 font-semibold' },
+            { field: 'is_default', headerName: 'Is Default', renderAsCheckbox: true, class: 'text-center' },
+        ],
+        dataSource: [],
+        height: "calc(100vh - 14.5rem)",
+        toolbar: ['Ubah Menjadi Default', 'Edit', 'Delete'],
+        showPaging: true,
+        showSearch: false,
+        showSort: false,
+        searchKeyword: 'channel_whatsapp',
+        searchPlaceholder: 'Find Channel Whatsapp Here',
+    };
+    GridChannelWaSelectedData: any;
+
+    ShowDialogChannelWa = false;
+    FormChannelWaState: 'insert' | 'update' = 'insert';
+    FormChannelWaProps: FormGroup;
+    @ViewChild('FormChannelWaComps') FormChannelWaComps!: DynamicFormComponent;
+
     constructor(
+        private _formBuilder: FormBuilder,
         private _messageService: MessageService,
         private _confirmationService: ConfirmationService,
         private _authenticationService: AuthenticationService,
         private _settingCompanyService: SettingCompanyService,
         private _templateEditorService: TemplateEditorService,
+        private _channelWhatsappService: ChannelWhatsappService,
     ) {
         this.FormProps = {
             id: 'form_setting_company',
@@ -196,6 +231,7 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     required: true,
                     type: 'text',
                     value: '',
+                    hidden: true
                 },
             ],
             style: 'not_inline',
@@ -391,11 +427,17 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
             state: 'write',
             defaultValue: null,
         };
+
+        this.FormChannelWaProps = this._formBuilder.group({
+            id_channel_whatsapp: [0, [Validators.required]],
+            credential: this._formBuilder.group({}),
+        });
     }
 
     ngOnInit(): void {
         setTimeout(() => {
             this.getTemplateEditor();
+            this.getAllChannelWhatsapp();
         }, 1000);
     }
 
@@ -423,6 +465,7 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
                     this.FormTagihanComps.FormGroup.patchValue(result.data);
                     this.FormPaymentGatewayComps.FormGroup.patchValue(result.data);
                     this.getPaymentMethodManual();
+                    this.getChannelWhatsapp();
                 }
             });
     }
@@ -434,6 +477,17 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
             .subscribe((result) => {
                 if (result.status) {
                     this.TemplateEditor = result.data;
+                }
+            });
+    }
+
+    private getAllChannelWhatsapp() {
+        this._channelWhatsappService
+            .getAll()
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this.ChannelWhatsappDatasource = result.data;
                 }
             });
     }
@@ -589,4 +643,150 @@ export class SettingCompanyComponent implements OnInit, AfterViewInit, OnDestroy
             })
     }
 
+    onToolbarChannelWhatsappClicked(args: any) {
+        if (args.type == 'ubah menjadi default') {
+            this._confirmationService.confirm({
+                target: (<any>event).target as EventTarget,
+                message: 'Pesan Whatsapp Akan Menggunakan Channel Ini',
+                header: 'Apakah Anda Yakin?',
+                icon: 'pi pi-info-circle',
+                acceptButtonStyleClass: "p-button-danger p-button-sm",
+                rejectButtonStyleClass: "p-button-secondary p-button-sm",
+                acceptIcon: "none",
+                acceptLabel: 'Iya Saya Yakin',
+                rejectIcon: "none",
+                rejectLabel: 'Tidak',
+                accept: () => {
+                    args.data.is_default = true;
+
+                    this._settingCompanyService
+                        .updateChannelWhatsapp(args.data)
+                        .pipe(takeUntil(this.Destroy$))
+                        .subscribe((result) => {
+                            if (result.status) {
+                                this._messageService.clear();
+                                this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
+                                this.FormChannelWaProps.reset();
+                                this.ShowDialogChannelWa = false;
+                                this.getChannelWhatsapp();
+                            }
+                        })
+                }
+            });
+        }
+
+        if (args.type == 'delete') {
+            this._confirmationService.confirm({
+                target: (<any>event).target as EventTarget,
+                message: 'Deleted data can not be reverted',
+                header: 'Are you sure?',
+                icon: 'pi pi-info-circle',
+                acceptButtonStyleClass: "p-button-danger p-button-sm",
+                rejectButtonStyleClass: "p-button-secondary p-button-sm",
+                acceptIcon: "none",
+                acceptLabel: 'Yes, sure',
+                rejectIcon: "none",
+                rejectLabel: 'No, back',
+                accept: () => {
+                    this.deleteChannelWhatsapp(args.data);
+                }
+            });
+        }
+
+        if (args.type == 'edit') {
+            this.ShowDialogChannelWa = true;
+            this.FormChannelWaProps.patchValue(args.data);
+        }
+    }
+
+    handleChannelWhatsappKey(key: string) {
+        return key.replace(/_/g, ' ');
+    }
+
+    handleChangeDropdownChannelWhatsapp(args: any) {
+        if (args.value) {
+            this.SelectedChannelWhatsapp = this.ChannelWhatsappDatasource.find(item => item.id_channel_whatsapp == args.value);
+            console.log("selected channel =>", this.SelectedChannelWhatsapp);
+
+            const requiredCredential = this.SelectedChannelWhatsapp.required_credential;
+
+            for (const item of requiredCredential) {
+                (this.FormChannelWaProps.get('credential') as FormGroup).addControl(item.key, this._formBuilder.control('', Validators.required))
+            }
+        }
+    }
+
+    getChannelWhatsapp() {
+        const userData = this._authenticationService.getUserData();
+
+        this._settingCompanyService
+            .getAllChannelWhatsapp(userData.id_setting_company)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this.GridChannelWaProps.dataSource = result.data;
+                }
+            })
+    }
+
+    saveChannelWhatsapp(data: any) {
+        this._settingCompanyService
+            .createChannelWhatsapp(data)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this._messageService.clear();
+                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data saved succesfully' });
+                    this.FormChannelWaProps.reset();
+                    this.ShowDialogChannelWa = false;
+                    this.getChannelWhatsapp();
+                }
+            })
+    }
+
+    updateChannelWhatsapp(data: any) {
+        this._confirmationService.confirm({
+            target: (<any>event).target as EventTarget,
+            message: 'Data will be updated',
+            header: 'Are you sure?',
+            icon: 'pi pi-info-circle',
+            acceptButtonStyleClass: "p-button-warning p-button-sm",
+            rejectButtonStyleClass: "p-button-secondary p-button-sm",
+            acceptIcon: "none",
+            acceptLabel: 'Yes, sure',
+            rejectIcon: "none",
+            rejectLabel: 'No, back',
+            accept: () => {
+                this._settingCompanyService
+                    .updateChannelWhatsapp(data)
+                    .pipe(takeUntil(this.Destroy$))
+                    .subscribe((result) => {
+                        if (result.status) {
+                            this._messageService.clear();
+                            this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
+                            this.FormChannelWaProps.reset();
+                            this.ShowDialogChannelWa = false;
+                            this.getChannelWhatsapp();
+                        }
+                    })
+            }
+        });
+    }
+
+    private deleteChannelWhatsapp(data: any) {
+        this._settingCompanyService
+            .updateChannelWhatsapp({ ...data, is_active: false })
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this._messageService.clear();
+                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
+                    this.getPaymentMethodManual();
+                }
+            })
+    }
+
+    get credentialFormGroup(): FormGroup {
+        return this.FormChannelWaProps.get('credential') as FormGroup;
+    }
 }
