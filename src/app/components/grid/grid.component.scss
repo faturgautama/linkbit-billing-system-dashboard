@@ -7,4 +7,9 @@
     display: flex !important;
     justify-content: end !important;
   }
+
+  p-sorticon > svg {
+    height: 12px !important;
+    width: 12px !important;
+  }
 }

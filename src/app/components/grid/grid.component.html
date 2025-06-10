@@ -78,11 +78,12 @@
 </div>
 
 <div class="grid w-full">
-
     <!-- Sort Mode -->
     <p-table *ngIf="props.showSort; else noSortMode" [value]="props.dataSource" [columns]="props.column"
         styleClass="p-datatable-striped" [tableStyle]="{'min-width': '50rem'}" selectionMode="single"
-        [(selection)]="SelectedRow" sortMode="multiple">
+        [(selection)]="SelectedRow" sortMode="single" [paginator]="props.showPaging"
+        [rows]="props.defaultRows ? props.defaultRows : 5" [rowsPerPageOptions]="[5, 10, 25, 50, 100]"
+        [scrollable]="true">
         <ng-template pTemplate="header" let-columns>
             <tr class="bg-gray-100">
                 <th *ngFor="let col of columns" class="text-sm" [pSortableColumn]="col.field">
@@ -95,7 +96,8 @@
         </ng-template>
         <ng-template *ngIf="props.dataSource" pTemplate="body" let-rowData let-columns="columns">
             <tr [pSelectableRow]="rowData" (dblclick)="onRowDoubleClicked(rowData)" (click)="onCellClicked(rowData)">
-                <td *ngFor="let col of columns" class="text-sm {{ col.class }}">
+                <td *ngFor="let col of columns" class="text-sm {{ col.class }}"
+                    [style.min-width]="col.width ? col.width : 'auto'">
                     <span *ngIf="col.renderAsCheckbox && !col.renderAsPills">
                         <i class="pi {{ rowData[col.field] ? 'pi-check' : 'pi-times' }}"></i>
                     </span>
@@ -173,8 +175,9 @@
     <ng-template #noSortMode>
         <p-table id="GridComponents" [value]="props.dataSource" [columns]="props.column"
             styleClass="p-datatable-striped" [tableStyle]="{'min-width': 'auto'}" selectionMode="single"
-            [(selection)]="SelectedRow" [paginator]="props.showPaging" [rows]="5"
-            [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [scrollable]="true">
+            [(selection)]="SelectedRow" [paginator]="props.showPaging"
+            [rows]="props.defaultRows ? props.defaultRows : 5" [rowsPerPageOptions]="[5, 10, 25, 50, 100]"
+            [scrollable]="true">
             <ng-template pTemplate="header" let-columns>
                 <tr class="bg-gray-100">
                     <th *ngFor="let col of columns"
