@@ -79,22 +79,23 @@ export class PelangganComponent implements OnInit, OnDestroy {
     GridProps: GridModel.IGrid = {
         id: 'GridSetupMenu',
         column: [
-            { field: 'pelanggan_code', headerName: 'Kode Pelanggan', class: 'text-sky-500 font-semibold' },
-            { field: 'full_name', headerName: 'Nama Pelanggan', },
-            { field: 'product_name', headerName: 'Layanan', },
-            { field: 'whatsapp', headerName: 'No. Whatsapp', },
-            { field: 'alamat', headerName: 'Alamat', width: '25%' },
+            { field: 'pelanggan_code', headerName: 'Kode Pelanggan', class: 'text-sky-500 font-semibold', width: '150px' },
+            { field: 'full_name', headerName: 'Nama Pelanggan', width: '200px' },
+            { field: 'product_name', headerName: 'Layanan', width: '150px' },
+            { field: 'whatsapp', headerName: 'No. Whatsapp', width: '150px' },
+            { field: 'alamat', headerName: 'Alamat', width: '200px' },
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
         toolbar: ['Change Status', 'Detail', 'Produk Layanan'],
         showPaging: true,
         showSearch: true,
-        showSort: false,
+        showSort: true,
         searchKeyword: 'role',
         searchPlaceholder: 'Find Role Name Here',
         isCustomSearch: true,
         customSearchProps: [],
+        defaultRows: 50
     };
     GridSelectedData: any;
 

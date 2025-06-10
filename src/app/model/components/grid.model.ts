@@ -45,5 +45,6 @@ export namespace GridModel {
         showSort?: boolean;
         toolbar?: string[];
         additionalButtons?: IAdditionalButtonGrid[];
+        defaultRows?: number;
     }
 }
