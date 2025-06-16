@@ -177,7 +177,7 @@
             styleClass="p-datatable-striped" [tableStyle]="{'min-width': '50rem'}" selectionMode="single"
             [(selection)]="SelectedRow" [paginator]="props.showPaging"
             [rows]="props.defaultRows ? props.defaultRows : 5" [rowsPerPageOptions]="[5, 10, 25, 50, 100]"
-            [scrollable]="true" scrollHeight="400px">
+            [scrollable]="true" scrollHeight="calc(100vh - 19rem)">
             <ng-template pTemplate="header" let-columns>
                 <tr class="bg-gray-100">
                     <th *ngFor="let col of columns"
