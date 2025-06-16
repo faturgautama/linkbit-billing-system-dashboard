@@ -1,0 +1,42 @@
+<div class="flex flex-col w-full gap-3">
+    <!-- Button -->
+    <p-button (onClick)="ShowDialogFilter = true" styleClass="p-button-sm" severity="info" icon="pi pi-search"
+        label="Advanced Filter">
+    </p-button>
+
+    <!-- Tag Saved Filter -->
+    <div *ngIf="SavedFilter.length" class="flex flex-row w-full gap-2">
+        @for (item of SavedFilter; track $index) {
+        <p-tag severity="info">
+            <div class="flex items-center gap-2 px-1">
+                <p class="text-xs font-medium">
+                    {{ item.label }} : {{ item.formatted_value }}
+                </p>
+                <span class="cursor-pointer" (click)="handleDeleteSavedFilter(item)">
+                    <i class="pi pi-times" style="font-size: 12px"></i>
+                </span>
+            </div>
+        </p-tag>
+        }
+    </div>
+</div>
+
+<p-dialog header="Filter Pencarian" [modal]="true" [(visible)]="ShowDialogFilter" [style]="{ width: '50rem' }"
+    [draggable]="false" [maximizable]="false">
+    <div class="flex flex-col gap-5 w-full">
+        <!-- Content -->
+        <div class="grid w-full">
+            <app-dynamic-form #FormComps [props]="FormProps"></app-dynamic-form>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex flex-row justify-end gap-3">
+            <p-button severity="secondary" label="Tutup" styleClass="p-button-sm" (onClick)="ShowDialogFilter = false">
+            </p-button>
+
+            <p-button severity="info" label="Cari" styleClass="p-button-sm"
+                (onClick)="handleSearch(FormComps.FormGroup.value)">
+            </p-button>
+        </div>
+    </div>
+</p-dialog>

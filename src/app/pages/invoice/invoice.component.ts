@@ -4,10 +4,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { InputTextModule } from 'primeng/inputtext';
 import { Subject, takeUntil } from 'rxjs';
+import { PanelFilterComponent } from 'src/app/components/filter/panel-filter/panel-filter.component';
 import { DynamicFormComponent } from 'src/app/components/form/dynamic-form/dynamic-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboard.component';
+import { PanelFilterModel } from 'src/app/model/components/filter.model';
 import { FormModel } from 'src/app/model/components/form.model';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
@@ -25,11 +28,13 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
     standalone: true,
     imports: [
         CommonModule,
-        DashboardComponent,
-        GridComponent,
-        DynamicFormComponent,
         ButtonModule,
-        ConfirmDialogModule
+        GridComponent,
+        InputTextModule,
+        DashboardComponent,
+        ConfirmDialogModule,
+        DynamicFormComponent,
+        PanelFilterComponent,
     ],
     templateUrl: './invoice.component.html',
     styleUrl: './invoice.component.scss'
@@ -41,6 +46,60 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
     FromPelanggan = false;
 
     QueryParams: any = null;
+
+    AdvancedFilterProps: PanelFilterModel.FilterDatasource[] = [
+        {
+            id: 'invoice_number',
+            label: 'No. Tagihan',
+            type: PanelFilterModel.TypeFilter.TEXT,
+            value: ''
+        },
+        {
+            id: 'invoice_date',
+            label: 'Periode',
+            type: PanelFilterModel.TypeFilter.MONTHPICKER,
+            value: '',
+            date_format: 'MM yy'
+        },
+        {
+            id: 'pelanggan_code',
+            label: 'Kode Pelanggan',
+            type: PanelFilterModel.TypeFilter.TEXT,
+            value: '',
+        },
+        {
+            id: 'full_name',
+            label: 'Nama Pelanggan',
+            type: PanelFilterModel.TypeFilter.TEXT,
+            value: '',
+        },
+        {
+            id: 'product_name',
+            label: 'Product',
+            type: PanelFilterModel.TypeFilter.SELECT,
+            value: '',
+            select_props: {
+                options: [],
+                optionName: 'product_name',
+                optionValue: 'product_name'
+            }
+        },
+        {
+            id: 'invoice_status',
+            label: 'Status',
+            type: PanelFilterModel.TypeFilter.SELECT,
+            value: '',
+            select_props: {
+                options: [
+                    { name: 'PENDING', value: 'PENDING' },
+                    { name: 'PAID', value: 'PAID' },
+                    { name: 'CANCEL', value: 'CANCEL' },
+                ],
+                optionName: 'name',
+                optionValue: 'value'
+            }
+        },
+    ]
 
     PageState: 'list' | 'form' = 'list';
 
@@ -64,27 +123,28 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
         },
     ];
 
-    @ViewChild('GridComps') GridComps!: GridComponent
+    @ViewChild('GridComps') GridComps!: GridComponent;
     GridProps: GridModel.IGrid = {
         id: 'GridSetupMenu',
         column: [
-            { field: 'invoice_number', headerName: 'No. Tagihan', class: 'font-semibold text-sky-500' },
-            { field: 'invoice_date', headerName: 'Tagihan Bulan', },
-            { field: 'pelanggan_code', headerName: 'Kode Pelanggan', },
-            { field: 'full_name', headerName: 'Pelanggan', },
-            { field: 'product_name', headerName: 'Produk', },
-            { field: 'total', headerName: 'Subtotal', format: 'currency', class: 'text-end' },
-            { field: 'invoice_status', headerName: 'Status', class: 'text-center' },
+            { field: 'invoice_number', headerName: 'No. Tagihan', class: 'font-semibold text-sky-500 text-xs' },
+            { field: 'invoice_date', headerName: 'Tagihan Bulan', class: 'text-xs' },
+            { field: 'pelanggan_code', headerName: 'Kode Pelanggan', class: 'text-xs' },
+            { field: 'full_name', headerName: 'Pelanggan', class: 'text-xs' },
+            { field: 'product_name', headerName: 'Produk', class: 'text-xs' },
+            { field: 'total', headerName: 'Subtotal', format: 'currency', class: 'text-end text-xs' },
+            { field: 'invoice_status', headerName: 'Status', class: 'text-center text-xs' },
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
         toolbar: ['Delete', 'Detail', 'Kirim Pesan Tagihan', 'Kirim Pesan Lunas'],
         showPaging: true,
-        showSearch: true,
-        showSort: false,
+        showSearch: false,
+        showSort: true,
+        defaultRows: 50,
         searchKeyword: 'role',
         searchPlaceholder: 'Find Role Name Here',
-        isCustomSearch: true,
+        isCustomSearch: false,
         customSearchProps: [
             {
                 id: 'invoice_date',
@@ -127,6 +187,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
         private _utilityService: UtilityService,
         private _invoiceService: InvoiceService,
         private _paymentService: PaymentService,
+        private _productService: ProductService,
         private _pelangganService: PelangganService,
         private _confirmationService: ConfirmationService,
         private _settingCompanyService: SettingCompanyService,
@@ -331,6 +392,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit(): void {
         this.getAll({ invoice_date: new Date() });
+        this.getAllProduct();
         this.getAllPelanggan();
         this.getSettingCompany();
     }
@@ -372,7 +434,41 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    handleFilterGridInvoice(args: any) {
+        this.GridQueryParams = this.resetQueryParams(args);
+        this.getAll(this.GridQueryParams);
+    }
+
+    handleSearchGridInvoice(search: string) {
+        let query = {
+            ...this.GridQueryParams
+        };
+
+        if (search) {
+            query.search = search;
+            this.GridQueryParams = query;
+        } else {
+            delete this.GridQueryParams.search;
+        }
+
+        this.getAll(this.GridQueryParams);
+    }
+
+    handleExportGridInvoice() {
+        this.GridComps.onExportExcel();
+    }
+
+    private resetQueryParams(obj: Record<string, any>) {
+        return Object.fromEntries(
+            Object.entries(obj).filter(([_, v]) => v !== undefined && v !== null && v !== '')
+        );
+    }
+
     private getAll(query?: any) {
+        setTimeout(() => {
+            console.log("query get all =>", query);
+        }, 1000);
+
         this.GridQueryParams = query;
 
         this._invoiceService
@@ -394,6 +490,18 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                             invoice_date: this._utilityService.onFormatDate(new Date(item.invoice_date), 'MMMM yyyy')
                         }
                     });
+                }
+            });
+    }
+
+    private getAllProduct() {
+        this._productService
+            .getAll()
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result) {
+                    const index = this.AdvancedFilterProps.findIndex(item => item.id == 'product_name')
+                    this.AdvancedFilterProps[index].select_props!.options = result.data;
                 }
             });
     }

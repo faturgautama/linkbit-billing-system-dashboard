@@ -1,3 +1,5 @@
+import { FormModel } from "./form.model";
+
 export namespace FilterModel {
     export interface IOffcanvasFilterDatasource {
         id: string;
@@ -27,3 +29,23 @@ export namespace FilterModel {
         searchText2?: string;
     }
 }
+
+export namespace PanelFilterModel {
+    export enum TypeFilter {
+        DATE = 'calendar',
+        MONTHPICKER = 'monthpicker',
+        TEXT = 'text',
+        NUMBER = 'number',
+        SELECT = 'dropdown'
+    };
+
+    export interface FilterDatasource {
+        id: string;
+        type: TypeFilter;
+        label: string;
+        value: string;
+        select_props?: FormModel.DropdownProps;
+        date_format?: string;
+        formatted_value?: string;
+    }
+};

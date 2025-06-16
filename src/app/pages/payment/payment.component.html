@@ -1,7 +1,31 @@
 <app-dashboard [ButtonNavigation]="ButtonNavigation" (onClickButtonNavigation)="handleClickButtonNavigation($event)">
     <!-- Grid -->
     <div *ngIf="PageState == 'list'" class="grid w-full bg-white rounded-lg shadow-sm p-2">
-        <app-grid [props]="GridProps" (cellClicked)="onCellClicked($event)"
+        <div
+            class="flex flex-row justify-between items-start w-full mb-2 pb-2 border-b border-t-0 border-x-0 border-dashed border-gray-300">
+            <div class="flex w-full gap-3">
+                <app-panel-filter [props]="AdvancedFilterProps" [formClass]="'grid-rows-3 grid-cols-3'"
+                    (onFilter)="handleFilterGridPayment($event)">
+                </app-panel-filter>
+            </div>
+
+            <div class="flex w-8/12 justify-end gap-2">
+                <div class="flex w-8/12">
+                    <input #SearchEl type="text" pInputText placeholder="Cari data disini" class="p-inputtext-sm w-full"
+                        (keyup.enter)="handleSearchGridPayment(SearchEl.value)">
+                </div>
+
+                <p-button severity="info" label="Cari" icon="pi pi-search" styleClass="p-button-sm"
+                    (onClick)="handleSearchGridPayment(SearchEl.value)">
+                </p-button>
+
+                <p-button severity="secondary" label="Export" icon="pi pi-download" styleClass="p-button-sm"
+                    (onClick)="handleExportGridPayment()">
+                </p-button>
+            </div>
+        </div>
+
+        <app-grid #GridComps [props]="GridProps" (cellClicked)="onCellClicked($event)"
             (rowDoubleClicked)="onRowDoubleClicked($event)" (aksiClicked)="onToolbarClicked($event)"
             (customSearchClicked)="onSearchGrid($event)">
         </app-grid>

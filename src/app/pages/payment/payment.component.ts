@@ -4,10 +4,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { InputTextModule } from 'primeng/inputtext';
 import { Subject, takeUntil } from 'rxjs';
+import { PanelFilterComponent } from 'src/app/components/filter/panel-filter/panel-filter.component';
 import { DynamicFormComponent } from 'src/app/components/form/dynamic-form/dynamic-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { DashboardComponent } from 'src/app/components/layout/dashboard/dashboard.component';
+import { PanelFilterModel } from 'src/app/model/components/filter.model';
 import { FormModel } from 'src/app/model/components/form.model';
 import { GridModel } from 'src/app/model/components/grid.model';
 import { LayoutModel } from 'src/app/model/components/layout.model';
@@ -15,6 +18,7 @@ import { AuthenticationService } from 'src/app/services/authentication/authentic
 import { InvoiceService } from 'src/app/services/invoice/invoice.service';
 import { PaymentService } from 'src/app/services/payment/payment.service';
 import { PelangganService } from 'src/app/services/pelanggan/pelanggan.service';
+import { ProductService } from 'src/app/services/setup-data/product.service';
 import { SettingCompanyService } from 'src/app/services/setup-data/setting-company.service';
 import { UtilityService } from 'src/app/services/utility/utility.service';
 
@@ -22,12 +26,14 @@ import { UtilityService } from 'src/app/services/utility/utility.service';
     selector: 'app-payment',
     standalone: true,
     imports: [
-        CommonModule,
-        DashboardComponent,
-        GridComponent,
-        DynamicFormComponent,
         ButtonModule,
-        ConfirmDialogModule
+        CommonModule,
+        GridComponent,
+        InputTextModule,
+        DashboardComponent,
+        ConfirmDialogModule,
+        DynamicFormComponent,
+        PanelFilterComponent,
     ],
     templateUrl: './payment.component.html',
     styleUrl: './payment.component.scss'
@@ -42,6 +48,79 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
     UserData = this._authenticationService.getUserData();
 
+    AdvancedFilterProps: PanelFilterModel.FilterDatasource[] = [
+        {
+            id: 'invoice_number',
+            label: 'No. Tagihan',
+            type: PanelFilterModel.TypeFilter.TEXT,
+            value: ''
+        },
+        {
+            id: 'invoice_date',
+            label: 'Periode Invoice',
+            type: PanelFilterModel.TypeFilter.MONTHPICKER,
+            value: '',
+            date_format: 'MM yy'
+        },
+        {
+            id: 'pelanggan_code',
+            label: 'Kode Pelanggan',
+            type: PanelFilterModel.TypeFilter.TEXT,
+            value: '',
+        },
+        {
+            id: 'full_name',
+            label: 'Nama Pelanggan',
+            type: PanelFilterModel.TypeFilter.TEXT,
+            value: '',
+        },
+        {
+            id: 'product_name',
+            label: 'Product',
+            type: PanelFilterModel.TypeFilter.SELECT,
+            value: '',
+            select_props: {
+                options: [],
+                optionName: 'product_name',
+                optionValue: 'product_name'
+            }
+        },
+        {
+            id: 'payment_date',
+            label: 'Tanggal Bayar',
+            type: PanelFilterModel.TypeFilter.DATE,
+            value: '',
+            date_format: 'DD MM yy'
+        },
+        {
+            id: 'payment_number',
+            label: 'No. Pembayaran',
+            type: PanelFilterModel.TypeFilter.TEXT,
+            value: '',
+        },
+        {
+            id: 'payment_method',
+            label: 'Metode Bayar',
+            type: PanelFilterModel.TypeFilter.TEXT,
+            value: '',
+        },
+        {
+            id: 'payment_status',
+            label: 'Status Pembayaran',
+            type: PanelFilterModel.TypeFilter.SELECT,
+            value: '',
+            select_props: {
+                options: [
+                    { name: 'PENDING', value: 'PENDING' },
+                    { name: 'PAID', value: 'PAID' },
+                    { name: 'CANCEL', value: 'CANCEL' },
+                ],
+                optionName: 'name',
+                optionValue: 'value'
+            }
+        },
+    ]
+
     PageState: 'list' | 'form' = 'list';
 
     ButtonNavigation: LayoutModel.IButtonNavigation[] = [
@@ -52,6 +131,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         },
     ];
 
+    @ViewChild('GridComps') GridComps!: GridComponent;
     GridProps: GridModel.IGrid = {
         id: 'GridSetupMenu',
         column: [
@@ -70,11 +150,11 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         height: "calc(100vh - 14.5rem)",
         toolbar: ['Print', 'Detail', 'Edit', 'Cancel'],
         showPaging: true,
-        showSearch: true,
+        showSearch: false,
         showSort: false,
         searchKeyword: 'role',
         searchPlaceholder: 'Find Role Name Here',
-        isCustomSearch: true,
+        isCustomSearch: false,
         customSearchProps: [
             {
                 id: 'invoice_date',
@@ -87,6 +167,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                 type: 'text'
             },
         ],
+        defaultRows: 50
     };
     GridSelectedData: any;
     GridQueryParams: any;
@@ -105,6 +186,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         private _paymentService: PaymentService,
         private _utilityService: UtilityService,
         private _invoiceService: InvoiceService,
+        private _productService: ProductService,
         private _pelangganService: PelangganService,
         private _confirmationService: ConfirmationService,
         private _authenticationService: AuthenticationService,
@@ -340,6 +422,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         this.getAll({ invoice_date: new Date() });
+        this.getAllProduct();
         this.getAllPelanggan();
         this.getAllPaymentMethodManual();
     }
@@ -372,6 +455,37 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    handleFilterGridPayment(args: any) {
+        args.search = this.GridQueryParams.search;
+        this.GridQueryParams = this.resetQueryParams(args);
+        this.getAll(this.GridQueryParams);
+    }
+
+    handleSearchGridPayment(search: string) {
+        let query = {
+            ...this.GridQueryParams
+        };
+
+        if (search) {
+            query.search = search;
+            this.GridQueryParams = query;
+        } else {
+            delete this.GridQueryParams.search;
+        }
+
+        this.getAll(this.GridQueryParams);
+    }
+
+    handleExportGridPayment() {
+        this.GridComps.onExportExcel();
+    }
+
+    private resetQueryParams(obj: Record<string, any>) {
+        return Object.fromEntries(
+            Object.entries(obj).filter(([_, v]) => v !== undefined && v !== null && v !== '')
+        );
+    }
+
     private getAll(query?: any) {
         this.GridQueryParams = query;
 
@@ -386,6 +500,18 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                             invoice_date: this._utilityService.onFormatDate(new Date(item.invoice_date), 'MMMM yyyy')
                         }
                     });
+                }
+            });
+    }
+
+    private getAllProduct() {
+        this._productService
+            .getAll()
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result) {
+                    const index = this.AdvancedFilterProps.findIndex(item => item.id == 'product_name')
+                    this.AdvancedFilterProps[index].select_props!.options = result.data;
                 }
             });
     }
