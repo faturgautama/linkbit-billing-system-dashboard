@@ -46,5 +46,6 @@ export namespace GridModel {
         toolbar?: string[];
         additionalButtons?: IAdditionalButtonGrid[];
         defaultRows?: number;
+        scrollHeight?: string;
     }
 }

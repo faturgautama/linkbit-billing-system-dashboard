@@ -39,7 +39,7 @@ export class PelangganService {
     }
 
     getAllInactive(id_setting_company: number): Observable<PelangganModel.GetAllPelanggan> {
-        return this._httpRequestService.getRequest(`${environment.webApiUrl}/pelanggan`, { id_setting_company: id_setting_company, is_active: false });
+        return this._httpRequestService.getRequest(`${environment.webApiUrl}/pelanggan`, { is_active: false });
     }
 
     getAllNotHaveProduct(id_setting_company: number): Observable<PelangganModel.GetAllPelanggan> {
@@ -58,11 +58,15 @@ export class PelangganService {
         return this._httpRequestService.putRequest(`${environment.webApiUrl}/pelanggan`, payload);
     }
 
-    delete(payload: PelangganModel.UpdatePelanggan): Observable<HttpBaseResponse> {
+    changeStatus(payload: PelangganModel.UpdatePelanggan): Observable<HttpBaseResponse> {
         return this._httpRequestService.putRequest(`${environment.webApiUrl}/pelanggan`, {
             ...payload,
             is_active: !payload.is_active,
         });
+    }
+
+    delete(id_pelanggan: number): Observable<HttpBaseResponse> {
+        return this._httpRequestService.putRequest(`${environment.webApiUrl}/pelanggan/delete/${id_pelanggan}`, null);
     }
 
     updateProductPelanggan(payload: PelangganModel.UpdateProductPelanggan): Observable<HttpBaseResponse> {

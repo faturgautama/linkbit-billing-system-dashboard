@@ -75,9 +75,9 @@ export class PelangganComponent implements OnInit, OnDestroy {
         },
     ];
 
-    @ViewChild('GridHistoryTagihanComps') GridHistoryTagihanComps!: GridComponent;
+    @ViewChild('GridPelangganComps') GridPelangganComps!: GridComponent;
     GridProps: GridModel.IGrid = {
-        id: 'GridSetupMenu',
+        id: 'GridPelanggan',
         column: [
             { field: 'pelanggan_code', headerName: 'Kode Pelanggan', class: 'text-sky-500 font-semibold', width: '150px' },
             { field: 'full_name', headerName: 'Nama Pelanggan', width: '200px' },
@@ -87,14 +87,12 @@ export class PelangganComponent implements OnInit, OnDestroy {
         ],
         dataSource: [],
         height: "calc(100vh - 14.5rem)",
-        toolbar: ['Change Status', 'Detail', 'Produk Layanan'],
+        toolbar: ['Change Status', 'Delete', 'Detail', 'Produk Layanan'],
         showPaging: true,
-        showSearch: true,
+        showSearch: false,
         showSort: true,
         searchKeyword: 'role',
         searchPlaceholder: 'Find Role Name Here',
-        isCustomSearch: true,
-        customSearchProps: [],
         defaultRows: 50
     };
     GridSelectedData: any;
@@ -103,6 +101,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
     FormProps: FormModel.IForm;
     @ViewChild('FormComps') FormComps!: DynamicFormComponent;
 
+    @ViewChild('GridHistoryTagihanComps') GridHistoryTagihanComps!: GridComponent;
     GridHistoryTagihanProps: GridModel.IGrid = {
         id: 'GridHistoryTagihan',
         column: [
@@ -351,48 +350,6 @@ export class PelangganComponent implements OnInit, OnDestroy {
         this.getAllProduct();
         this.getAllGroupPelanggan();
         this.getAllSettingCompany();
-
-        const index = this.FormProps.fields.findIndex(item => item.id == 'id_setting_company');
-
-        if (this.UserData.company_type == 'KANTOR PUSAT') {
-            this.FormProps.fields[index].hidden = false;
-            this.GridProps.customSearchProps = [
-                {
-                    id: 'id_setting_company',
-                    placeholder: 'Cari Setting Company Disini',
-                    type: 'dropdown',
-                    dropdownProps: {
-                        options: [],
-                        optionName: 'company_name',
-                        optionValue: 'id_setting_company'
-                    }
-                },
-                {
-                    id: 'full_name',
-                    placeholder: 'Cari Nama Pelanggan Disini',
-                    type: 'text'
-                },
-                {
-                    id: 'pelanggan_code',
-                    placeholder: 'Cari Kode Pelanggan Disini',
-                    type: 'text'
-                },
-            ];
-        } else {
-            this.FormProps.fields[index].hidden = true;
-            this.GridProps.customSearchProps = [
-                {
-                    id: 'full_name',
-                    placeholder: 'Cari Nama Pelanggan Disini',
-                    type: 'text'
-                },
-                {
-                    id: 'pelanggan_code',
-                    placeholder: 'Cari Kode Pelanggan Disini',
-                    type: 'text'
-                },
-            ];
-        }
     }
 
     ngAfterViewInit(): void {
@@ -427,23 +384,24 @@ export class PelangganComponent implements OnInit, OnDestroy {
         this.getAll();
     }
 
+    handleSearchGridPelanggan(query: string) {
+        this.getAll(query);
+    }
+
+    handleExportGridPelanggan() {
+        this.GridPelangganComps.onExportExcel();
+    }
+
     private getAll(query?: any) {
-        query = {
-            ...query,
-            id_setting_company: this.UserData.id_setting_company
-        }
+        let newQuery: any = {}
 
         if (this.ActiveTab == 'active') {
-            query = {
-                ...query,
-                is_active: true
-            };
+            if (query) newQuery.search = query;
 
-            this.GridProps.isCustomSearch = true;
-            this.GridProps.showSearch = true;
+            newQuery.is_active = true;
 
             this._pelangganService
-                .getAll(query, true)
+                .getAll(newQuery, true)
                 .pipe(takeUntil(this.Destroy$))
                 .subscribe((result) => {
                     if (result) {
@@ -451,8 +409,9 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     }
                 });
         } else {
-            this.GridProps.isCustomSearch = false;
-            this.GridProps.showSearch = false;
+            if (query) newQuery.search = query;
+
+            newQuery.is_active = true;
 
             this._pelangganService
                 .getAllInactive(this.UserData.id_setting_company)
@@ -619,12 +578,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 },
             ];
 
-            const queryParams = {
-                id_setting_company: this.UserData.id_setting_company,
-                is_active: this.ActiveTab == 'active' ? true : false
-            }
-
-            this.getAll(queryParams);
+            this.getAll();
         }, 100);
     }
 
@@ -659,6 +613,24 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 acceptLabel: 'Yes, sure',
                 rejectIcon: "none",
                 rejectLabel: 'No, back',
+                accept: () => {
+                    this.changeStatusData(args.data);
+                }
+            });
+        }
+
+        if (args.type == 'delete') {
+            this._confirmationService.confirm({
+                target: (<any>event).target as EventTarget,
+                message: 'Data yang dihapus tidak dapat dikembalikan',
+                header: 'Apakah Anda Yakin?',
+                icon: 'pi pi-info-circle',
+                acceptButtonStyleClass: "p-button-danger p-button-sm",
+                rejectButtonStyleClass: "p-button-secondary p-button-sm",
+                acceptIcon: "none",
+                acceptLabel: 'Iya, yakin',
+                rejectIcon: "none",
+                rejectLabel: 'Tidak, kembali',
                 accept: () => {
                     this.deleteData(args.data);
                 }
@@ -735,20 +707,28 @@ export class PelangganComponent implements OnInit, OnDestroy {
         });
     }
 
-    private deleteData(data: any) {
+    private changeStatusData(data: any) {
         this._pelangganService
-            .delete(data)
+            .changeStatus(data)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result.status) {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
-                    const queryParams = {
-                        id_setting_company: this.UserData.id_setting_company,
-                        is_active: this.ActiveTab == 'active' ? true : false
-                    }
+                    this.getAll();
+                }
+            })
+    }
 
-                    this.getAll(queryParams);
+    private deleteData(data: any) {
+        this._pelangganService
+            .delete(data.id_pelanggan)
+            .pipe(takeUntil(this.Destroy$))
+            .subscribe((result) => {
+                if (result.status) {
+                    this._messageService.clear();
+                    this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data deleted succesfully' });
+                    this.getAll();
                 }
             })
     }
@@ -766,12 +746,7 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     this._messageService.clear();
                     this._messageService.add({ severity: 'success', summary: 'Success!', detail: 'Data updated succesfully' });
                     this.ShowDialogProduct = false;
-                    const queryParams = {
-                        id_setting_company: this.UserData.id_setting_company,
-                        is_active: this.ActiveTab == 'active' ? true : false
-                    }
-
-                    this.getAll(queryParams);
+                    this.getAll();
                 }
             })
     }
