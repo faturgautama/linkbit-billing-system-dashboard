@@ -79,10 +79,10 @@
 
 <div class="grid w-full">
     <!-- Sort Mode -->
-    <p-table *ngIf="props.showSort; else noSortMode" [value]="props.dataSource" [columns]="props.column"
-        styleClass="p-datatable-striped" [tableStyle]="{'min-width': '50rem'}" selectionMode="single"
-        [(selection)]="SelectedRow" sortMode="single" [paginator]="props.showPaging" [first]="First"
-        [showCurrentPageReport]="true"
+    <p-table *ngIf="props.showSort; else noSortMode" id="GridComponents" [value]="props.dataSource"
+        [columns]="props.column" styleClass="p-datatable-striped" [tableStyle]="{'min-width': '50rem'}"
+        selectionMode="single" [(selection)]="SelectedRow" sortMode="single" [paginator]="props.showPaging"
+        [first]="First" [showCurrentPageReport]="true"
         currentPageReportTemplate="Data ke {first} - {last} dari {totalRecords} total data"
         [rows]="props.defaultRows ? props.defaultRows : 5" [rowsPerPageOptions]="[5, 10, 25, 50, 100]"
         [scrollable]="true" scrollHeight="calc(100vh - 19rem)">
