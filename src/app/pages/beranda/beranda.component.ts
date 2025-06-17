@@ -125,8 +125,13 @@ export class BerandaComponent implements OnInit, OnDestroy {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Nov', 'Des'],
                     datasets: [
                         {
-                            label: 'Pembayaran',
-                            data: result.data.map((item: any) => item.total),
+                            label: 'Sudah Terbayar',
+                            data: result.data.map((item: any) => item.total_paid),
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Belum Terbayar',
+                            data: result.data.map((item: any) => item.total_unpaid),
                             borderWidth: 1
                         }
                     ]

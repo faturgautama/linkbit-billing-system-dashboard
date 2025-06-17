@@ -47,5 +47,6 @@ export namespace GridModel {
         additionalButtons?: IAdditionalButtonGrid[];
         defaultRows?: number;
         scrollHeight?: string;
+        showCheckboxSelection?: boolean;
     }
 }

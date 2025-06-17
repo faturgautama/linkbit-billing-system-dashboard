@@ -71,6 +71,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     CustomSearchLength$ = new BehaviorSubject<number>(1);
 
+    First = 0;
+
     constructor(
         private _formBuilder: FormBuilder,
         private _utilityService: UtilityService,

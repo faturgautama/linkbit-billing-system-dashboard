@@ -460,10 +460,6 @@ export class PelangganComponent implements OnInit, OnDestroy {
                 if (result) {
                     const index = this.FormProps.fields.findIndex(item => item.id == 'id_setting_company');
                     this.FormProps.fields[index].dropdownProps.options = result.data;
-
-                    if (this.UserData.company_type == 'KANTOR PUSAT') {
-                        this.GridProps.customSearchProps![0]!.dropdownProps!.options = result.data;
-                    }
                 }
             });
     }
