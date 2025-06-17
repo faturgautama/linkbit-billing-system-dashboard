@@ -5,7 +5,11 @@
 
   .p-paginator.p-component {
     display: flex !important;
-    justify-content: end !important;
+    width: 100% !important;
+
+    .p-paginator-current {
+      margin-right: auto !important;
+    }
   }
 
   p-sorticon > svg {

@@ -392,14 +392,17 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit(): void {
         this.getAll({ invoice_date: new Date() });
-        this.getAllProduct();
-        this.getAllPelanggan();
-        this.getSettingCompany();
     }
 
     ngAfterViewInit(): void {
         setTimeout(() => {
             this.checkQueryParams();
+
+            setTimeout(() => {
+                this.getAllProduct();
+                this.getAllPelanggan();
+                this.getSettingCompany();
+            }, 1000);
         }, 100);
     }
 
@@ -476,14 +479,6 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
-                    let formQuery = { ...query };
-
-                    if (formQuery.invoice_date) {
-                        formQuery.invoice_date = new Date(formQuery.invoice_date)
-                    };
-
-                    this.GridComps.CustomSearchForm.patchValue(formQuery);
-
                     this.GridProps.dataSource = result.data.map((item: any) => {
                         return {
                             ...item,
@@ -514,9 +509,6 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (result) {
                     const index = this.FormProps.fields.findIndex(item => item.id == 'id_pelanggan')
                     this.FormProps.fields[index].dropdownProps.options = result.data;
-
-                    const indexSearch = this.GridProps.customSearchProps!.findIndex(item => item.id == 'id_pelanggan');
-                    this.GridProps.customSearchProps![indexSearch].dropdownProps!.options = result.data;
 
                     this._activatedRoute
                         .queryParams
