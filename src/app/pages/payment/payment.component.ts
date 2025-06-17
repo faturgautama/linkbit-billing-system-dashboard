@@ -283,7 +283,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                     id: 'payment_date',
                     label: 'Tgl. Pembayaran',
                     required: true,
-                    type: 'date',
+                    type: 'datetime',
                     value: "",
                 },
                 {

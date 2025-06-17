@@ -59,7 +59,7 @@ export namespace FormModel {
 
     export interface IFormFields {
         id: string;
-        type: 'text' | 'date' | 'daterange' | 'monthpicker' | 'number' | 'select' | 'multiselect' | 'checkbox' | 'radio' | 'textarea' | 'password' | 'lookup' | 'text_split' | 'switch' | 'time' | 'number_split' | 'fileinput' | 'editor' | 'otp';
+        type: 'text' | 'date' | 'datetime' | 'daterange' | 'monthpicker' | 'number' | 'select' | 'multiselect' | 'checkbox' | 'radio' | 'textarea' | 'password' | 'lookup' | 'text_split' | 'switch' | 'time' | 'number_split' | 'fileinput' | 'editor' | 'otp';
         label: string;
         required: boolean;
         value: any;
