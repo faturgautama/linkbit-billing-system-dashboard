@@ -5,7 +5,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { Subject, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Subject, takeUntil } from 'rxjs';
 import { PanelFilterComponent } from 'src/app/components/filter/panel-filter/panel-filter.component';
 import { DynamicFormComponent } from 'src/app/components/form/dynamic-form/dynamic-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -99,7 +99,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                 optionValue: 'value'
             }
         },
-    ]
+    ];
 
     PageState: 'list' | 'form' = 'list';
 
@@ -180,6 +180,8 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
     FormProps: FormModel.IForm;
     @ViewChild('FormComps') FormComps!: DynamicFormComponent;
 
+    FilterPelanggan$ = new Subject();
+
     constructor(
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
@@ -241,9 +243,12 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                             title: 'full_name',
                             subtitle: 'pelanggan_code',
                             description: 'alamat'
-                        }
+                        },
                     },
                     value: '',
+                    onFilter: (args: any) => {
+                        this.FilterPelanggan$.next(args);
+                    },
                     onChange: (args: any) => {
                         if (args) {
                             if (!args.product_id) {
@@ -301,7 +306,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
                 {
                     id: 'notes',
-                    label: 'Tagihan',
+                    label: 'Notes',
                     required: true,
                     type: 'text',
                     value: '',
@@ -388,6 +393,18 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
             state: 'write',
             defaultValue: null,
         };
+
+        this.FilterPelanggan$
+            .pipe(
+                takeUntil(this.Destroy$),
+                map((result: any) => result.filter),
+                debounceTime(500),
+                distinctUntilChanged()
+            ).subscribe((result) => {
+                if (result.length) {
+                    this.getAllPelanggan({ full_name: result }, true);
+                }
+            })
     }
 
     ngOnInit(): void {
@@ -400,7 +417,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
 
             setTimeout(() => {
                 this.getAllProduct();
-                this.getAllPelanggan();
+                // this.getAllPelanggan();
                 this.getSettingCompany();
             }, 1000);
         }, 100);
@@ -501,9 +518,9 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
             });
     }
 
-    private getAllPelanggan(query?: any) {
+    private getAllPelanggan(query?: any, refresh_state?: boolean) {
         this._pelangganService
-            .getAll(query)
+            .getAll(query, refresh_state)
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result) {
@@ -639,13 +656,12 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
         this.PageState = 'form';
         this.FormState = 'update';
         this.ButtonNavigation = [];
+        this.getAllPelanggan({ full_name: args.full_name }, true);
         // ** Set value ke Dynamic form components
         setTimeout(() => {
-            console.log("args =>", args);
-
             args.invoice_date = new Date(args.invoice_date);
+            this.getTanggalJatuhTempo(args.invoice_date);
             this.FormComps.FormGroup.patchValue(args);
-            this.getTanggalJatuhTempo(args.invoice_date)
         }, 500);
     }
 
