@@ -394,6 +394,15 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                         optionValue: 'id_payment_method_manual'
                     }
                 },
+                {
+                    id: 'payment_method',
+                    label: 'Metode Bayar',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    readonly: true,
+                    hidden: true
+                },
             ],
             style: 'not_inline',
             class: 'grid-rows-4 grid-cols-2',
@@ -589,6 +598,12 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.FormState == 'detail' ? this.FormDetailComps.onResetForm() : this.FormComps.onResetForm();
 
+            const indexManual = this.FormDetailProps.fields.findIndex(item => item.id == 'id_payment_method_manual');
+            this.FormDetailProps.fields[indexManual].hidden = false;
+
+            const indexPaymentMethod = this.FormDetailProps.fields.findIndex(item => item.id == 'payment_method');
+            this.FormDetailProps.fields[indexPaymentMethod].hidden = true;
+
             setTimeout(() => {
                 this.PageState = 'list';
                 this.FormState = 'insert';
@@ -618,6 +633,13 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
             args.due_date = args.due_date ? this._utilityService.onFormatDate(new Date(args.due_date), 'DD MMMM yyyy') : 'Invoice Telah Dibatalkan';
             args.payment_date = this._utilityService.onFormatDate(new Date(args.invoice_date), 'MMMM yyyy');
             args.invoice_date = this._utilityService.onFormatDate(new Date(args.invoice_date), 'MMMM yyyy');
+
+            const indexManual = this.FormDetailProps.fields.findIndex(item => item.id == 'id_payment_method_manual');
+            this.FormDetailProps.fields[indexManual].hidden = true;
+
+            const indexPaymentMethod = this.FormDetailProps.fields.findIndex(item => item.id == 'payment_method');
+            this.FormDetailProps.fields[indexPaymentMethod].hidden = false;
+
             this.FormDetailComps.FormGroup.patchValue(args);
         }, 500);
     }
