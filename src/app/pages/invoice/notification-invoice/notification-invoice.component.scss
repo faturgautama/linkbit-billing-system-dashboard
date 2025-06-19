@@ -1,0 +1,23 @@
+:host ::ng-deep {
+  tr th td {
+    font-size: 12px !important;
+  }
+
+  p-table#TableRekapPembayaranTahunan {
+    width: calc(100vw - 10rem);
+  }
+
+  .p-paginator.p-component {
+    display: flex !important;
+    width: 100% !important;
+
+    .p-paginator-current {
+      margin-right: auto !important;
+    }
+  }
+
+  p-sorticon > svg {
+    height: 12px !important;
+    width: 12px !important;
+  }
+}

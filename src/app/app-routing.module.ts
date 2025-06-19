@@ -44,6 +44,15 @@ const routes: Routes = [
         }
     },
     {
+        path: 'tagihan/batch-message',
+        canActivate: [AuthGuard],
+        loadComponent: async () => (await import('./pages/invoice/notification-invoice/notification-invoice.component')).NotificationInvoiceComponent,
+        data: {
+            title: 'Send Message Batch',
+            breadcrumbs: ['Home', 'Tagihan', 'Send Message Batch']
+        }
+    },
+    {
         path: 'pembayaran',
         canActivate: [AuthGuard, MenuPermissionGuard],
         loadComponent: async () => (await import('./pages/payment/payment.component')).PaymentComponent,

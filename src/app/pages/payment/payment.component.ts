@@ -126,7 +126,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     ButtonNavigation: LayoutModel.IButtonNavigation[] = [
         {
             id: 'add',
-            title: 'Add Payment Cash',
+            title: 'Add Payment Manual',
             icon: 'pi pi-plus'
         },
     ];
@@ -142,6 +142,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
             { field: 'alamat', headerName: 'Alamat', class: 'text-xs', width: '300px' },
             { field: 'product_name', headerName: 'Produk', class: 'text-xs', width: '200px' },
             { field: 'payment_date', headerName: 'Tgl. Bayar', format: 'datetime', class: 'text-xs', width: '200px' },
+            { field: 'payment_provider', headerName: 'Payment Provider', class: 'text-xs', width: '200px' },
             { field: 'payment_method', headerName: 'Metode Bayar', class: 'text-xs', width: '150px' },
             { field: 'payment_amount', headerName: 'Total Bayar', format: 'currency', class: 'text-start text-xs', width: '150px' },
             { field: 'payment_status', headerName: 'Status', class: 'text-center text-xs', width: '100px' },
@@ -172,7 +173,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     GridSelectedData: any;
     GridQueryParams: any;
 
-    FormState: 'insert' | 'update' | 'detail' = 'insert';
+    FormState: 'insert' | 'update' | 'update_cash' | 'detail' = 'insert';
     FormProps: FormModel.IForm;
     @ViewChild('FormComps') FormComps!: DynamicFormComponent;
 
@@ -307,6 +308,15 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                         optionValue: 'id_payment_method_manual'
                     }
                 },
+                {
+                    id: 'id_payment',
+                    label: 'id payment',
+                    required: true,
+                    type: 'text',
+                    value: '',
+                    readonly: true,
+                    hidden: true,
+                },
             ],
             style: 'not_inline',
             class: 'grid-rows-4 grid-cols-2',
@@ -430,7 +440,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
             ]
         }
 
-        this.getAll({ invoice_date: new Date() });
+        this.getAll({ payment_date: this._utilityService.onFormatDate(new Date(), 'yyyy-MM-DD') });
         this.getAllProduct();
         this.getAllPelanggan();
         this.getAllPaymentMethodManual();
@@ -567,7 +577,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
             });
     }
 
-    private getAllPaymentMethodManual() {
+    private getAllPaymentMethodManual(is_set?: boolean, payment_method_manual?: string) {
         const userData = this._authenticationService.getUserData();
 
         this._settingCompanyService
@@ -577,6 +587,14 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (result.status) {
                     const index = this.FormProps.fields.findIndex(item => item.id == 'id_payment_method_manual');
                     this.FormProps.fields[index].dropdownProps.options = result.data;
+
+                    if (is_set) {
+                        const index = result.data.findIndex((item: any) => item.payment_method === payment_method_manual);
+
+                        if (index > -1) {
+                            this.FormComps.FormGroup.get('id_payment_method_manual')?.setValue(result.data[index].id_payment_method_manual);
+                        }
+                    }
                 }
             })
     }
@@ -610,7 +628,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.ButtonNavigation = [
                     {
                         id: 'add',
-                        title: 'Add',
+                        title: 'Add Payment Manual',
                         icon: 'pi pi-plus'
                     }
                 ];
@@ -626,22 +644,42 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onRowDoubleClicked(args: any): void {
         this.PageState = 'form';
-        this.FormState = 'detail';
         this.ButtonNavigation = [];
-        // ** Set value ke Dynamic form components
-        setTimeout(() => {
-            args.due_date = args.due_date ? this._utilityService.onFormatDate(new Date(args.due_date), 'DD MMMM yyyy') : 'Invoice Telah Dibatalkan';
-            args.payment_date = this._utilityService.onFormatDate(new Date(args.invoice_date), 'MMMM yyyy');
-            args.invoice_date = this._utilityService.onFormatDate(new Date(args.invoice_date), 'MMMM yyyy');
+        this.FormState = args.payment_provider == 'MANUAL' ? 'update' : 'detail';
 
-            const indexManual = this.FormDetailProps.fields.findIndex(item => item.id == 'id_payment_method_manual');
-            this.FormDetailProps.fields[indexManual].hidden = true;
+        if (args.payment_provider != 'MANUAL' && this.FormState == 'detail') {
+            // ** Set value ke Dynamic form components
+            setTimeout(() => {
+                args.due_date = args.due_date ? this._utilityService.onFormatDate(new Date(args.due_date), 'DD MMMM yyyy') : 'Invoice Telah Dibatalkan';
+                args.payment_date = new Date(args.payment_date);
+                args.invoice_date = this._utilityService.onFormatDate(new Date(args.invoice_date), 'MMMM yyyy');
 
-            const indexPaymentMethod = this.FormDetailProps.fields.findIndex(item => item.id == 'payment_method');
-            this.FormDetailProps.fields[indexPaymentMethod].hidden = false;
+                const indexManual = this.FormDetailProps.fields.findIndex(item => item.id == 'id_payment_method_manual');
+                this.FormDetailProps.fields[indexManual].hidden = true;
 
-            this.FormDetailComps.FormGroup.patchValue(args);
-        }, 500);
+                const indexPaymentMethod = this.FormDetailProps.fields.findIndex(item => item.id == 'payment_method');
+                this.FormDetailProps.fields[indexPaymentMethod].hidden = false;
+
+                this.FormDetailComps.FormGroup.patchValue(args);
+            }, 500);
+        } else {
+            this.getAllInvoice(args.id_pelanggan);
+            this.getAllPaymentMethodManual(true, args.payment_method);
+
+            // ** Set value ke Dynamic form components
+            setTimeout(() => {
+                args.due_date = args.due_date ? this._utilityService.onFormatDate(new Date(args.due_date), 'DD MMMM yyyy') : 'Invoice Telah Dibatalkan';
+                args.payment_date = new Date(args.payment_date);
+                args.invoice_date = this._utilityService.onFormatDate(new Date(args.invoice_date), 'MMMM yyyy');
+
+                const indexManual = this.FormProps.fields.findIndex(item => item.id == 'id_payment_method_manual');
+                this.FormProps.fields[indexManual].hidden = false;
+
+                this.FormComps.FormGroup.patchValue(args);
+            }, 500);
+        }
+
+
     }
 
     onToolbarClicked(args: any): void {
@@ -650,11 +688,11 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (args.type == 'edit') {
-            if (args.data.payment_status == 'PENDING' || args.data.payment_status == 'ACTIVE') {
+            if (args.data.payment_provider != 'MANUAL' && (args.data.payment_status == 'PENDING' || args.data.payment_status == 'ACTIVE')) {
                 this.onRowDoubleClicked(args.data);
             } else {
                 this._messageService.clear();
-                this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Aksi ini hanya untuk PENDING payment' });
+                this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Aksi ini hanya untuk PENDING payment & tidak melalui Payment Gateway' });
             }
         }
 
@@ -668,7 +706,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (args.type == 'cancel') {
-            if (args.data.payment_status == 'PENDING' || args.data.payment_status == 'ACTIVE') {
+            if (args.data.payment_provider != 'MANUAL' && args.data.payment_status == 'PENDING' || args.data.payment_status == 'ACTIVE') {
                 this._confirmationService.confirm({
                     target: (<any>event).target as EventTarget,
                     message: 'Canceled data can not be reverted',
@@ -686,7 +724,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
             } else {
                 this._messageService.clear();
-                this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Aksi ini hanya untuk PENDING payment' });
+                this._messageService.add({ severity: 'warn', summary: 'Oops', detail: 'Aksi ini hanya untuk PENDING payment & tidak melalui Payment Gateway' });
             }
         }
     }
@@ -710,13 +748,13 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     updateData(data: any) {
-        delete data.product_name;
-        data.invoice_date = new Date(this._utilityService.onFormatDate(new Date(data.invoice_date), 'yyyy-MM-DD'));
-        data.due_date = new Date(data.due_date).toISOString();
-        data.diskon_percentage = parseFloat(data.diskon_percentage);
-
         this._paymentService
-            .update(data)
+            .updatePaymentCash({
+                id_payment: data.id_payment,
+                id_invoice: data.id_invoice,
+                id_payment_method_manual: data.id_payment_method_manual,
+                payment_date: data.payment_date,
+            })
             .pipe(takeUntil(this.Destroy$))
             .subscribe((result) => {
                 if (result.status) {
