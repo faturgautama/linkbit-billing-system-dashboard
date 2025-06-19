@@ -44,6 +44,10 @@ export class InvoiceService {
         return this._httpRequestService.getRequest(`${environment.webApiUrl}/invoice/send-message/${id_invoice}`);
     }
 
+    sendMessageBatch(data: any): Observable<HttpBaseResponse> {
+        return this._httpRequestService.postRequest(`${environment.webApiUrl}/invoice/send-message-batch`, data);
+    }
+
     retriggerJobInvoice(): Observable<InvoiceModel.GetAllInvoice> {
         return this._httpRequestService.getRequestWithoutLoading(`${environment.webApiUrl}/invoice/retrigger-job-invoice`);
     }

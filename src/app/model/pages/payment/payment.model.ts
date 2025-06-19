@@ -66,6 +66,13 @@ export namespace PaymentModel {
         payment_amount: number;
     }
 
+    export interface UpdatePaymentCash {
+        id_payment: number;
+        id_invoice: number;
+        id_payment_method_manual: number;
+        payment_date: Date;
+    }
+
     export interface IPaymentMethod {
         payment_method_type: string;
         payment_method_name: string;

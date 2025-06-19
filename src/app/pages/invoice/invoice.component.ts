@@ -121,6 +121,11 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
             title: 'Rerun Job Message',
             icon: 'pi pi-whatsapp'
         },
+        {
+            id: 'batch_message',
+            title: 'Send Message Batch',
+            icon: 'pi pi-send'
+        },
     ];
 
     @ViewChild('GridComps') GridComps!: GridComponent;
@@ -487,10 +492,6 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private getAll(query?: any) {
-        setTimeout(() => {
-            console.log("query get all =>", query);
-        }, 1000);
-
         this.GridQueryParams = query;
 
         this._invoiceService
@@ -614,6 +615,10 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                         this._messageService.add({ severity: 'success', summary: 'Berhasil', detail: 'Job Send Message Telah Berjalan' })
                     }
                 })
+        };
+
+        if (data.id == 'batch_message') {
+            this._router.navigateByUrl("/tagihan/batch-message");
         };
     }
 

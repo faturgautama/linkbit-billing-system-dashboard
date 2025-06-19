@@ -1,0 +1,82 @@
+<app-dashboard [ButtonNavigation]="ButtonNavigation" (onClickButtonNavigation)="handleClickButtonNavigation($event)">
+    <div class="grid w-full bg-white rounded-lg shadow-sm p-2">
+        <div
+            class="flex flex-row justify-between items-start w-full mb-2 pb-2 border-b border-t-0 border-x-0 border-dashed border-gray-300">
+            <div class="flex w-full gap-3">
+                <app-panel-filter [props]="AdvancedFilterProps" [formClass]="'grid-rows-2 grid-cols-3'"
+                    (onFilter)="handleFilterGridInvoice($event)">
+                </app-panel-filter>
+            </div>
+
+            <div class="flex w-8/12 justify-end gap-2">
+                <div class="flex w-8/12">
+                    <input #SearchEl type="text" pInputText placeholder="Cari data disini" class="p-inputtext-sm w-full"
+                        (keyup.enter)="handleSearchGridInvoice(SearchEl.value)">
+                </div>
+
+                <p-button severity="info" label="Cari" icon="pi pi-search" styleClass="p-button-sm"
+                    (onClick)="handleSearchGridInvoice(SearchEl.value)">
+                </p-button>
+
+                <p-button severity="secondary" label="Export" icon="pi pi-download" styleClass="p-button-sm"
+                    (onClick)="handleExportGridInvoice()">
+                </p-button>
+            </div>
+        </div>
+
+        <p-table id="TableRekapPembayaranTahunan" #GridComps [value]="GridProps.dataSource" [scrollable]="true"
+            scrollHeight="calc(100vh - 19rem)" [paginator]="true" [rows]="50" [first]="First"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Data ke {first} - {last} dari {totalRecords} total data"
+            [rowsPerPageOptions]="[5, 10, 25, 50, 100]" [(selection)]="GridSelectedData" dataKey="id_invoice">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 100px"><p-tableHeaderCheckbox /></th>
+                    <th [style.min-width]="'170px'" style="font-size: 12px">
+                        No. Tagihan
+                    </th>
+                    <th [style.min-width]="'100px'" style="font-size: 12px">
+                        Periode
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Kode Pelanggan
+                    </th>
+                    <th [style.min-width]="'250px'" style="font-size: 12px">
+                        Pelanggan
+                    </th>
+                    <th [style.min-width]="'200px'" style="font-size: 12px">
+                        Produk
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Subtotal
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Status
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Metode Bayar
+                    </th>
+                    <th [style.min-width]="'150px'" style="font-size: 12px">
+                        Tgl. Bayar
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-customer>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="customer" />
+                    </td>
+                    <td style="font-size: 12px">{{ customer.invoice_number }}</td>
+                    <td style="font-size: 12px">{{ customer.invoice_date }}</td>
+                    <td style="font-size: 12px">{{ customer.pelanggan_code }}</td>
+                    <td style="font-size: 12px">{{ customer.full_name }}</td>
+                    <td style="font-size: 12px">{{ customer.product_name }}</td>
+                    <td style="font-size: 12px">{{ customer.total | currency: 'Rp. ' }}</td>
+                    <td style="font-size: 12px">{{ customer.invoice_status }}</td>
+                    <td style="font-size: 12px">{{ customer.payment_method }}</td>
+                    <td style="font-size: 12px">{{ customer.payment_date | date: 'dd-MM-yyyy HH:mm:ss' }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</app-dashboard>
