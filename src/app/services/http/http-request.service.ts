@@ -128,8 +128,7 @@ export class HttpRequestService {
 
                     // ** Jika status = false
                     if (!result.status) {
-                        this._messageService.clear();
-                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: result.message, data: result.data })
+                        this.handlingValidation(result.message)
                     }
 
                     return result;
@@ -160,8 +159,7 @@ export class HttpRequestService {
                 map((result) => {
                     // ** Jika status = false
                     if (!result.status) {
-                        this._messageService.clear();
-                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
+                        this.handlingValidation(result.message)
                     }
 
                     return result;
@@ -210,7 +208,6 @@ export class HttpRequestService {
             )
     }
 
-
     /**
      * @description Put Request Method
      * @param url 
@@ -241,8 +238,7 @@ export class HttpRequestService {
 
                     // ** Jika status = false
                     if (!result.status) {
-                        this._messageService.clear();
-                        this._messageService.add({ severity: 'warn', summary: 'Oops', detail: this._titleCasePipe.transform(result.message) })
+                        this.handlingValidation(result.message)
                     }
 
                     return result;
@@ -295,5 +291,25 @@ export class HttpRequestService {
         this._utilityService.ShowLoading$.next(false);
         this._messageService.clear();
         this._messageService.add({ severity: 'error', summary: error.statusText, detail: error.error.message })
+    }
+
+    private handlingValidation(message: any) {
+        this._messageService.clear();
+
+        if (Array.isArray(message)) {
+            message.forEach((msg: string) => {
+                this._messageService.add({
+                    severity: 'warn',
+                    summary: 'Oops',
+                    detail: this._titleCasePipe.transform(msg),
+                });
+            });
+        } else {
+            this._messageService.add({
+                severity: 'warn',
+                summary: 'Oops',
+                detail: this._titleCasePipe.transform(message),
+            });
+        }
     }
 }

@@ -4,8 +4,8 @@
 
 export const environment = {
     production: false,
-    webApiUrl: 'https://staging-core.bill.linkbit.net.id/api/v1',
-    socketUrl: 'https://staging-core.bill.linkbit.net.id',
+    webApiUrl: 'http://localhost:5000/api/v1',
+    socketUrl: 'http://localhost:5000',
     checkoutUrl: 'https://checkout.linkbit.net.id',
     version: 'v0.2.3-alpha',
 };
