@@ -539,6 +539,10 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     }
                 })
         };
+
+        if (data.id == 'produk layanan') {
+            this.onToolbarClicked({ type: 'produk layanan', data: this.GridSelectedData });
+        };
     }
 
     handleBackToList() {
@@ -585,7 +589,13 @@ export class PelangganComponent implements OnInit, OnDestroy {
     onRowDoubleClicked(args: any): void {
         this.PageState = 'form';
         this.FormState = 'update';
-        this.ButtonNavigation = [];
+        this.ButtonNavigation = [
+            {
+                id: 'produk layanan',
+                title: 'Ubah Paket Layanan',
+                icon: 'pi pi-cog'
+            }
+        ];
         // ** Set value ke Dynamic form components
         setTimeout(() => {
             args.phone = args.phone;
@@ -639,6 +649,8 @@ export class PelangganComponent implements OnInit, OnDestroy {
         }
 
         if (args.type == 'produk layanan') {
+            console.log("args =>", args.data);
+
             this.ShowDialogProduct = true;
 
             setTimeout(() => {
