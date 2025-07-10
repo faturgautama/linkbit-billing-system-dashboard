@@ -94,12 +94,12 @@
 
         <!-- Payment Method -->
         <div class="flex flex-col w-full gap-0 p-3 absolute {{ IsSandboxMode ? 'top-[320px]' : 'top-[280px]' }} ">
-            <p class="text-base text-sky-600 font-semibold">
+            <!-- <p class="text-base text-sky-600 font-semibold">
                 <span *ngIf="IsPaymentGenerated" class="text-gray-700" (click)="changePaymentMethod()">
                     <i class="pi pi-chevron-left" style="font-size: 12px"></i>
                 </span>
                 {{ IsPaymentGenerated ? DetailPayment.payment_method : 'Pilih Metode Bayar' }}
-            </p>
+            </p> -->
 
             <p *ngIf="!IsPaymentGenerated" class="text-xs text-gray-500 mb-5">
                 Pembayaran dapat dilakukan melalui VA atau QRIS
