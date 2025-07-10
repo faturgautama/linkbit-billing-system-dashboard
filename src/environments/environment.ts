@@ -4,8 +4,8 @@
 
 export const environment = {
     production: false,
-    webApiUrl: 'http://localhost:5000/api/v1',
-    socketUrl: 'http://localhost:5000',
+    webApiUrl: 'https://core.bill.linkbit.net.id/api/v1',
+    socketUrl: 'https://core.bill.linkbit.net.id',
     checkoutUrl: 'https://checkout.linkbit.net.id',
     version: 'v0.2.3-alpha',
 };

@@ -409,7 +409,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                 distinctUntilChanged()
             ).subscribe((result) => {
                 if (result.length) {
-                    this.getAllPelanggan({ full_name: result }, true);
+                    this.getAllPelanggan({ search: result }, true);
                 }
             })
     }
@@ -420,13 +420,12 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit(): void {
         setTimeout(() => {
-            this.checkQueryParams();
+            this.getAllProduct();
+            this.getSettingCompany();
 
             setTimeout(() => {
-                this.getAllProduct();
-                // this.getAllPelanggan();
-                this.getSettingCompany();
-            }, 1000);
+                this.checkQueryParams();
+            }, 250);
         }, 100);
     }
 
@@ -444,6 +443,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
             if (queryParams['state'] == 'add') {
                 this.PageState = 'form';
                 this.ButtonNavigation = [];
+                this.getAllPelanggan({ search: queryParams['full_name'] }, true, true, queryParams['id_pelanggan']);
             }
 
             if (queryParams['state'] == 'edit') {
@@ -521,7 +521,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
             });
     }
 
-    private getAllPelanggan(query?: any, refresh_state?: boolean) {
+    private getAllPelanggan(query?: any, refresh_state?: boolean, is_set?: boolean, id_pelanggan?: number) {
         this._pelangganService
             .getAll(query, refresh_state)
             .pipe(takeUntil(this.Destroy$))
@@ -538,6 +538,23 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
                                 this.FormComps.FormGroup.get('id_pelanggan')?.setValue(parseInt(result['id_pelanggan']));
                             };
                         });
+
+                    if (is_set) {
+                        const data: any = result.data.find(item => item.id_pelanggan == id_pelanggan);
+
+                        if (data) {
+                            this.FormComps.FormGroup.get('id_pelanggan_product')?.setValue(data.id_pelanggan_product);
+                            this.FormComps.FormGroup.get('id_product')?.setValue(data.product_id);
+                            this.FormComps.FormGroup.get('product_name')?.setValue(data.product_name);
+                            this.FormComps.FormGroup.get('price')?.setValue(data.product_price);
+                            this.FormComps.FormGroup.get('invoice_date')?.setValue(new Date());
+                            this.countSubtotalForm();
+
+                            setTimeout(() => {
+                                this.getTanggalJatuhTempo(new Date());
+                            }, 1000);
+                        }
+                    }
                 }
             });
     }
@@ -663,7 +680,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
         this.PageState = 'form';
         this.FormState = 'update';
         this.ButtonNavigation = [];
-        this.getAllPelanggan({ full_name: args.full_name }, true);
+        this.getAllPelanggan({ search: args.full_name }, true, true, args.id_pelanggan);
         // ** Set value ke Dynamic form components
         setTimeout(() => {
             args.invoice_date = new Date(args.invoice_date);
