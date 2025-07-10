@@ -747,12 +747,12 @@ export class PelangganComponent implements OnInit, OnDestroy {
             })
     }
 
-    handleGoToAddInvoice(id_pelanggan: number) {
-        this._router.navigateByUrl(`/tagihan?state=add&id_pelanggan=${id_pelanggan}`);
+    handleGoToAddInvoice(data: any) {
+        this._router.navigateByUrl(`/tagihan?state=add&id_pelanggan=${data.id_pelanggan}&full_name=${data.full_name}`);
     }
 
-    handleGoToAddPaymentCash(id_pelanggan: number) {
-        this._router.navigateByUrl(`/tagihan?state=add&id_pelanggan=${id_pelanggan}`);
+    handleGoToAddPaymentCash(data: any) {
+        this._router.navigateByUrl(`/tagihan?state=add&id_pelanggan=${data.id_pelanggan}&full_name=${data.full_name}`);
     }
 
     onToolbarClickedHistoryInvoice(args: any): void {
