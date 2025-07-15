@@ -337,9 +337,24 @@ export class PelangganComponent implements OnInit, OnDestroy {
                     type: 'number',
                     value: '',
                 },
+                {
+                    id: 'is_active',
+                    label: 'Status',
+                    required: true,
+                    type: 'select',
+                    dropdownProps: {
+                        options: [
+                            { name: 'Aktif', value: true },
+                            { name: 'Non Aktif', value: false },
+                        ],
+                        optionName: 'name',
+                        optionValue: 'value'
+                    },
+                    value: '',
+                },
             ],
             style: 'not_inline',
-            class: 'grid-rows-5 grid-cols-1',
+            class: 'grid-rows-6 grid-cols-1',
             state: 'write',
             defaultValue: null,
         };
