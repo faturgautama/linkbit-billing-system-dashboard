@@ -19,9 +19,25 @@
         <div
             class="flex flex-col w-11/12 max-w-[450px] p-2 gap-0 bg-white rounded-lg shadow drop-shadow absolute {{ IsSandboxMode ? 'top-[120px]' : 'top-[85px]' }}">
             <div class="flex w-full justify-between items-end mb-1">
-                <p class="text-gray-500 text-xs">
-                    Total
-                </p>
+
+                <div class="flex flex-col gap-1">
+                    <!-- Batas Waktu Pembayaran -->
+                    <div *ngIf="IsPaymentGenerated" class="flex flex-col w-full">
+                        <p class="text-gray-500 text-xs text-end">
+                            Batas Waktu Pembayaran :
+                            <span class="text-sky-600 text-xs font-medium">
+                                {{ ExpirationTimeCountdown }}
+                            </span>
+                        </p>
+
+                    </div>
+
+                    <p class="text-gray-500 text-xs">
+                        Total
+                    </p>
+                </div>
+
+
 
                 <div class="flex flex-col gap-0 justify-end items-end">
                     <p class="text-sky-600 text-sm font-semibold">
@@ -72,17 +88,6 @@
                             {{ InvoiceDatasource.alamat }}
                         </p>
                     </div>
-
-                    <!-- Batas Waktu Pembayaran -->
-                    <div *ngIf="IsPaymentGenerated" class="flex flex-col w-full">
-                        <p class="text-gray-500 text-xs text-end">
-                            Batas Waktu Pembayaran :
-                        </p>
-                        <p class="text-sky-600 text-xs font-medium text-end">
-                            {{ ExpirationTimeCountdown }}
-                        </p>
-                    </div>
-
                 </div>
             </div>
         </div>
