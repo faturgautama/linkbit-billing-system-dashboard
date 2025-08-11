@@ -3,11 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-    production: false,
-    webApiUrl: 'https://core.bill.linkbit.net.id/api/v1',
-    socketUrl: 'https://core.bill.linkbit.net.id',
-    checkoutUrl: 'https://checkout.linkbit.net.id',
-    version: 'v0.2.3-alpha',
+  production: false,
+  webApiUrl: 'http://localhost:5500/api/v1',
+  socketUrl: 'http://localhost:5500',
+  checkoutUrl: 'https://checkout.linkbit.net.id',
+  version: 'v0.2.3-alpha',
 };
 
 /*
