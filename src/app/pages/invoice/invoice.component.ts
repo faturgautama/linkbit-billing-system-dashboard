@@ -168,6 +168,12 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
         width: '300px',
       },
       {
+        field: 'alamat',
+        headerName: 'Alamat',
+        class: 'text-xs',
+        width: '450px',
+      },
+      {
         field: 'product_name',
         headerName: 'Produk',
         class: 'text-xs',
@@ -697,8 +703,7 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.FormComps.FormGroup.get('notes')?.setValue(
-      `${
-        this.FormComps.FormGroup.get('product_name')?.value
+      `${this.FormComps.FormGroup.get('product_name')?.value
       } - ${this._utilityService.onFormatDate(dueDate, 'yyyy-MM-DD')}`
     );
   }
@@ -763,9 +768,8 @@ export class InvoiceComponent implements OnInit, AfterViewInit, OnDestroy {
   handleBackToList() {
     if (this.FromPelanggan) {
       this._router.navigateByUrl(
-        `/pelanggan?id_pelanggan=${
-          this.QueryParams.id_pelanggan ||
-          this.FormComps.FormGroup.get('id_pelanggan')?.value
+        `/pelanggan?id_pelanggan=${this.QueryParams.id_pelanggan ||
+        this.FormComps.FormGroup.get('id_pelanggan')?.value
         }`
       );
     } else {
